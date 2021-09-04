@@ -11,7 +11,7 @@ foreach(explode("&", file_get_contents('php://input')) as $value) {
 $action = $post_data['Action'];
 
 $accountsFile = "accounts.json";
-if(!file_exists($accountsFile)) {
+if(!file_exists($accountsFile) || strlen(file_get_contents($accountsFile)) < 2) {
     $openedFile = fopen($accountsFile, 'w');
     fwrite($openedFile, "[]");
     fclose($openedFile);
@@ -22,26 +22,34 @@ switch($action) {
         // Save the account credentials to json
         $accounts = json_decode(file_get_contents($accountsFile), true);
 
+        $currentSave = 10000000000000;
         $trainerID = generateValidTrainerID($accounts);
-        $profileID = generateValidProfileID($accounts);
+        $profileID = generateValidProfileID($currentSave, $trainerID);
 
-        $accounts[] = ['Email' => $post_data['Email'],
+        $accounts[] = [
+                        'Email' => $post_data['Email'],
                         'Pass' => $post_data['Pass'],
+                        'CurrentSave' => $currentSave,
                         'TrainerID' => $trainerID,
                         'ProfileID' => $profileID,
                         'Advanced1' => "0",
                         'p1_numPoke' => "0",
                         'Nickname1' => "",
                         'Badges1' => "0",
+                        'avatar1' => "",
                         'Advanced2' => "0",
                         'p2_numPoke' => "0",
                         'Nickname2' => "",
                         'Badges2' => "0",
+                        'avatar2' => "",
                         'Advanced3' => "0",
                         'p3_numPoke' => "0",
                         'Nickname3' => "",
-                        'Badges3' => "0"
+                        'Badges3' => "0",
+                        'avatar3' => "",
+                        'accNickname' => ""
                     ];
+
         $accounts = json_encode($accounts);
 
         $openedFile = fopen($accountsFile, 'w');
@@ -65,7 +73,7 @@ switch($action) {
         if($account != null) {
             echo "Result=Success" .
             "&Reason=LoggedIn" .
-            "&CurrentSave=" . getCurrentSave($accounts, $post_data) .
+            "&CurrentSave=" . $account['CurrentSave'] .
             "&TrainerID=" . $account['TrainerID'] .
             "&ProfileID=" . $account['ProfileID'] .
             "&Advanced1=" . $account['Advanced1'] .
@@ -98,29 +106,8 @@ function generateValidTrainerID($accounts) : int {
     return $temp;
 }
 
-function generateValidProfileID($accounts) : int {
-    $temp = rand();
-
-    foreach($accounts as $tempAccount) {
-        if($temp == $tempAccount['ProfileID']) {
-            $temp = generateValidProfileID($accounts);
-            break;
-        }
-    }
-
-    return $temp;
-}
-
-function getCurrentSave($accounts, $post_data) : int {
-    foreach($accounts as $tempAccount) {
-        if($tempAccount['user'] == $post_data['Email']) {
-            if(isset($tempAccount['CurrentSave'])) {
-                return $tempAccount['CurrentSave'];
-            }
-
-            return 10000000000000;
-        }
-    }
+function generateValidProfileID($currentSave, $trainerID) : String {
+    return exec("java16 -jar ../PTD1-Keygen-1.0-SNAPSHOT.jar " . $currentSave . " " . $trainerID . " true");
 }
 
 ?>
