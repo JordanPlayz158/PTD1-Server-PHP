@@ -25,22 +25,22 @@ switch($action) {
         $trainerID = generateValidTrainerID($accounts);
         $profileID = generateValidProfileID($accounts);
 
-        $accounts[] = ['user' => $post_data['Email'],
-                        'pass' => $post_data['Pass'],
+        $accounts[] = ['Email' => $post_data['Email'],
+                        'Pass' => $post_data['Pass'],
                         'TrainerID' => $trainerID,
                         'ProfileID' => $profileID,
-                        'Advanced1' => "1",
-                        'p1_numPoke' => "1",
-                        'Nickname1' => "Test",
-                        'Badges1' => "1",
+                        'Advanced1' => "0",
+                        'p1_numPoke' => "0",
+                        'Nickname1' => "",
+                        'Badges1' => "0",
                         'Advanced2' => "0",
                         'p2_numPoke' => "0",
-                        'Nickname2' => "Test2",
-                        'Badges2' => "3",
-                        'Advanced3' => "1",
+                        'Nickname2' => "",
+                        'Badges2' => "0",
+                        'Advanced3' => "0",
                         'p3_numPoke' => "0",
-                        'Nickname3' => "Test3",
-                        'Badges3' => "5"
+                        'Nickname3' => "",
+                        'Badges3' => "0"
                     ];
         $accounts = json_encode($accounts);
 
@@ -54,8 +54,8 @@ switch($action) {
         $account = null;
 
         foreach($accounts as $tempAccount) {
-            if($tempAccount['user'] == $post_data['Email']) {
-                if($tempAccount['pass'] == $post_data['Pass']) {
+            if($tempAccount['Email'] == $post_data['Email']) {
+                if($tempAccount['Pass'] == $post_data['Pass']) {
                     $account = $tempAccount;
                     break;
                 }
@@ -86,7 +86,7 @@ switch($action) {
 }
 
 function generateValidTrainerID($accounts) : int {
-    $temp = rand();
+    $temp = rand(333, 99999);
 
     foreach($accounts as $tempAccount) {
         if($temp == $tempAccount['TrainerID']) {
@@ -111,14 +111,14 @@ function generateValidProfileID($accounts) : int {
     return $temp;
 }
 
-function getCurrentSave($accounts, $post_data) : String {
+function getCurrentSave($accounts, $post_data) : int {
     foreach($accounts as $tempAccount) {
         if($tempAccount['user'] == $post_data['Email']) {
             if(isset($tempAccount['CurrentSave'])) {
                 return $tempAccount['CurrentSave'];
             }
 
-            return "NotFound";
+            return 10000000000000;
         }
     }
 }
