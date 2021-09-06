@@ -1,109 +1,364 @@
 <?php
+require_once('Account.php');
+require_once('Save.php');
+require_once('Poke.php');
 
 $post_data = array();
 
-foreach(explode("&", file_get_contents('php://input')) as $value) {
-    $keyAndValue = explode("=", $value);
+$body = file_get_contents('php://input');
+$body = str_replace("saveString=", "", $body);
+$body = str_replace("%3D", "=", $body);
+$body = str_replace("%26", "&", $body);
+$body = str_replace("%5F", "_", $body);
+
+foreach(explode("&", $body) as $urlVariable) {
+    $keyAndValue = explode("=", $urlVariable);
 
     $post_data[$keyAndValue[0]] = $keyAndValue[1];
 }
 
-$action = $post_data['Action'];
-
 $accountsFile = "accounts.json";
+
 if(!file_exists($accountsFile) || strlen(file_get_contents($accountsFile)) < 2) {
-    $openedFile = fopen($accountsFile, 'w');
-    fwrite($openedFile, "[]");
-    fclose($openedFile);
+    $file = fopen($accountsFile, 'w');
+    fwrite($file, "[]");
+    fclose($file);
 }
 
-switch($action) {
+$accounts = array();
+$response = "";
+
+// Save the account credentials to json
+$accountsJson = json_decode(file_get_contents($accountsFile), true);
+
+foreach($accountsJson as $accountJson) {
+    $account = new Account();
+
+    $account -> Email = $accountJson['Email'];
+    $account -> Pass = $accountJson['Pass'];
+    $account -> CurrentSave = $accountJson['CurrentSave'];
+    $account -> TrainerID = $accountJson['TrainerID'];
+    $account -> ProfileID = $accountJson['ProfileID'];
+
+    foreach($accountJson['save'] as $saveJson) {
+        $save = new Save();
+
+        $aStory = "a_story";
+        $cStory = "c_story";
+
+        $save -> Advanced = $saveJson['Advanced'];
+        $save -> Advanced_a = $saveJson['Advanced_a'];
+        $save -> p_numPoke = $saveJson['p_numPoke'];
+        $save -> Nickname = $saveJson['Nickname'];
+        $save -> Badges = $saveJson['Badges'];
+        $save -> avatar = $saveJson['avatar'];
+        $save -> Classic = $saveJson['Classic'];
+        $save -> Classic_a = $saveJson['Classic_a'];
+        $save -> Challenge = $saveJson['Challenge'];
+        $save -> Money = $saveJson['Money'];
+        $save -> NPCTrade = $saveJson['NPCTrade'];
+        $save -> newGame = $saveJson['newGame'];
+        $save -> $aStory = $saveJson[$aStory];
+        $save -> $cStory = $saveJson[$cStory];
+
+        $aStory = $aStory . "_a";
+        $cStory = $cStory . "_a";
+
+        $save -> $aStory = $saveJson[$aStory];
+        $save -> $cStory = $saveJson[$cStory];
+        $save -> ShinyHunt = $saveJson['ShinyHunt'];
+        $save -> Version = $saveJson['Version'];
+        
+        foreach($saveJson['poke'] as $pokeJson) {
+            $poke = new Poke();
+            
+            $poke -> reason = $pokeJson['reason'];
+            $poke -> num = $pokeJson['num'];
+            $poke -> nickname = $pokeJson['nickname'];
+            $poke -> exp = $pokeJson['exp'];
+            $poke -> lvl = $pokeJson['lvl'];
+            $poke -> m1 = $pokeJson['m1'];
+            $poke -> m2 = $pokeJson['m2'];
+            $poke -> m3 = $pokeJson['m3'];
+            $poke -> m4 = $pokeJson['m4'];
+            $poke -> ability = $pokeJson['ability'];
+            $poke -> mSel = $pokeJson['mSel'];
+            $poke -> targetType = $pokeJson['targetType'];
+            $poke -> tag = $pokeJson['tag'];
+            $poke -> item = $pokeJson['item'];
+            $poke -> owner = $pokeJson['owner'];
+            $poke -> myID = $pokeJson['myID'];
+            $poke -> pos = $pokeJson['pos'];
+            $poke -> extra = $pokeJson['extra'];
+
+            $save -> poke[] = $poke;
+        }
+        
+        $save -> HMI = $saveJson['HMI'];
+
+        $account -> save[] = $save;
+    }
+
+    $account -> accNickname = $accountJson['accNickname'];
+    $account -> dex1 = $accountJson['dex1'];
+    $account -> dex1Shiny = $accountJson['dex1Shiny'];
+    $account -> dex1Shadow = $accountJson['dex1Shadow'];
+
+    $accounts[] = $account;
+}
+
+switch($post_data['Action']) {
     case "createAccount":
-        // Save the account credentials to json
-        $accounts = json_decode(file_get_contents($accountsFile), true);
+        if(getAccount() != null) {
+            response("Result", "Failure");
+            response("Reason", "taken");
 
-        $currentSave = 10000000000000;
-        $trainerID = generateValidTrainerID($accounts);
-        $profileID = generateValidProfileID($currentSave, $trainerID);
+            echo $response;
+            return;
+        }
 
-        $accounts[] = [
-                        'Email' => $post_data['Email'],
-                        'Pass' => $post_data['Pass'],
-                        'CurrentSave' => $currentSave,
-                        'TrainerID' => $trainerID,
-                        'ProfileID' => $profileID,
-                        'Advanced1' => "0",
-                        'p1_numPoke' => "0",
-                        'Nickname1' => "",
-                        'Badges1' => "0",
-                        'avatar1' => "",
-                        'Advanced2' => "0",
-                        'p2_numPoke' => "0",
-                        'Nickname2' => "",
-                        'Badges2' => "0",
-                        'avatar2' => "",
-                        'Advanced3' => "0",
-                        'p3_numPoke' => "0",
-                        'Nickname3' => "",
-                        'Badges3' => "0",
-                        'avatar3' => "",
-                        'accNickname' => ""
-                    ];
+        $trainerID = generateValidTrainerID();
+        $profileID = generateValidProfileID(10000000000000, $trainerID);
 
-        $accounts = json_encode($accounts);
+        $account = new Account();
+        $account -> Email = $post_data['Email'];
+        $account -> Pass = $post_data['Pass'];
+        $account -> TrainerID = $trainerID;
+        $account -> ProfileID = $profileID;
 
-        $openedFile = fopen($accountsFile, 'w');
-        fwrite($openedFile, $accounts);
-        fclose($openedFile);
+        $save = new Save();
+        $account -> save[] = $save;
+        $account -> save[] = $save;
+        $account -> save[] = $save;
+
+        $accounts[] = $account;
+
+        $accountsJson = preg_replace('/,\s*"[^"]+":null|"[^"]+":null,?/', '', json_encode($accounts));
+
+        $file = fopen($accountsFile, 'w');
+        fwrite($file, $accountsJson);
+        fclose($file);
     case "loadAccount":
-        // Save the account credentials to json
-        $accounts = json_decode(file_get_contents($accountsFile), true);
+        loadAccount();
+        break;
+    case "saveAccount":
+        $account = getAccount();
 
-        $account = null;
+        if($account == null) {
+            response("Result", "Failure");
+            response("Reason", "NotFound");
 
-        foreach($accounts as $tempAccount) {
-            if($tempAccount['Email'] == $post_data['Email']) {
-                if($tempAccount['Pass'] == $post_data['Pass']) {
-                    $account = $tempAccount;
-                    break;
-                }
-            }
+            echo $response;
+            return;
         }
 
-        if($account != null) {
-            echo "Result=Success" .
-            "&Reason=LoggedIn" .
-            "&CurrentSave=" . $account['CurrentSave'] .
-            "&TrainerID=" . $account['TrainerID'] .
-            "&ProfileID=" . $account['ProfileID'] .
-            "&Advanced1=" . $account['Advanced1'] .
-            "&p1_numPoke=" . $account['p1_numPoke'] .
-            "&Nickname1=" . $account['Nickname1'] .
-            "&Version1=750" .
-            "&Advanced2=" . $account['Advanced2'] .
-            "&p2_numPoke=" . $account['p2_numPoke'] .
-            "&Nickname2=" . $account['Nickname2'] .
-            "&Version2=750" .
-            "&Advanced3=" . $account['Advanced3'] .
-            "&p3_numPoke=" . $account['p3_numPoke'] .
-            "&Nickname3=" . $account['Nickname3'] .
-            "&Version3=750";
-        } else {
-            echo "Username or Password are incorrect.";
+        $save = $account -> save;
+        $save = $save[$post_data['whichProfile'] - 1];
+
+        $account -> CurrentSave = $post_data['currentSave'];
+        $account -> TrainerID = $post_data['myTID'];
+        $account -> ProfileID = $post_data['myVID'];
+
+        $aStory = "a_story";
+        $cStory = "c_story";
+
+        $save -> newGame = $post_data['newGame'];
+        $save -> Badges = $post_data['badges'];
+        $save -> Challenge = $post_data['challenge'];
+        $save -> $aStory = $post_data[$aStory];
+
+        $aStory = $aStory . "_a";
+
+        $save -> $aStory = $post_data[$aStory];
+        $save -> $cStory = $post_data[$cStory];
+
+        $cStory = $cStory . "_a";
+
+        $save -> $cStory = $post_data[$cStory];
+        $save -> NPCTrade = $post_data['NPCTrade'];
+        $save -> ShinyHunt = $post_data['ShinyHunt'];
+        $save -> Money = $post_data['Money'];
+        $save -> Nickname = $post_data['Nickname'];
+        $save -> Version = $post_data['Version'];
+        $save -> avatar = $post_data['Avatar'];
+
+        $save -> poke = array();
+
+        $i = 1;
+        $pokeNum = 'poke' . $i . "_";
+        while(isset($post_data[$pokeNum . 'reason'])) {
+            $poke = new Poke();
+            
+            $poke -> reason = $post_data[$pokeNum . 'reason'];
+            $poke -> num = $post_data[$pokeNum . 'num'];
+            $poke -> nickname = $post_data[$pokeNum . 'nickname'];
+            $poke -> exp = $post_data[$pokeNum . 'exp'];
+            $poke -> lvl = $post_data[$pokeNum . 'lvl'];
+            $poke -> m1 = $post_data[$pokeNum . 'm1'];
+            $poke -> m2 = $post_data[$pokeNum . 'm2'];
+            $poke -> m3 = $post_data[$pokeNum . 'm3'];
+            $poke -> m4 = $post_data[$pokeNum . 'm4'];
+            $poke -> ability = $post_data[$pokeNum . 'ability'];
+            $poke -> mSel = $post_data[$pokeNum . 'mSel'];
+            $poke -> targetType = $post_data[$pokeNum . 'targetType'];
+            $poke -> tag = $post_data[$pokeNum . 'tag'];
+            $poke -> item = $post_data[$pokeNum . 'item'];
+            $poke -> owner = $post_data[$pokeNum . 'owner'];
+            $poke -> myID = $post_data[$pokeNum . 'myID'];
+            $poke -> pos = $post_data[$pokeNum . 'pos'];
+            $poke -> extra = $post_data[$pokeNum . 'extra'];
+
+            $save -> poke[] = $poke;
+
+            $i++;
+            $pokeNum = 'poke' . $i;
         }
+        
+        $save -> p_numPoke = $post_data['HMP'];
+        $save -> HMI = $post_data['HMI'];
+
+        $account -> dex1 = $post_data['dex1'];
+        $account -> dex1Shiny = $post_data['dex1Shiny'];
+        $account -> dex1Shadow = $post_data['dex1Shadow'];
+
+        $file = fopen($accountsFile, 'w');
+        fwrite($file, preg_replace('/,\s*"[^"]+":null|"[^"]+":null,?/', '', json_encode($accounts)));
+        fclose($file);
+
+        loadAccount();
+        break;
 }
 
-function generateValidTrainerID($accounts) : int {
+function loadAccount() {
+    global $post_data;
+    global $response;
+
+    // Save the account credentials to json
+    $account = getAccount();
+
+    if($account != null) {
+        response("Result", "Success");
+        response("Reason", "LoggedIn");
+        response("CurrentSave", $account -> CurrentSave);
+        response("TrainerID", $account -> TrainerID);
+        response("ProfileID", $account -> ProfileID);
+
+        $saves = $account -> save;
+
+        for($i = 0; $i < count($saves); $i++) {
+            $s = $i + 1;
+            $save = $saves[$i];
+
+            response("Advanced" . $s, $save -> Advanced);
+            response("Advanced" . $s . "_a", $save -> Advanced_a);
+            response("p" . $s . "_numPoke", $save -> p_numPoke);
+            response("Nickname" . $s, $save -> Nickname);
+            response("Badges" . $s, $save -> Badges);
+            response("avatar" . $s, $save -> avatar);
+            response("Classic" . $s, $save -> Classic);
+            response("Classic" . $s . "_a", $save -> Classic_a);
+            response("Challenge" . $s, $save -> Challenge);
+            response("Money" . $s, $save -> Money);
+            response("NPCTrade" . $s, $save -> NPCTrade);
+            response("newGame" . $s, $save -> newGame);
+            response("a_story" . $s, $save -> a_story);
+            response("a_story_a" . $s, $save -> a_story_a);
+            response("c_story" . $s, $save -> c_story);
+            response("c_story_a" . $s, $save -> c_story_a);
+            response("ShinyHunt" . $s, $save -> ShinyHunt);
+            response("Version" . $s, $save -> Version);
+
+            $ii = 1;
+            $pokeNum = 'pk' . $ii . "_";
+
+            $pokes = $save -> poke;
+
+            foreach($pokes as $poke) {
+                response($pokeNum . "id", $poke -> myID);
+                response($pokeNum . "num", $poke -> num);
+                response($pokeNum . "lvl", $poke -> lvl);
+                response($pokeNum . "exp", $poke -> exp);
+                //numMoves
+                //Shiny (boolean)
+                response($pokeNum . "m1", $poke -> m1);
+                response($pokeNum . "m2", $poke -> m2);
+                response($pokeNum . "m3", $poke -> m3);
+                response($pokeNum . "m4", $poke -> m4);
+                response($pokeNum . "moveSel", $poke -> mSel);
+
+                /*$poke -> reason = $post_data[$pokeNum . 'reason'];
+                $poke -> nickname = $post_data[$pokeNum . 'nickname'];
+                $poke -> ability = $post_data[$pokeNum . 'ability'];
+                $poke -> targetType = $post_data[$pokeNum . 'targetType'];
+                $poke -> tag = $post_data[$pokeNum . 'tag'];
+                $poke -> item = $post_data[$pokeNum . 'item'];
+                $poke -> owner = $post_data[$pokeNum . 'owner'];
+                
+                $poke -> pos = $post_data[$pokeNum . 'pos'];
+                $poke -> extra = $post_data[$pokeNum . 'extra'];
+
+                $save -> poke[] = $poke;
+
+                $ii++;
+                $pokeNum = 'pk' . $ii . "_";*/
+            }
+
+
+            response("HMI" . $i, $save -> HMI);
+        }
+
+        response("accNickname", $account -> accNickname);
+        response("dex1", $account -> dex1);
+        response("dex1Shiny", $account -> dex1Shiny);
+        response("dex1Shadow", $account -> dex1Shadow);
+
+        echo $response;
+    } else {
+        response("Result", "Failure");
+        response("Reason", "NotFound");
+
+        echo $response;
+    }
+}
+
+function response($key, $value) {
+    global $response;
+
+    if(strlen($response) == 0) {
+        $response = $response . $key . "=" . $value;
+        return;
+    }
+
+    $response = $response . "&" . $key . "=" . $value;
+}
+
+function generateValidTrainerID() : int {
+    global $accounts;
     $temp = rand(333, 99999);
 
-    foreach($accounts as $tempAccount) {
-        if($temp == $tempAccount['TrainerID']) {
-            $temp = generateValidTrainerID($accounts);
+    foreach($accounts as $account) {
+        if($temp == $account -> TrainerID) {
+            $temp = generateValidTrainerID();
             break;
         }
     }
 
     return $temp;
+}
+
+function getAccount() : mixed {
+    global $accounts;
+    global $post_data;
+
+    foreach($accounts as $account) {
+        if($account -> Email == $post_data['Email']) {
+            if($account -> Pass == $post_data['Pass']) {
+                return $account;
+            }
+        }
+    }
+
+    return null;
 }
 
 function generateValidProfileID($currentSave, $trainerID) : String {
