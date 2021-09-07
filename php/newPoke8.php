@@ -2,6 +2,7 @@
 require_once('Account.php');
 require_once('Save.php');
 require_once('Poke.php');
+require_once('Item.php');
 
 $post_data = array();
 
@@ -67,7 +68,17 @@ foreach($accountsJson as $accountJson) {
         $save -> $aStory = $saveJson[$aStory];
         $save -> $cStory = $saveJson[$cStory];
         $save -> ShinyHunt = $saveJson['ShinyHunt'];
+        $save -> p_numItem = $saveJson['p_numItem'];
         $save -> Version = $saveJson['Version'];
+
+        // Items
+        foreach($saveJson['items'] as $itemJson) {
+            $item = new Item();
+
+            $item -> num = $itemJson['num'];
+
+            $save -> items[] = $item;
+        }
         
         foreach($saveJson['poke'] as $pokeJson) {
             $poke = new Poke();
@@ -89,12 +100,14 @@ foreach($accountsJson as $accountJson) {
             $poke -> owner = $pokeJson['owner'];
             $poke -> myID = $pokeJson['myID'];
             $poke -> pos = $pokeJson['pos'];
+            $poke -> shiny = $pokeJson['shiny'];
             $poke -> extra = $pokeJson['extra'];
 
             $save -> poke[] = $poke;
         }
         
         $save -> HMI = $saveJson['HMI'];
+        $save -> p_hs = $saveJson['p_hs'];
 
         $account -> save[] = $save;
     }
@@ -182,36 +195,39 @@ switch($post_data['Action']) {
         $save -> Version = $post_data['Version'];
         $save -> avatar = $post_data['Avatar'];
 
-        $save -> poke = array();
 
         $i = 1;
         $pokeNum = 'poke' . $i . "_";
-        while(isset($post_data[$pokeNum . 'reason'])) {
-            $poke = new Poke();
+
+        if(isset($post_data[$pokeNum . 'reason'])) {
+            $save -> poke = array();
+            while(isset($post_data[$pokeNum . 'reason'])) {
+                $poke = new Poke();
             
-            $poke -> reason = $post_data[$pokeNum . 'reason'];
-            $poke -> num = $post_data[$pokeNum . 'num'];
-            $poke -> nickname = $post_data[$pokeNum . 'nickname'];
-            $poke -> exp = $post_data[$pokeNum . 'exp'];
-            $poke -> lvl = $post_data[$pokeNum . 'lvl'];
-            $poke -> m1 = $post_data[$pokeNum . 'm1'];
-            $poke -> m2 = $post_data[$pokeNum . 'm2'];
-            $poke -> m3 = $post_data[$pokeNum . 'm3'];
-            $poke -> m4 = $post_data[$pokeNum . 'm4'];
-            $poke -> ability = $post_data[$pokeNum . 'ability'];
-            $poke -> mSel = $post_data[$pokeNum . 'mSel'];
-            $poke -> targetType = $post_data[$pokeNum . 'targetType'];
-            $poke -> tag = $post_data[$pokeNum . 'tag'];
-            $poke -> item = $post_data[$pokeNum . 'item'];
-            $poke -> owner = $post_data[$pokeNum . 'owner'];
-            $poke -> myID = $post_data[$pokeNum . 'myID'];
-            $poke -> pos = $post_data[$pokeNum . 'pos'];
-            $poke -> extra = $post_data[$pokeNum . 'extra'];
+                $poke -> reason = $post_data[$pokeNum . 'reason'];
+                $poke -> num = $post_data[$pokeNum . 'num'];
+                $poke -> nickname = $post_data[$pokeNum . 'nickname'];
+                $poke -> exp = $post_data[$pokeNum . 'exp'];
+                $poke -> lvl = $post_data[$pokeNum . 'lvl'];
+                $poke -> m1 = $post_data[$pokeNum . 'm1'];
+                $poke -> m2 = $post_data[$pokeNum . 'm2'];
+                $poke -> m3 = $post_data[$pokeNum . 'm3'];
+                $poke -> m4 = $post_data[$pokeNum . 'm4'];
+                $poke -> ability = $post_data[$pokeNum . 'ability'];
+                $poke -> mSel = $post_data[$pokeNum . 'mSel'];
+                $poke -> targetType = $post_data[$pokeNum . 'targetType'];
+                $poke -> tag = $post_data[$pokeNum . 'tag'];
+                $poke -> item = $post_data[$pokeNum . 'item'];
+                $poke -> owner = $post_data[$pokeNum . 'owner'];
+                $poke -> myID = $post_data[$pokeNum . 'myID'];
+                $poke -> pos = $post_data[$pokeNum . 'pos'];
+                $poke -> extra = $post_data[$pokeNum . 'extra'];
 
-            $save -> poke[] = $poke;
+                $save -> poke[] = $poke;
 
-            $i++;
-            $pokeNum = 'poke' . $i;
+                $i++;
+                $pokeNum = 'poke' . $i . "_";
+            }
         }
         
         $save -> p_numPoke = $post_data['HMP'];
@@ -240,6 +256,7 @@ function loadAccount() {
         response("Result", "Success");
         response("Reason", "LoggedIn");
         response("CurrentSave", $account -> CurrentSave);
+        response("newSave", $account -> CurrentSave);
         response("TrainerID", $account -> TrainerID);
         response("ProfileID", $account -> ProfileID);
 
@@ -265,46 +282,49 @@ function loadAccount() {
             response("a_story_a" . $s, $save -> a_story_a);
             response("c_story" . $s, $save -> c_story);
             response("c_story_a" . $s, $save -> c_story_a);
-            response("ShinyHunt" . $s, $save -> ShinyHunt);
+            response("shinyHunt" . $s, $save -> ShinyHunt);
+            response("p" . $s . "_numItem", $save -> p_numItem);
             response("Version" . $s, $save -> Version);
 
+            // Items
             $ii = 1;
-            $pokeNum = 'pk' . $ii . "_";
+
+            foreach($save -> items as $item) {
+                response("p" . $s . "_item_" . $ii . "_num", $item -> num);
+                $ii++;
+            }
+
+            $ii = 1;
+            $pokeNum = 'p' . $s . '_poke_' . $ii . "_";
 
             $pokes = $save -> poke;
 
             foreach($pokes as $poke) {
-                response($pokeNum . "id", $poke -> myID);
+                response($pokeNum . "nickname", $poke -> nickname);
                 response($pokeNum . "num", $poke -> num);
                 response($pokeNum . "lvl", $poke -> lvl);
                 response($pokeNum . "exp", $poke -> exp);
-                //numMoves
+                response($pokeNum . "owner", $poke -> owner);
+                response($pokeNum . "targetType", $poke -> targetType);
+                response($pokeNum . "tag", $poke -> tag);
+                response($pokeNum . "myID", $poke -> myID);
+                response($pokeNum . "pos", $poke -> pos);
                 //Shiny (boolean)
+                response($pokeNum . "noWay", $poke -> shiny);
+                //numMoves
                 response($pokeNum . "m1", $poke -> m1);
                 response($pokeNum . "m2", $poke -> m2);
                 response($pokeNum . "m3", $poke -> m3);
                 response($pokeNum . "m4", $poke -> m4);
-                response($pokeNum . "moveSel", $poke -> mSel);
-
-                /*$poke -> reason = $post_data[$pokeNum . 'reason'];
-                $poke -> nickname = $post_data[$pokeNum . 'nickname'];
-                $poke -> ability = $post_data[$pokeNum . 'ability'];
-                $poke -> targetType = $post_data[$pokeNum . 'targetType'];
-                $poke -> tag = $post_data[$pokeNum . 'tag'];
-                $poke -> item = $post_data[$pokeNum . 'item'];
-                $poke -> owner = $post_data[$pokeNum . 'owner'];
-                
-                $poke -> pos = $post_data[$pokeNum . 'pos'];
-                $poke -> extra = $post_data[$pokeNum . 'extra'];
-
-                $save -> poke[] = $poke;
+                response($pokeNum . "mSel", $poke -> mSel);
 
                 $ii++;
-                $pokeNum = 'pk' . $ii . "_";*/
+                $pokeNum = 'p' . $s . '_poke_' . $ii . "_";
             }
 
 
             response("HMI" . $i, $save -> HMI);
+            response("p" . $s . "_hs", $save -> p_hs);
         }
 
         response("accNickname", $account -> accNickname);

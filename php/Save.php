@@ -8,6 +8,7 @@ class Save {
     // called HMI (in saveAccount Action)
     // Inventory Size
     public $p_numItem = 0;
+    public $p_hs = 0;
     public $Nickname = "NA";
     public $Badges = 0;
     public $avatar = "none";
@@ -27,4 +28,5 @@ class Save {
     public $ShinyHunt = 0;
     public $Version = 750;
     public $poke = array();
+    public $items = array();
 }
