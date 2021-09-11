@@ -1,3 +1,3 @@
-php/test.php
-php/accounts.json
-index.nginx-debian.html
+public/php/test.php
+accounts.json
+public/index.nginx-debian.html
