@@ -18,6 +18,5 @@ class Poke {
     public $owner;
     public $myID;
     public $pos;
-    public $extra;
     public $shiny;
 }

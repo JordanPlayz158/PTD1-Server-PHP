@@ -21,10 +21,8 @@ dex1
 dex1Shiny
 dex1Shadow
 
-// IMPORTANT (Not in Save yet)
 p$i_numItem
 p$i_item_$ii_num
-// IMPORTANT
 
 avatar$i
 accNickname
@@ -38,12 +36,13 @@ p$i_poke_$ii_targetType
 p$i_poke_$ii_tag
 p$i_poke_$ii_myID
 p$i_poke_$ii_pos
-// Determines if pokemon is shiny APPARENTLY??? (int, 0 or 1)
+// Determines if pokemon is normal, shiny or shadow APPARENTLY???
+// (saying apparently as the name of the variable makes ABSOLUTELY no sense for it's purpose)
+// 0 -> normal
+// 1 -> shiny
+// 2 -> shadow
 p$i_poke_$ii_noWay
 p$i_poke_$ii_m$iii
 p$i_poke_$ii_mSel
-
-// Not sent in request
 // Number of shiny's (used for hacking check)
 p$i_hs
-//
