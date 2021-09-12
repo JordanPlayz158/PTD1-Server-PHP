@@ -1,13 +1,15 @@
 <?php
+require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
+
 class SaveAccount {
-    function __constructor() {
-        $account = getAccount();
+    function __construct($accounts, $post_data) {
+        $account = Utils::getAccount($accounts, $post_data);
 
         if($account == null) {
-            response("Result", "Failure");
-            response("Reason", "NotFound");
+            Utils::response("Result", "Failure");
+            Utils::response("Reason", "NotFound");
 
-            echo $response;
+            echo Utils::getResponse();
             return;
         }
 
@@ -23,11 +25,9 @@ class SaveAccount {
         $saves = $account -> save;
 
         if(isset($post_data['newGame']) && $post_data['newGame'] == "yes") {
+            // Set Items and Poke to blank arrays
             $saves[$whichProfile] = new Save();
             $account -> save = $saves;
-            saveData();
-            loadAccount();
-            return;
         }
 
         $save = $saves[$whichProfile];
@@ -59,32 +59,32 @@ class SaveAccount {
         
         for($i = 1; $i <= $post_data['HMP']; $i++) {
             $pokeNum = 'poke' . $i . "_";
-            $poke = getPokeByID($pokes, $post_data[$pokeNum . 'myID']);
+            $poke = Utils::getPokeByID($pokes, $post_data[$pokeNum . 'myID']);
             $pokeExisted = isset($poke -> myID) ? true : false;
 
             if(!$pokeExisted || $poke -> myID == 0) {
-                $poke -> myID = generateUniquePokeID($pokes);
+                $poke -> myID = Utils::generateUniquePokeID($pokes);
             }
                 
             $poke -> reason = $post_data[$pokeNum . 'reason'];
 
-            setPokeData($poke, $pokeNum . 'num', "num");
-            setPokeData($poke, $pokeNum . 'nickname', "nickname");
-            setPokeData($poke, $pokeNum . 'exp', "exp");
-            setPokeData($poke, $pokeNum . 'lvl', "lvl");
+            Utils::setPokeData($post_data, $poke, $pokeNum . 'num', "num");
+            Utils::setPokeData($post_data, $poke, $pokeNum . 'nickname', "nickname");
+            Utils::setPokeData($post_data, $poke, $pokeNum . 'exp', "exp");
+            Utils::setPokeData($post_data, $poke, $pokeNum . 'lvl', "lvl");
 
             for($m = 1; $m < 5; $m++) {
-                setPokeData($poke, $pokeNum . 'm' . $m, "m" . $m);
+                Utils::setPokeData($post_data, $poke, $pokeNum . 'm' . $m, "m" . $m);
             }
 
-            setPokeData($poke, $pokeNum . 'ability', "ability");
-            setPokeData($poke, $pokeNum . 'mSel', "mSel");
-            setPokeData($poke, $pokeNum . 'targetType', "targetType");
-            setPokeData($poke, $pokeNum . 'tag', "tag");
-            setPokeData($poke, $pokeNum . 'item', "item");
-            setPokeData($poke, $pokeNum . 'owner', "owner");
-            setPokeData($poke, $pokeNum . 'pos', "pos");
-            setPokeData($poke, $pokeNum . 'extra', "shiny");
+            Utils::setPokeData($post_data, $poke, $pokeNum . 'ability', "ability");
+            Utils::setPokeData($post_data, $poke, $pokeNum . 'mSel', "mSel");
+            Utils::setPokeData($post_data, $poke, $pokeNum . 'targetType', "targetType");
+            Utils::setPokeData($post_data, $poke, $pokeNum . 'tag', "tag");
+            Utils::setPokeData($post_data, $poke, $pokeNum . 'item', "item");
+            Utils::setPokeData($post_data, $poke, $pokeNum . 'owner', "owner");
+            Utils::setPokeData($post_data, $poke, $pokeNum . 'pos', "pos");
+            Utils::setPokeData($post_data, $poke, $pokeNum . 'extra', "shiny");
 
             if(!$pokeExisted) {
                 if($poke -> shiny == "1") {
@@ -135,10 +135,8 @@ class SaveAccount {
         
         $save -> p_numItem = $post_data['HMI'];
 
-        saveData();
-        loadAccount();
+        Utils::saveData($accounts);
+        new LoadAccount($accounts, $post_data);
     }
-
-
-
 }
+?>
