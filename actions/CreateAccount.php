@@ -11,7 +11,7 @@ class CreateAccount {
             Utils::response("Reason", "taken");
 
             echo Utils::getResponse();
-            exit;
+            return;
         }
 
         $account = new Account();
@@ -28,6 +28,7 @@ class CreateAccount {
         newPoke8::$accounts = $accounts;
 
         Utils::saveData($accounts);
+        new LoadAccount(newPoke8::$accounts, $post_data);
     }
 }
 ?>

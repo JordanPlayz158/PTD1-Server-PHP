@@ -84,7 +84,10 @@ class SaveAccount {
             Utils::setPokeData($post_data, $poke, $pokeNum . 'item', "item");
             Utils::setPokeData($post_data, $poke, $pokeNum . 'owner', "owner");
             Utils::setPokeData($post_data, $poke, $pokeNum . 'pos', "pos");
-            Utils::setPokeData($post_data, $poke, $pokeNum . 'extra', "shiny");
+
+            if(isset($post_data[$pokeNum . 'extra'])) {
+                $poke -> shiny = substr($post_data[$pokeNum . 'extra'], 0, 1);
+            }
 
             if(!$pokeExisted) {
                 if($poke -> shiny == "1") {
@@ -93,8 +96,6 @@ class SaveAccount {
                 $pokes[] = $poke;
             }
         }
-
-        $save -> p_numPoke = count($pokes);
 
         if(isset($post_data['releasePoke'])) {
             $releasePokes = explode("|", $post_data['releasePoke']);
@@ -120,6 +121,7 @@ class SaveAccount {
             }
         }
 
+        $save -> p_numPoke = count($pokes);
         $save -> poke = $pokes;
 
         $iii = 1;

@@ -1,4 +1,5 @@
 <?php
+require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Account.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Save.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Poke.php');
@@ -11,6 +12,7 @@ new newPoke8();
 
 class newPoke8 {
     public static $accounts = array();
+    public static $body;
 
     function __construct() {
         $post_data = array();
@@ -18,6 +20,7 @@ class newPoke8 {
         $body = file_get_contents('php://input');
         $body = urldecode($body);
         $body = str_replace("saveString=", "", $body);
+        newPoke8::$body = $body;
 
         foreach(explode("&", $body) as $urlVariable) {
             $keyAndValue = explode("=", $urlVariable);
@@ -25,11 +28,7 @@ class newPoke8 {
             $post_data[$keyAndValue[0]] = $keyAndValue[1];
         }
 
-        if(!file_exists(Utils::getAccountsFile()) || strlen(file_get_contents(Utils::getAccountsFile())) < 2) {
-            $file = fopen(Utils::getAccountsFile(), 'w');
-            fwrite($file, "[]");
-            fclose($file);
-        }
+        Utils::setEmptyFileContents(Utils::getAccountsFile(), "[]");
 
         // Save the account credentials to json
         $accountsJson = json_decode(file_get_contents(Utils::getAccountsFile()), true);
@@ -68,6 +67,10 @@ class newPoke8 {
         
                 // Pokemon
                 foreach($saveJson['poke'] as $pokeJson) {
+                    if(isset($post_data['debug'])) {
+                        echo(isset($pokeJson['item']) ? "0" : "\n-1 " . $pokeJson['myID'] . "\n");
+                    }
+
                     $poke = new Poke();
             
                     $poke -> reason = $pokeJson['reason'];
@@ -110,6 +113,7 @@ class newPoke8 {
         switch($post_data['Action']) {
             case "createAccount":
                 new CreateAccount(newPoke8::$accounts, $post_data);
+                break;
             case "loadAccount":
                 new LoadAccount(newPoke8::$accounts, $post_data);
                 break;
@@ -117,6 +121,8 @@ class newPoke8 {
                 new SaveAccount(newPoke8::$accounts, $post_data);
                 break;
         }
+
+        Utils::log();
     }
 }
 ?>

@@ -1,0 +1,19 @@
+body {
+    background-color: black;
+    color: white;
+}
+
+table {
+    table-layout: auto;
+    border-collapse: collapse;
+}
+
+button {
+    float: right;
+}
+
+.post_data {
+    max-width: 600px;
+    overflow: auto;
+    word-wrap: break-word;
+}
