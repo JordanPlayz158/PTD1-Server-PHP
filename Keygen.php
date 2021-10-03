@@ -12,16 +12,13 @@ class Keygen {
             return 'invalidCurrentSaveOrTrainerId';
         }
 
-		$_loc5 = strval(((int) $trainerId * $currentSaveInt) * 14);
-		$_loc6 = $_loc5[0];
         $profileId = '';
-		$_loc8 = 0;
+		$_loc5 = strval(((int) $trainerId * $currentSaveInt) * 14);
 
 		for($i = 0; $i < strlen($_loc5); $i++) {
-			$_loc8 = (int) $_loc5[$i] + $_loc6;
-            $_loc9 = Keygen::numToChar("$_loc8");
-            $profileId .= $_loc9;
+            $profileId .= Keygen::numToChar((int)$_loc5[$i] + $_loc5[0]);
 		}
+
 		echo $profileId;
         return $profileId;
     }
@@ -29,9 +26,11 @@ class Keygen {
     private static function currentSaveToInt(int $currentSave) {
 		$num = 0;
 		$currentSaveString = "$currentSave";
+
 		for($i = 0; $i < strlen($currentSaveString); $i++) {
 			$num += Keygen::charToInt($currentSaveString[$i]);
 		}
+
         return $num;
     }
 
@@ -42,17 +41,7 @@ class Keygen {
 	 * ex. '0' = 0, '1' = 1, '2' = 2, 'a' = 1, 'b' = 2
 	 */
     private static function charToInt(string $char) : int {
-		if($char === '0') {
-			return 0;
-		}
-
-		$num = intval($char);
-
-		if($num === 0) {
-			$num = ord($char) - 96;
-		}
-
-		return $num;
+		return intval($char) + (ord($char) - 96) * ((intval($char) === 0) && ($char !== '0'));
     }
 
 	/**
