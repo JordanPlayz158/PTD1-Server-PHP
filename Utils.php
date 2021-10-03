@@ -1,6 +1,7 @@
 <?php
 require_once('objects/Account.php');
 require_once('objects/Poke.php');
+require_once('Keygen.php');
 
 class Utils {
     private static $response = "";
@@ -70,7 +71,7 @@ class Utils {
     }
     
     public static function generateValidProfileID($currentSave, $trainerID) : String {
-        return exec("java16 -jar ../../PTD1-Keygen-1.0-SNAPSHOT.jar " . $currentSave . " " . $trainerID . " true");
+        return Keygen::genprofileid($currentSave, $trainerID);
     }
     
     public static function generateUniquePokeID($pokes) : int {
