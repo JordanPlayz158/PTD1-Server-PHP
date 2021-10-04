@@ -1,5 +1,11 @@
-public/php/test.php
-accounts.json
 public/index.nginx-debian.html
 config.json
-log.json
+accounts.beforeTesting.json
+
+# Eclipse PDT Files
+.buildpath
+.settings
+.project
+
+# VS Code Files
+.vscode
