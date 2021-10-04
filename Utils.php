@@ -2,12 +2,15 @@
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Account.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Poke.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Log.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/php/newPoke8.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/../Keygen.php');
 
 class Utils {
-    private static $response = "";
+    public static $body;
+    public static $mysql;
+    private static $response = '';
+    public static $config;
 
-    public static function getAccount($accounts, $post_data) : mixed {
+    public static function getAccount($accounts, $post_data) : Account|null {
         foreach($accounts as $account) {
             if($account -> Email == $post_data['Email']) {
                 if($account -> Pass == $post_data['Pass']) {
@@ -21,6 +24,7 @@ class Utils {
 
     public static function getPokeByID($pokes, $id) : Poke {
         foreach($pokes as $poke) {
+            echo $poke -> myID . ' ' . $id;
             if($poke -> myID == $id) {
                 return $poke;
             }
@@ -29,41 +33,35 @@ class Utils {
         return new Poke();
     }
 
-    public static function setPokeData($post_data, $poke, $postKey, $pokeVariable) {    
+    public static function setPokeData($post_data, Poke $poke, $postKey, $pokeVariable) {    
         if(isset($post_data[$postKey])) {
             $poke -> $pokeVariable = $post_data[$postKey];
         }
     }
 
-    public static function saveData($accounts) {
-        $file = fopen(Utils::getAccountsFile(), 'w');
-        fwrite($file, preg_replace('/,\s*"[^"]+":null|"[^"]+":null,?/', '', json_encode($accounts)));
-        fclose($file);
-    }
-
-    public static function getResponse() : String {
+    public static function getResponse() : string {
         global $response;
 
         return $response;
     }
     
-    public static function response($key, $value) {
+    public static function response(string $key, string $value) {
         global $response;
 
         if(strlen($response) == 0) {
-            $response = $response . $key . "=" . $value;
+            $response = $key . '=' . $value;
             return;
         }
     
-        $response = $response . "&" . $key . "=" . $value;
+        $response = $response . '&' . $key . '=' . $value;
     }
     
-    public static function generateValidTrainerID($accounts) : int {
+    public static function generateValidTrainerID($trainerIds) : int {
         $temp = mt_rand(333, 99999);
     
-        foreach($accounts as $account) {
-            if($temp == $account -> TrainerID) {
-                $temp = generateValidTrainerID();
+        foreach($trainerIds as $trainerId) {
+            if($temp == $trainerId[0]) {
+                $temp = Utils::generateValidTrainerID($trainerIds);
                 break;
             }
         }
@@ -71,8 +69,8 @@ class Utils {
         return $temp;
     }
     
-    public static function generateValidProfileID($currentSave, $trainerID) : String {
-        return exec("java16 -jar ../../PTD1-Keygen-1.0-SNAPSHOT.jar " . $currentSave . " " . $trainerID . " true");
+    public static function generateValidProfileID(int $trainerID) : string {
+        return Keygen::generateProfileId(10000000000000, $trainerID);
     }
     
     public static function generateUniquePokeID($pokes) : int {
@@ -80,11 +78,24 @@ class Utils {
     
         foreach($pokes as $poke) {
             if($temp == $poke -> myID) {
-                $temp = generateUniquePokeID();
+                $temp = Utils::generateUniquePokeID($pokes);
                 break;
             }
         }
     
+        return $temp;
+    }
+
+    public static function generateUniqueID($ids) : int {
+        $temp = mt_rand(1, 999999);
+    
+        foreach($ids as $id) {
+            if($temp == $id[0]) {
+                $temp = Utils::generateUniqueID($ids);
+                break;
+            }
+        }
+
         return $temp;
     }
 
@@ -97,56 +108,72 @@ class Utils {
         }
     }
 
+    /**
+     * Generate a random string, using a cryptographically secure 
+     * pseudorandom number generator (random_int)
+     * 
+     * For PHP 7, random_int is a PHP core function
+     * For PHP 5.x, depends on https://github.com/paragonie/random_compat
+     * 
+     * @param int $length      How many characters do we want?
+     * @param string $keyspace A string of all possible characters
+     *                         to select from
+     * @return string
+     */
+    private static function generatePass($length, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') : string {
+        $str = '';
+        $max = mb_strlen($keyspace, '8bit') - 1;
+        if ($max < 1) {
+            throw new Exception('$keyspace must be at least two characters long');
+        }
+        for ($i = 0; $i < $length; ++$i) {
+            $str .= $keyspace[random_int(0, $max)];
+        }
+        return $str;
+    }
+
     public static function log() {
+        global $conn;
+
         $log = new Log();
 
         $log -> time = time();
         $log -> ip = getallheaders()['X-Forwarded-For'];
-        $log -> post_data = newPoke8::$body;
+        $log -> post_data = Utils::$body;
 
         $response = Utils::getResponse();
         $responseData = array();
 
-        foreach(explode("&", $response) as $urlVariable) {
-            $keyAndValue = explode("=", $urlVariable);
+        foreach(explode('&', $response) as $urlVariable) {
+            $keyAndValue = explode('=', $urlVariable);
     
             $responseData[$keyAndValue[0]] = $keyAndValue[1];
         }
 
         $log -> response = 'Result=' . $responseData['Result'] . '&Reason=' . $responseData['Reason'];
 
-        Utils::setEmptyFileContents(Utils::getLogFile(), "[]");
-        $logJson = json_decode(file_get_contents(Utils::getLogFile()), true);
-        $logs = array();
+        $stmt = $conn->prepare('INSERT INTO logs VALUES (?, ?, ?, ?);');
+        $stmt->bind_param('isss', $log -> time, $log -> ip, $log -> post_data, $log -> response);
 
-        foreach($logJson as $json) {
-            $logA = new Log();
+        $stmt->execute();
 
-            $logA -> time = $json['time'];
-            $logA -> ip = $json['ip'];
-            $logA -> post_data = $json['post_data'];
-            $logA -> response = $json['response'];
+        $stmt->close();
+    }
 
-            $logs[] = $logA;
+    public static function fillDex(string $dex) : string {
+        while(strlen($dex) != 151) {
+            $dex .= '0';
         }
 
-        $logs[] = $log;
-
-        $file = fopen(Utils::getLogFile(), 'w');
-        fwrite($file, json_encode($logs));
-        fclose($file);
+        return $dex;
     }
 
-    public static function getAccountsFile() : String {
-        return $_SERVER['DOCUMENT_ROOT'] . "/../accounts.json";
+    public static function getConfigFileDefault() : string {
+        return "{\n  \"maintenance\": false,\n  \"timezone\": \"\",\n  \"pass\": \"" . Utils::generatePass(32) . "\",\n  \"mysql\": {\n    \"hostname\": \"\",\n    \"username\": \"\",\n    \"password\": \"\",\n    \"db\": \"\"\n  }\n}";
     }
 
-    public static function getLogFile() : String {
-        return $_SERVER['DOCUMENT_ROOT'] . "/../log.json";
-    }
-
-    public static function getConfigFile() : String {
-        return $_SERVER['DOCUMENT_ROOT'] . "/../config.json";
+    public static function getConfigFile() : string {
+        return $_SERVER['DOCUMENT_ROOT'] . '/../config.json';
     }
 }
 ?>
