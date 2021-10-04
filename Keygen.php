@@ -5,10 +5,8 @@ class Keygen {
 
 		// CurrentSave must be 14 characters long, trainerId must be between 333 and 99999, and currentSaveInt must not be 0.
         if (strlen($currentSave) != 14 || $trainerId < 333 || $trainerId > 99999 || $currentSaveInt == 0) {
-			/**
-	 		 * This used to call a function which outputed a bunch of garbage for the profileId
-	 		 * but now it gives you a helpful, clear message to let you know that the currentSave or trainerId was invalid
-	 		 */
+	 		//This used to call a function which outputed a bunch of garbage for the profileId
+	 		//but now it gives you a helpful, clear message to let you know that the currentSave or trainerId was invalid
             return 'invalidCurrentSaveOrTrainerId';
         }
 
@@ -22,7 +20,7 @@ class Keygen {
             $_loc9 = Keygen::numToChar("$_loc8");
             $profileId .= $_loc9;
 		}
-		echo $profileId;
+		
         return $profileId;
     }
 
