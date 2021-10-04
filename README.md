@@ -11,7 +11,7 @@ server {
     access_log /var/log/nginx/www.sndgames.com.access.log;
     error_log /var/log/nginx/www.sndgames.com.error.log;
 
-    index index.php;
+    index index.html index.php;
     root /var/www/PTD1-Server-Code/public;
 
     location / {
