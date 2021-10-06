@@ -40,7 +40,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $accounts = getAccountByEmail($conn, 'accounts');
     
     if($post_data['Action'] === 'createAccount') {
-        new CreateAccount($post_data);
+        CreateAccount($post_data);
         
         echo Utils::getResponse();
         Utils::log();
@@ -169,10 +169,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     switch($post_data['Action']) {
         case 'loadAccount':
-            new LoadAccount($account);
+            LoadAccount($account);
             break;
         case 'saveAccount':
-            new SaveAccount($account, $post_data, $conn);
+            SaveAccount($account, $post_data, $conn);
             break;
         default:
             return;
