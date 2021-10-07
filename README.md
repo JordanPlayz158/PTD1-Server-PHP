@@ -99,7 +99,8 @@ server {
 
 # Contributors
 ## Coders
-KGMats - https://github.com/KGMats (Made the keygen.php code - removed java 16 dependency)
+KGMats - https://github.com/KGMats (Made the keygen.php code - removed java 16 dependency)  
+RIPOKER - https://github.com/RicardoCarvalho01 (Has helped in a bunch of ways, optimized code (from ifs to math expressions (branchless programming)), looked over code, made code suggestions, etc.)
 ## Testers
 KGMats - https://github.com/KGMats  
 Gaminator#2433 (816098181707333652)  
