@@ -55,14 +55,8 @@ class Utils
     public static function response(string $key, string $value) 
     {
         global $response;
-
-        if(strlen($response) == 0) 
-        {
-            $response = $key . '=' . $value;
-            return;
-        }
     
-        $response = $response . '&' . $key . '=' . $value;
+        $response .= trim(chr(38 * (strlen($response) != 0))) . $key . '=' . $value;
     }
     
     public static function generateValidTrainerID($trainerIds) : int 
