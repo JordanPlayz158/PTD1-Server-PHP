@@ -1,24 +1,21 @@
 <?php
-
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 
-function LoadAccount($account) 
-{
+function loadAccount($account) {
     Utils::response('Result', 'Success');
     Utils::response('Reason', 'LoggedIn');
     Utils::response('CurrentSave', 10000000000000);
     Utils::response('newSave', 10000000000000);
-    Utils::response('TrainerID', $account->trainerId);
-    Utils::response('ProfileID', Utils::generateValidProfileID($account->trainerId));
+    Utils::response('TrainerID', 333);
+    Utils::response('ProfileID', Utils::generateValidProfileID());
     Utils::response('accNickname', $account->accNickname);
-    Utils::response('dex1', Utils::fillDex($account->dex1));
-    Utils::response('dex1Shiny', Utils::fillDex($account->dex1Shiny));
-    Utils::response('dex1Shadow', Utils::fillDex($account->dex1Shadow));
+    Utils::response('dex1', fillDex($account->dex1));
+    Utils::response('dex1Shiny', fillDex($account->dex1Shiny));
+    Utils::response('dex1Shadow', fillDex($account->dex1Shadow));
 
     $saves = $account->saves;
 
-    for($it = 0; $it < count($saves); $it++)
-    {
+    for($it = 0; $it < count($saves); $it++) {
         $i = $it + 1;
         $save = $saves[$it];
 
@@ -42,8 +39,7 @@ function LoadAccount($account)
 
         $pokes = $save->pokes;
 
-        foreach ($pokes as $poke) 
-        {
+        foreach ($pokes as $poke) {
             Utils::response($pokeNum . 'nickname', $poke->nickname);
             Utils::response($pokeNum . 'num', $poke->num);
             Utils::response($pokeNum . 'lvl', $poke->lvl);
@@ -72,8 +68,7 @@ function LoadAccount($account)
         // Items
         $ii = 1;
 
-        foreach($save -> items as $item) 
-        {
+        foreach($save -> items as $item) {
             Utils::response('p' . $i . '_item_' . $ii . '_num', $item -> num);
             $ii++;
         }
@@ -83,4 +78,9 @@ function LoadAccount($account)
     }
 }
 
-?>
+function fillDex(string $dex) : string {
+    while (strlen($dex) < 151) 
+        $dex .= '0';
+
+    return $dex;
+}

@@ -23,7 +23,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 
     Utils::$config = $config = json_decode(file_get_contents(Utils::getConfigFile()), true);
 
-    if($config['pass'] == $post_data['Pass']) {
+    if($config['pass'] == $post_data['pass']) {
         if(strlen($config['timezone']) > 0) {
             date_default_timezone_set($config['timezone']);
         }
@@ -35,7 +35,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Logging - Login</title>
     <link rel="stylesheet" type="text/css" href="logging.css">
@@ -44,7 +44,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
     <h1>Login</h1>
     <form id="login" method="post" action="index.php">
         <label><b>Password</b></label>
-        <input type="Password" name="Pass" id="Pass" placeholder="Password">
+        <label for="pass"></label><input type="Password" name="pass" id="pass" placeholder="Password">
         <br>
         <input type="submit" name="log" id="log" value="Log In">
         <br>

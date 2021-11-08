@@ -1,9 +1,9 @@
 <?php
-
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 
-function SaveAccount($account, $post_data, $conn)
-{
+function saveAccount($account, $post_data, $conn) {
+    // myTID is TrainerID (saveAccount Action)
+    // ONLY 1 (not per save)
     $account->dex1 = $post_data['dex1'];
     $account->dex1Shiny = $post_data['dex1Shiny'];
     $account->dex1Shadow = $post_data['dex1Shadow'];
@@ -12,8 +12,7 @@ function SaveAccount($account, $post_data, $conn)
 
     $saves = $account->saves;
 
-    if (isset($post_data['newGame']) && $post_data['newGame'] == 'yes')
-    {
+    if (isset($post_data['newGame']) && $post_data['newGame'] == 'yes') {
         // Set Items and Poke to blank arrays
         $num = $saves[$whichProfile]->num;
         $saves[$whichProfile] = new Save();
@@ -48,8 +47,7 @@ function SaveAccount($account, $post_data, $conn)
 
     print_r($save->pokes);
     
-    for ($i = 1; $i <= intval($post_data['HMP']); $i++)
-    {
+    for ($i = 1; $i <= intval($post_data['HMP']); $i++) {
         $pokeNum = 'poke' . $i . '_';
         // This is not finding a pokemon so it is returning a new one
         $poke = Utils::getPokeByID($pokes, intval($post_data[$pokeNum . 'myID']));
@@ -68,8 +66,7 @@ function SaveAccount($account, $post_data, $conn)
         $ids = array();
         $id = "";
 
-        if ($stmt->bind_result($id))
-        {
+        if ($stmt->bind_result($id)) {
             while ($stmt->fetch())
                 $ids[] = [$id];
         }
@@ -98,8 +95,7 @@ function SaveAccount($account, $post_data, $conn)
         if (isset($post_data[$pokeNum . 'extra']))
             $poke->shiny = intval(substr($post_data[$pokeNum . 'extra'], 0, 1));
 
-        if (!$pokeExisted) 
-        {
+        if (!$pokeExisted) {
             /*
             if($poke->shiny == 1)
                 $save->p_hs++;
@@ -110,19 +106,16 @@ function SaveAccount($account, $post_data, $conn)
         }
     }
 
-    if (isset($post_data['releasePoke'])) 
-    {
+    if (isset($post_data['releasePoke'])) {
         $releasePokes = explode('|', $post_data['releasePoke']);
 
         $numInArray = array();
 
         $ii = 0;
-        foreach ($pokes as $poke)
-        {
+        foreach ($pokes as $poke) {
             $id = $poke -> myID;
 
-            if (in_array($id, $releasePokes)) 
-            {
+            if (in_array($id, $releasePokes)) {
                 /*
                 if ($poke -> shiny == 1)
                     $save -> p_hs--;
@@ -143,8 +136,7 @@ function SaveAccount($account, $post_data, $conn)
     $save->pokes = $pokes;
 
     $iii = 1;
-    while (isset($post_data['item' . $iii . '_num'])) 
-    {
+    while (isset($post_data['item' . $iii . '_num'])) {
         /*
         $item = new Item();
         $item->num = intval($post_data['item' . $iii . '_num']);
@@ -161,7 +153,6 @@ function SaveAccount($account, $post_data, $conn)
     //print_r($account);
 
     Utils::$mysql->saveAccount($account);
-    LoadAccount($account);
+    loadAccount($account);
 }
-
 ?>

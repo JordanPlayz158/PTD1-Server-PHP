@@ -1,35 +1,28 @@
 <?php
-
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Account.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Poke.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Log.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../Keygen.php');
 
-class Utils 
-{
-    public static $body;
-    public static $mysql;
-    private static $response = '';
-    public static $config;
+class Utils {
+    public static MySQL $mysql;
+    private static string $response = '';
+    public static array $config;
 
-    public static function getAccount($accounts, $post_data) : Account|null 
-    {
-        foreach($accounts as $account) 
-        {
-            if($account->Email == $post_data['Email']) 
-            {
-                if($account->Pass == $post_data['Pass'])
-                    return $account;
-            }
-        }
+    public static function urlVariablesToArray($urlVariables) : array {
+        $responseData = array();
+
+        foreach (explode('&', $urlVariables) as $urlVariable) {
+            $keyAndValue = explode('=', $urlVariable);
     
-        return null;
+            $responseData[$keyAndValue[0]] = $keyAndValue[1];
+        }
+
+        return $responseData;
     }
 
-    public static function getPokeByID($pokes, $id) : Poke 
-    {
-        foreach($pokes as $poke) 
-        {
+    public static function getPokeByID($pokes, $id) : Poke {
+        foreach($pokes as $poke) {
             echo $poke->myID . ' ' . $id;
 
             if($poke->myID == $id)
@@ -39,39 +32,32 @@ class Utils
         return new Poke();
     }
 
-    public static function setPokeData($post_data, Poke $poke, $postKey, $pokeVariable) 
-    {    
+    public static function setPokeData($post_data, Poke $poke, $postKey, $pokeVariable) {    
         if(isset($post_data[$postKey]))
             $poke -> $pokeVariable = $post_data[$postKey];
     }
 
-    public static function getResponse() : string
-    {
+    public static function getResponse() : string {
         global $response;
 
         return $response;
     }
     
-    public static function response(string $key, string $value) 
-    {
+    public static function response(string $key, $value) {
         global $response;
     
         $response .= trim(chr(38 * (strlen($response) != 0))) . $key . '=' . $value;
     }
     
-    public static function generateValidTrainerID($trainerIds) : int 
-    {
+    /*public static function generateValidTrainerID($trainerIds) : int {
         $valid = false;
 
-        while (!$valid)
-        {
+        while (!$valid) {
             $tmp = mt_rand(333, 99999);
             $valid = true;
 
-            foreach ($trainerIds as $trainerId) 
-            {
-                if ($tmp == $trainerId[0]) 
-                {
+            foreach ($trainerIds as $trainerId) {
+                if ($tmp == $trainerId[0]) {
                     $valid = false;
                     break;
                 }
@@ -79,26 +65,27 @@ class Utils
         }
         
         return $tmp;
+    }*/
+    
+    public static function generateValidProfileID(/*$trainerID*/) : string {
+        // this keygen is just for a hacker check so i'll hardcode the profileId
+        // if for whatever reason you want to have random trainer and profileIds then
+        // i'll leave the Keygen code in just in case (and as we made it look nice and perform well)
+        //return generateProfileId(10000000000000, $trainerID);
+
+        //generateProfileId(10000000000000, 333); results in the output below
+        return 'ikkg';
     }
     
-    public static function generateValidProfileID(int $trainerID) : string
-     {
-        return generateProfileId(10000000000000, $trainerID);
-    }
-    
-    public static function generateUniquePokeID($pokes) : int 
-    {
+    public static function generateUniquePokeID($pokes) : int {
         $valid = false;
         
-        while (!$valid)
-        {
+        while (!$valid) {
             $tmp = mt_rand(1, 999999);
             $valid = true;
 
-            foreach ($pokes as $poke) 
-            {
-                if ($tmp == $poke->myID) 
-                {
+            foreach ($pokes as $poke) {
+                if ($tmp == $poke->myID) {
                     $valid = false;
                     break;
                 }
@@ -108,19 +95,15 @@ class Utils
         return $tmp;
     }
 
-    public static function generateUniqueID($ids) : int 
-    {
+    public static function generateUniqueID($ids) : int {
         $valid = false;
         
-        while (!$valid)
-        {
+        while (!$valid) {
             $tmp = mt_rand(1, 999999);
             $valid = true;
 
-            foreach($ids as $id) 
-            {
-                if ($tmp == $id[0]) 
-                {
+            foreach($ids as $id) {
+                if ($tmp == $id[0]) {
                     $valid = false;
                     break;
                 }
@@ -132,10 +115,8 @@ class Utils
     }
 
     // If the file is empty or under 2 characters in length (invalid json) then the file will be overwritten with the desired contents from $string
-    public static function setEmptyFileContents($file, $string) 
-    {
-        if (!file_exists($file) || strlen(file_get_contents($file)) < 2)
-        {
+    public static function setEmptyFileContents($file, $string) {
+        if (!file_exists($file) || strlen(file_get_contents($file)) < 2) {
             $file = fopen($file, 'w');
             fwrite($file, $string);
             fclose($file);
@@ -154,8 +135,7 @@ class Utils
      *                         to select from
      * @return string
      */
-    private static function generatePass($length, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') : string
-    {
+    private static function generatePass($length, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') : string {
         $str = '';
         $max = mb_strlen($keyspace, '8bit') - 1;
 
@@ -168,46 +148,7 @@ class Utils
         return $str;
     }
 
-    public static function log() 
-    {
-        global $conn;
-
-        $log = new Log();
-
-        $log -> time = time();
-        $log -> ip = getallheaders()['X-Forwarded-For'];
-        $log -> post_data = Utils::$body;
-
-        $response = Utils::getResponse();
-        $responseData = array();
-
-        foreach (explode('&', $response) as $urlVariable)
-        {
-            $keyAndValue = explode('=', $urlVariable);
-    
-            $responseData[$keyAndValue[0]] = $keyAndValue[1];
-        }
-
-        $log -> response = 'Result=' . $responseData['Result'] . '&Reason=' . $responseData['Reason'];
-
-        $stmt = $conn->prepare('INSERT INTO logs VALUES (?, ?, ?, ?);');
-        $stmt->bind_param('isss', $log -> time, $log -> ip, $log -> post_data, $log -> response);
-
-        $stmt->execute();
-
-        $stmt->close();
-    }
-
-    public static function fillDex(string $dex) : string 
-    {
-        while (strlen($dex) < 151) 
-            $dex .= '0';
-
-        return $dex;
-    }
-
-    public static function getConfigFileDefault() : string 
-    {
+    public static function getConfigFileDefault() : string {
         return "{\n  \"maintenance\": false,\n  \"timezone\": \"\",\n  \"pass\":
                      \"" . Utils::generatePass(32) . "\",\n  \"mysql\": {\n
                         \"hostname\": \"\",\n    \"username\": \"\",\n 
@@ -218,5 +159,4 @@ class Utils
         return $_SERVER['DOCUMENT_ROOT'] . '/../config.json';
     }
 }
-
 ?>
