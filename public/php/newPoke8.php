@@ -11,8 +11,10 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/../MySQL.php');
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     Utils::setEmptyFileContents(Utils::getConfigFile(), Utils::getConfigFileDefault());
-
     Utils::$config = $config = json_decode(file_get_contents(Utils::getConfigFile()), true);
+
+    $body = str_replace('saveString=', '', urldecode(file_get_contents('php://input')));
+    $post_data = Utils::urlVariablesToArray($body);
     //$start = milliseconds();
     if($config['maintenance']) {
         Utils::response('Result', 'Failure');
@@ -23,31 +25,20 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
  
     Utils::$mysql = $mysql = new MySQL();
     $conn = $mysql->conn;
-    
-    $post_data = array();
-    
-    $body = file_get_contents('php://input');
-    $body = urldecode($body);
-    $body = str_replace('saveString=', '', $body);
-    Utils::$body = $body;
-    
-    foreach(explode('&', $body) as $urlVariable) {
-        $keyAndValue = explode('=', $urlVariable);
-        
-        $post_data[$keyAndValue[0]] = $keyAndValue[1];
-    }
 
-    $accounts = getAccountByEmail($conn, 'accounts');
+    $accounts = getAccountByEmail($conn, 'accounts', $post_data['Email']);
     
     if($post_data['Action'] === 'createAccount') {
-        CreateAccount($post_data);
+        createAccount($post_data);
         
         echo Utils::getResponse();
-        Utils::log();
+        logMySQL($conn, $body);
         
         $conn->close();
         return;
     }
+
+    $accounts1 = $accounts[0];
 
     if(count($accounts) === 0) {
         Utils::response('Result', 'Failure');
@@ -55,7 +46,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         echo Utils::getResponse();
         return;
-    } else if(count($accounts) >= 1 && $post_data['Pass'] !== $accounts['pass']) {
+    } else if(count($accounts) >= 1 && $post_data['Pass'] !== $accounts1['pass']) {
         Utils::response('Result', 'Failure');
         Utils::response('Reason', 'taken');
 
@@ -65,17 +56,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $account = new Account();
         
-    $account -> email = $accounts['email'];
-    $account -> pass = $accounts['pass'];
-    $account -> trainerId = $accounts['trainerId'];
-    $account -> accNickname = $accounts['accNickname'];
-    $account -> dex1 = $accounts['dex1'];
-    $account -> dex1Shiny = $accounts['dex1Shiny'];
-    $account -> dex1Shadow = $accounts['dex1Shadow'];
+    $account -> email = $accounts1['id'];
+    $account -> pass = $accounts1['pass'];
+    $account -> trainerId = $accounts1['trainerId'];
+    $account -> accNickname = $accounts1['accNickname'];
+    $account -> dex1 = $accounts1['dex1'];
+    $account -> dex1Shiny = $accounts1['dex1Shiny'];
+    $account -> dex1Shadow = $accounts1['dex1Shadow'];
     
-    $saves = getAccountByEmail($conn, 'saves');
-
-    //print_r($saves);
+    $saves = getAccountByEmail($conn, 'saves', $post_data['Email'] . ',%');
 
     foreach($saves as $saveArray) {
         $save = new Save();
@@ -97,18 +86,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $account -> saves[] = $save;
     }
 
-    $pokes = getAccountByEmail($conn, 'pokes');
+    $pokes = getAccountByEmail($conn, 'pokes', $post_data['Email'] . ',%');
     
     // Pokemon
     foreach($pokes as $pokeArray) {
-        print_r($pokes);
-        
         $poke = new Poke();
         
         $id = explode(',', $pokeArray['id']);
 
-        $poke -> id = $id['id'];       
-        $poke -> reason = $pokeArray['reason'];
         $poke -> num = $pokeArray['num'];
         $poke -> nickname = $pokeArray['nickname'];
         $poke -> exp = $pokeArray['exp'];
@@ -123,7 +108,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $poke -> tag = $pokeArray['tag'];
         $poke -> item = $pokeArray['item'];
         $poke -> owner = $pokeArray['owner'];
-        $poke -> myID = $pokeArray['myID'];
+        $poke -> myID = $id[2];
         $poke -> pos = $pokeArray['pos'];
         $poke -> shiny = $pokeArray['shiny'];
 
@@ -131,17 +116,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         
     }
 
-    $items = getAccountByEmail($conn, 'items');
+    $items = getAccountByEmail($conn, 'items', $post_data['Email'] . ',%');
 
     // Items
     foreach($items as $itemArray) {
-        $item = new Item();
-        
         $id = explode(',', $itemArray['id']);
-                
-        $item -> id = $id[2];
+
         $item -> num = $itemArray['num'];
-                
+
         $account -> saves[$id[1]] -> items[] = $item;
     }
 
@@ -164,26 +146,26 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $account -> saves[$i] = $save;
     }
-
-    print_r($account);
     
     switch($post_data['Action']) {
         case 'loadAccount':
-            LoadAccount($account);
+            loadAccount($account);
             break;
         case 'saveAccount':
-            SaveAccount($account, $post_data, $conn);
+            saveAccount($account, $post_data, $conn);
             break;
         default:
             return;
     }
     
     echo Utils::getResponse();
-    Utils::log();
+    logMySQL($conn, $body);
 
     $conn->close();
     
     //echo milliseconds() - $start;
+} else {
+    echo "Invalid Request Method";
 }
 
 function milliseconds() : int {
@@ -191,18 +173,9 @@ function milliseconds() : int {
     return ((int)$mt[1]) * 1000 + ((int)round($mt[0] * 1000));
 }
 
-function getAccountByEmail(mysqli $conn, string $table) : array {
-    global $post_data;
-
-    if($table === 'accounts') {
-        $stmt = $conn->prepare('SELECT * FROM ' . $table  . ' WHERE email = ?');
-        $stmt->bind_param('s', $post_data['Email']);
-    } else {
-        $email = $post_data['Email'] . ',%';
-    
-        $stmt = $conn->prepare('SELECT * FROM ' . $table  . ' WHERE id LIKE ?');
-        $stmt->bind_param('s', $email);
-    }
+function getAccountByEmail(mysqli $conn, string $table, string $id) : array {
+    $stmt = $conn->prepare("SELECT * FROM $table WHERE id LIKE ?");
+    $stmt->bind_param('s', $id);
 
     $stmt->execute();
 
@@ -222,15 +195,24 @@ function getAccountByEmail(mysqli $conn, string $table) : array {
     $statment="\$stmt->bind_result($statementParams);";
     eval($statment);
     while($stmt->fetch()){
-        if($table !== "accounts") {
-            $columns[] = $column;
-        }
+        $columns[] = $column;
         //Now the data is contained in the assoc array $column. Useful if you need to do a foreach, or
         //if your lazy and didn't want to write out each param to bind.
     }
 
     $stmt->close();
 
-    return count($columns) !== 0 ? $columns : $column;
+    return $columns;
 }
-?>
+
+function logMySQL($conn, $body) {
+    $response = Utils::urlVariablesToArray(Utils::getResponse());
+    $responseResult = 'Result=' . $response['Result'] . '&Reason=' . $response['Reason'];
+    $ip = getallheaders()['X-Forwarded-For'];
+    $time = time();
+
+    $stmt = $conn->prepare('INSERT INTO logs VALUES (?, ?, ?, ?);');
+    $stmt->bind_param('isss', $time, $ip, $body, $responseResult);
+    $stmt->execute();
+    $stmt->close();
+}

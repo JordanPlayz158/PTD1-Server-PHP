@@ -5,13 +5,13 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/../objects/Poke.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/../objects/Item.php';
 
 class MySQL {
-    public $conn;
+    public mysqli $conn;
 
     function __construct() {
         $mysqlConfig = Utils::$config['mysql'];
 
         //$driver = new mysqli_driver();
-        //$driver->report_mode = MYSQLI_REPORT_ALL;
+        //$driver->report_mode = MYSQLI_REPORT_STRICT|MYSQLI_REPORT_ERROR;
 
         $this->conn = $conn = new mysqli($mysqlConfig['hostname'], $mysqlConfig['username'], $mysqlConfig['password'], $mysqlConfig['db']);
 
@@ -26,7 +26,7 @@ class MySQL {
         }
 
         $makeAccountsTable = 'CREATE TABLE IF NOT EXISTS accounts (
-            email VARCHAR(255) UNIQUE NOT NULL,
+            id VARCHAR(255) UNIQUE NOT NULL,
             pass VARCHAR(255) NOT NULL,
             trainerId MEDIUMINT(5) unsigned NOT NULL,
             accNickname VARCHAR(255),
@@ -48,7 +48,8 @@ class MySQL {
             money INT(10) unsigned,
             npcTrade TINYINT(1) unsigned,
             shinyHunt TINYINT(1) unsigned,
-            version TINYINT(1) unsigned
+            version TINYINT(1) unsigned,
+            items LONGTEXT
         ); ';
 
         $makePokesTable = 'CREATE TABLE IF NOT EXISTS pokes (
@@ -73,11 +74,6 @@ class MySQL {
             shiny TINYINT(1) unsigned
         ); ';
 
-        $makeItemsTable = 'CREATE TABLE IF NOT EXISTS items (
-            id VARCHAR(255) UNIQUE NOT NULL,
-            num TINYINT(3) unsigned
-        ); ';
-
         $makeLogsTable = 'CREATE TABLE IF NOT EXISTS logs (
             time INT(10) unsigned,
             ip VARCHAR(255),
@@ -85,7 +81,7 @@ class MySQL {
             response LONGTEXT
         ); ';
 
-        $makeTables = $makeAccountsTable . $makeSavesTable . $makePokesTable . $makeItemsTable . $makeLogsTable;
+        $makeTables = $makeAccountsTable . $makeSavesTable . $makePokesTable . $makeLogsTable;
         if($conn->multi_query($makeTables) or die($conn->error)) {
             do {
                 if ($result = $conn -> store_result()) {
@@ -122,7 +118,7 @@ class MySQL {
         $conn = $this->conn;
         
         $stmts = array();
-        $stmts[] = $stmt = $conn->prepare('UPDATE accounts SET trainerId = ?, accNickname = ?, dex1 = ?, dex1Shiny = ?, dex1Shadow = ? WHERE email = ?');
+        $stmts[] = $stmt = $conn->prepare('UPDATE accounts SET trainerId = ?, accNickname = ?, dex1 = ?, dex1Shiny = ?, dex1Shadow = ? WHERE id = ?');
         $stmt->bind_param('isssss', $account->trainerId, $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow, $account->email);
         $stmt->execute();
         
@@ -135,8 +131,6 @@ class MySQL {
             $stmt->bind_param('iisisisiiiiis', $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, $id);
             $stmt->execute();
 
-
-            //print_r($save-> pokes);
             foreach($save -> pokes as $poke) {
                 $id = $poke->id;
                 $pokeReason = $poke-> reason;
@@ -157,8 +151,6 @@ class MySQL {
                 $pokeMyID = $poke-> myID;
                 $pokePos = $poke-> pos;
                 $pokeShiny = $poke-> shiny;
-
-                //print_r($poke);
                 
                 $stmts[] = $stmt = $conn->prepare('INSERT INTO pokes VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE reason=?, num=?, nickname=?, exp=?, lvl=?, m1=?, m2=?, m3=?, m4=?, ability=?, mSel=?, targetType=?, tag=?, item=?, owner=?, myID=?, pos=?, shiny=?');
                 $stmt->bind_param('ssisiiiiiiiiisssiiisisiiiiiiiiisssiii', $id, $pokeReason, $pokeNum, $pokeNickname, $pokeExp, $pokeLvl, $pokeM1, $pokeM2, $pokeM3,
@@ -171,14 +163,14 @@ class MySQL {
                 //                    $pokeM4 . $pokeAbility . $pokeMSel . $pokeTargetType . $pokeTag . $pokeItem . $pokeOwner . $pokeMyID . $pokePos . $pokeShiny;
             }
             
-            foreach($save->items as $item) {
+            /*foreach($save->items as $item) {
                 $id = $account->email . ',' . $i . ',' . $item->id;
                 $itemNum = $item->num;
                 
                 $stmts[] = $stmt = $conn->prepare('INSERT INTO items VALUES(?, ?) ON DUPLICATE KEY UPDATE num=?');
                 $stmt->bind_param('sii', $id, $itemNum, $itemNum);
                 $stmt->execute();
-            }
+            }*/
         }
         
         foreach($stmts as $stmt) {
