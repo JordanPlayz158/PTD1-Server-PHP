@@ -1,18 +1,12 @@
 <?php
 class Account {
-    // Never sent in response
-    public $email;
-    // Never sent in response
-    public $pass;
-    // myTID is TrainerID (saveAccount Action)
-    // ONLY 1 (not per save)
-    public $trainerId;
+    public string $email;
+    public string $pass;
 
-    public $saves = array();
+    public array $saves = array();
 
-    public $accNickname = 'N/A';
-    public $dex1;
-    public $dex1Shiny;
-    public $dex1Shadow;
+    public string $accNickname = 'N/A';
+    public string $dex1;
+    public string $dex1Shiny;
+    public string $dex1Shadow;
 }
-?>

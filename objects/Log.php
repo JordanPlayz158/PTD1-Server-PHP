@@ -1,8 +1,7 @@
 <?php
 class Log {
-    public $time;
-    public $ip;
-    public $post_data;
-    public $response;
+    public int $time;
+    public string $ip;
+    public string $post_data;
+    public string $response;
 }
-?>

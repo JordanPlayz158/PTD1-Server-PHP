@@ -1,5 +1,4 @@
 <?php
 class Item {
-    public $num;
+    public int $num;
 }
-?>
