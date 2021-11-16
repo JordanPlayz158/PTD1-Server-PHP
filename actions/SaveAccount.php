@@ -51,7 +51,9 @@ function saveAccount($account, $post_data, $conn) {
         $pokeNum = 'poke' . $i . '_';
         // This is not finding a pokemon so it is returning a new one
         $poke = Utils::getPokeByID($pokes, intval($post_data[$pokeNum . 'myID']));
-        $pokeExisted = isset($poke->myID) ? true : false;
+        // isset($poke->myID) ? true : false
+        // Was changed from above, if issues occur, change back
+        $pokeExisted = isset($poke->myID);
 
         if (!$pokeExisted || $poke->myID == 0)
             $poke->myID = Utils::generateUniquePokeID($pokes);
@@ -155,4 +157,3 @@ function saveAccount($account, $post_data, $conn) {
     Utils::$mysql->saveAccount($account);
     loadAccount($account);
 }
-?>

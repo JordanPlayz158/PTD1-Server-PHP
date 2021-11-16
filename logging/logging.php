@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title>Logging</title>
         <link rel='stylesheet' type='text/css' href='logging.css'>
@@ -30,7 +30,7 @@
                 $str = '';
 
                 foreach (array_keys($arr[0]) as $key) {
-                    $str .= "                <th>{$key}</th>\n";
+                    $str .= "                <th>$key</th>\n";
                 }
                     
                 foreach ($arr as $key => $value) {
@@ -38,24 +38,17 @@
                 
                     foreach ($value as $key1 => $value1) {
                         $buttons = "<button id='Pretty'>Pretty</button><button id='Decode'>Decode</button><button id='Original'>Original</button><br>";
+
+                        $value1 = match ($key1) {
+                            'time' => '<td>' . date('d/M/Y H:i:  O', $value1),
+                            'ip' => "<td id='ip'><p>$value1</p>",
+                            'post_data' => "<td class='post_data'>$buttons<p>$value1</p>",
+                            default => "<td>$value1",
+                        };
             
-                        switch($key1) {
-                            case 'time':
-                                $value1 = '<td>' . date('d/M/Y H:i:  O', $value1);
-                                break;
-                            case 'ip':
-                                $value1 = "<td id='ip'><p>{$value1}</p>";
-                                break;
-                            case 'post_data':
-                                $value1 = "<td class='post_data'>{$buttons}<p>{$value1}</p>";
-                                break;
-                            default:
-                                $value1 = "<td>{$value1}";
-                        }
+                        $value1 = "\n                $value1";
             
-                        $value1 = "\n                {$value1}";
-            
-                        $str .= "{$value1}</td>";
+                        $str .= "$value1</td>";
                     }
             
                     $str .= "\n            </tr>";

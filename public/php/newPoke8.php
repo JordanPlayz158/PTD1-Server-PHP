@@ -58,7 +58,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         
     $account -> email = $accounts1['id'];
     $account -> pass = $accounts1['pass'];
-    $account -> trainerId = $accounts1['trainerId'];
     $account -> accNickname = $accounts1['accNickname'];
     $account -> dex1 = $accounts1['dex1'];
     $account -> dex1Shiny = $accounts1['dex1Shiny'];
@@ -122,6 +121,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach($items as $itemArray) {
         $id = explode(',', $itemArray['id']);
 
+        $item = new Item();
         $item -> num = $itemArray['num'];
 
         $account -> saves[$id[1]] -> items[] = $item;
@@ -184,7 +184,7 @@ function getAccountByEmail(mysqli $conn, string $table, string $id) : array {
     $metaResults = $stmt->result_metadata();
     $fields = $metaResults->fetch_fields();
     $statementParams='';
-    //build the bind_results statement dynamically so I can get the results in an array
+    //build the bind_results statement dynamically, so I can get the results in an array
     foreach($fields as $field){
         if(empty($statementParams)){
             $statementParams.="\$column['".$field->name."']";

@@ -28,7 +28,6 @@ class MySQL {
         $makeAccountsTable = 'CREATE TABLE IF NOT EXISTS accounts (
             id VARCHAR(255) UNIQUE NOT NULL,
             pass VARCHAR(255) NOT NULL,
-            trainerId MEDIUMINT(5) unsigned NOT NULL,
             accNickname VARCHAR(255),
             dex1 VARCHAR(151),
             dex1Shiny VARCHAR(151),
@@ -54,7 +53,6 @@ class MySQL {
 
         $makePokesTable = 'CREATE TABLE IF NOT EXISTS pokes (
             id VARCHAR(255) UNIQUE NOT NULL,
-            reason VARCHAR(255),
             num MEDIUMINT(6) unsigned,
             nickname VARCHAR(255),
             exp MEDIUMINT(7) unsigned,
@@ -69,7 +67,6 @@ class MySQL {
             tag VARCHAR(3),
             item VARCHAR(3),
             owner VARCHAR(255),
-            myID MEDIUMINT(6) unsigned,
             pos MEDIUMINT(7) unsigned,
             shiny TINYINT(1) unsigned
         ); ';
@@ -94,19 +91,20 @@ class MySQL {
     public function createAccount($account) {
         $conn = $this->conn;
 
-        $stmt = $conn->prepare('INSERT INTO accounts VALUES (?, ?, ?, ?, ?, ?, ?)');
-        $stmt->bind_param('ssissss', $account->email, $account->pass, $account->trainerId, $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow);
+        $stmt = $conn->prepare('INSERT INTO accounts VALUES (?, ?, ?, ?, ?, ?)');
+        $stmt->bind_param('ssssss', $account->email, $account->pass, $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow);
         $stmt->execute() or $stmt->close() && $conn->close() && die('Result=Failure&Reason=taken');
         $stmt->close();
         
-        $stmt = $conn->prepare('INSERT INTO saves VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt = $conn->prepare('INSERT INTO saves VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         
         $saves = $account->saves;
         for($i = 0; $i < count($saves); $i++) {
             $save = $saves[$i];
             $id = $account->email . ',' . $i;
 
-            $stmt->bind_param('siisisisiiiii', $id, $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version);
+            // Add items as last bind param
+            $stmt->bind_param('siisisisiiiiis', $id, $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version);
             $stmt->execute();
         }
         
@@ -118,15 +116,16 @@ class MySQL {
         $conn = $this->conn;
         
         $stmts = array();
-        $stmts[] = $stmt = $conn->prepare('UPDATE accounts SET trainerId = ?, accNickname = ?, dex1 = ?, dex1Shiny = ?, dex1Shadow = ? WHERE id = ?');
-        $stmt->bind_param('isssss', $account->trainerId, $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow, $account->email);
+        $stmts[] = $stmt = $conn->prepare('UPDATE accounts SET accNickname = ?, dex1 = ?, dex1Shiny = ?, dex1Shadow = ? WHERE id = ?');
+        $stmt->bind_param('sssss', $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow, $account->email);
         $stmt->execute();
         
         for($i = 0; $i < count($account->saves); $i++) {
             $save = $account->saves[$i];
             
             $id = $account->email . ',' . $i;
-            
+
+            // Add items entry
             $stmts[] = $stmt = $conn->prepare('UPDATE saves SET advanced = ?, advanced_a = ?, nickname = ?, badges = ?, avatar = ?, classic = ?, classic_a = ?, challenge = ?, money = ?, npcTrade = ?, shinyHunt = ?, version = ? WHERE id = ?') or die($conn->errno);
             $stmt->bind_param('iisisisiiiiis', $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, $id);
             $stmt->execute();
@@ -178,4 +177,3 @@ class MySQL {
         }
     }
 }
-?>
