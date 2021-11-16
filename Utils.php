@@ -68,9 +68,9 @@ class Utils {
     }*/
     
     public static function generateValidProfileID(/*$trainerID*/) : string {
-        // this keygen is just for a hacker check so i'll hardcode the profileId
+        // this keygen is just for a hacker check, so I hardcoded the profileId
         // if for whatever reason you want to have random trainer and profileIds then
-        // i'll leave the Keygen code in just in case (and as we made it look nice and perform well)
+        // I'll leave the Keygen code in just in case (and as we made it look nice and perform well)
         //return generateProfileId(10000000000000, $trainerID);
 
         //generateProfileId(10000000000000, 333); results in the output below
@@ -109,7 +109,6 @@ class Utils {
                 }
             }
         }
-        
 
         return $tmp;
     }
@@ -124,18 +123,19 @@ class Utils {
     }
 
     /**
-     * Generate a random string, using a cryptographically secure 
+     * Generate a random string, using a cryptographically secure
      * pseudorandom number generator (random_int)
-     * 
+     *
      * For PHP 7, random_int is a PHP core function
      * For PHP 5.x, depends on https://github.com/paragonie/random_compat
-     * 
-     * @param int $length      How many characters do we want?
+     *
+     * @param int $length How many characters do we want?
      * @param string $keyspace A string of all possible characters
      *                         to select from
      * @return string
+     * @throws Exception
      */
-    private static function generatePass($length, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') : string {
+    private static function generatePass(int $length, string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') : string {
         $str = '';
         $max = mb_strlen($keyspace, '8bit') - 1;
 
@@ -148,6 +148,9 @@ class Utils {
         return $str;
     }
 
+    /**
+     * @throws Exception
+     */
     public static function getConfigFileDefault() : string {
         return "{\n  \"maintenance\": false,\n  \"timezone\": \"\",\n  \"pass\":
                      \"" . Utils::generatePass(32) . "\",\n  \"mysql\": {\n
@@ -159,4 +162,3 @@ class Utils {
         return $_SERVER['DOCUMENT_ROOT'] . '/../config.json';
     }
 }
-?>
