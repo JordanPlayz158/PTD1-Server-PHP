@@ -2,7 +2,6 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/../objects/Account.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/../objects/Save.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/../objects/Poke.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/../objects/Item.php';
 
 class MySQL {
     public mysqli $conn;
@@ -104,7 +103,7 @@ class MySQL {
             $id = $account->email . ',' . $i;
 
             // Add items as last bind param
-            $stmt->bind_param('siisisisiiiiis', $id, $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version);
+            $stmt->bind_param('siisisisiiiiis', $id, $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, serialize($save->items));
             $stmt->execute();
         }
         

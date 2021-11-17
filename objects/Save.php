@@ -11,7 +11,7 @@ class Save {
     public int $p_numItem = 0;
     // used for hacker check, number of shiny pokemon you have (NOT SHADOW)
     public int $p_hs = 0;
-    public string $nickname = 'N/A';
+    public ?string $nickname = null;
     public int $badges = 0;
     public string $avatar = 'none';
     // called haveFlash (in SWF), assuming it's talking about the Flash TM

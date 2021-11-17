@@ -5,8 +5,8 @@ class Account {
 
     public array $saves = array();
 
-    public string $accNickname = 'N/A';
-    public string $dex1;
-    public string $dex1Shiny;
-    public string $dex1Shadow;
+    public ?string $accNickname = null;
+    public ?string $dex1 = null;
+    public ?string $dex1Shiny = null;
+    public ?string $dex1Shadow = null;
 }

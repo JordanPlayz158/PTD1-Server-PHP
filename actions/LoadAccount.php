@@ -78,7 +78,11 @@ function loadAccount($account) {
     }
 }
 
-function fillDex(string $dex) : string {
+function fillDex($dex) : string {
+    if($dex === null) {
+        $dex = '0';
+    }
+
     while (strlen($dex) < 151) 
         $dex .= '0';
 

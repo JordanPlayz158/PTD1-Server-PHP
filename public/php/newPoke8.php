@@ -3,7 +3,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Account.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Save.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Poke.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Item.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../actions/CreateAccount.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../actions/LoadAccount.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../actions/SaveAccount.php');
@@ -121,10 +120,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach($items as $itemArray) {
         $id = explode(',', $itemArray['id']);
 
-        $item = new Item();
-        $item -> num = $itemArray['num'];
-
-        $account -> saves[$id[1]] -> items[] = $item;
+        $account -> saves[$id[1]] -> items[] = $itemArray['num'];
     }
 
     for($i = 0; $i < count($account -> saves); $i++) {

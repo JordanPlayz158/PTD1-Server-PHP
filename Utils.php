@@ -1,7 +1,6 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Account.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Poke.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Log.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../Keygen.php');
 
 class Utils {
@@ -148,14 +147,15 @@ class Utils {
         return $str;
     }
 
-    /**
-     * @throws Exception
-     */
     public static function getConfigFileDefault() : string {
-        return "{\n  \"maintenance\": false,\n  \"timezone\": \"\",\n  \"pass\":
-                     \"" . Utils::generatePass(32) . "\",\n  \"mysql\": {\n
-                        \"hostname\": \"\",\n    \"username\": \"\",\n 
-                               \"password\": \"\",\n    \"db\": \"\"\n  }\n}";
+        try {
+            return "{\n  \"maintenance\": false,\n  \"timezone\": \"\",\n  \"pass\":
+                         \"" . Utils::generatePass(32) . "\",\n  \"mysql\": {\n
+                            \"hostname\": \"\",\n    \"username\": \"\",\n 
+                                   \"password\": \"\",\n    \"db\": \"\"\n  }\n}";
+        } catch (Exception $e) {
+            return "Utils::generatePass thrown an exception, $e";
+        }
     }
 
     public static function getConfigFile() : string {
