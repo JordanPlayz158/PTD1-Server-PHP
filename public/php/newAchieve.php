@@ -2,17 +2,6 @@
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $post_data = array();
-
-    $body = file_get_contents('php://input');
-    $body = urldecode($body);
-
-    foreach (explode("&", $body) as $urlVariable) {
-        $keyAndValue = explode("=", $urlVariable);
-
-        $post_data[$keyAndValue[0]] = $keyAndValue[1];
-    }
-
     Utils::response("Result", "Success");
     Utils::response("Reason", "GetAchive");
 

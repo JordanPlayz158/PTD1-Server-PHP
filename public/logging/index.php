@@ -1,10 +1,7 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 
-if(getallheaders()['X-Forwarded-Proto'] == "http") {
-    echo 'You are unable to access the logging login page via http, please connect through https in order to do so!';
-    return;
-}
+Utils::httpsOnly();
 
 if(session_start()) {
     if (isset($_SESSION['token'])) {

@@ -3,10 +3,10 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Account.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Save.php');
 
-function createAccount($post_data) {
+function createAccount() {
     $account = new Account();
-    $account->email = $post_data['Email'];
-    $account->pass = $post_data['Pass'];
+    $account->email = $_POST['Email'];
+    $account->pass = $_POST['Pass'];
 
     for ($i = 1; $i <= 3; $i++)
         $account->saves[] = new Save();

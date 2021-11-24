@@ -1,18 +1,12 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 
-if(getallheaders()['X-Forwarded-Proto'] == "http") {
-    echo 'You are unable to access the logging login page via http, please connect through https in order to do so!';
-    return;
-}
+Utils::httpsOnly();
 
 if($_SERVER['REQUEST_METHOD'] == "POST") {
-    $body = str_replace("&amp;", "&", htmlentities(file_get_contents('php://input'), ENT_QUOTES, 'UTF-8'));
-    $post_data = Utils::urlVariablesToArray($body);
-
     if (session_start()) {
         // Change from password to actual random token that expires in 24 hours.
-        $_SESSION['token'] = $post_data['pass'];
+        $_SESSION['token'] = $_POST['pass'];
         header('Location: /logging/');
     }
 }

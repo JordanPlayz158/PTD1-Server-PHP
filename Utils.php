@@ -22,8 +22,6 @@ class Utils {
 
     public static function getPokeByID($pokes, $id) : Poke {
         foreach($pokes as $poke) {
-            echo $poke->myID . ' ' . $id;
-
             if($poke->myID == $id)
                 return $poke;
         }
@@ -31,9 +29,9 @@ class Utils {
         return new Poke();
     }
 
-    public static function setPokeData($post_data, Poke $poke, $postKey, $pokeVariable) {    
-        if(isset($post_data[$postKey]))
-            $poke -> $pokeVariable = $post_data[$postKey];
+    public static function setPokeData($saveData, Poke $poke, $postKey, $pokeVariable) {
+        if(isset($saveData[$postKey]))
+            $poke -> $pokeVariable = $saveData[$postKey];
     }
 
     public static function getResponse() : string {
@@ -160,5 +158,11 @@ class Utils {
 
     public static function getConfigFile() : string {
         return $_SERVER['DOCUMENT_ROOT'] . '/../config.json';
+    }
+
+    public static function httpsOnly() {
+        if(getallheaders()['X-Forwarded-Proto'] == "http") {
+            exit('You are unable to access the logging login page via http, please connect through https in order to do so!');
+        }
     }
 }

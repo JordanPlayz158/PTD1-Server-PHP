@@ -25,16 +25,20 @@ class MySQL {
         }
 
         $makeAccountsTable = 'CREATE TABLE IF NOT EXISTS accounts (
-            id VARCHAR(255) UNIQUE NOT NULL,
+            email VARCHAR(255) NOT NULL,
             pass VARCHAR(255) NOT NULL,
             accNickname VARCHAR(255),
             dex1 VARCHAR(151),
             dex1Shiny VARCHAR(151),
-            dex1Shadow VARCHAR(151)
+            dex1Shadow VARCHAR(151),
+    
+            PRIMARY KEY(email),
+            FOREIGN KEY(email) REFERENCES saves(email)
         ); ';
 
         $makeSavesTable = 'CREATE TABLE IF NOT EXISTS saves (
-            id VARCHAR(255) UNIQUE NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            num TINYINT(1) unsigned NOT NULL,
             advanced TINYINT(3) unsigned,
             advanced_a TINYINT(3) unsigned,
             nickname VARCHAR(255),
@@ -47,12 +51,17 @@ class MySQL {
             npcTrade TINYINT(1) unsigned,
             shinyHunt TINYINT(1) unsigned,
             version TINYINT(1) unsigned,
-            items LONGTEXT
+            items LONGTEXT,
+    
+            PRIMARY KEY(email, num),
+            FOREIGN KEY (email, num) REFERENCES pokes(email, num)
         ); ';
 
         $makePokesTable = 'CREATE TABLE IF NOT EXISTS pokes (
-            id VARCHAR(255) UNIQUE NOT NULL,
-            num MEDIUMINT(6) unsigned,
+            email VARCHAR(255) NOT NULL,
+            num TINYINT(1) unsigned NOT NULL,
+            id MEDIUMINT(7) unsigned NOT NULL,
+            pNum MEDIUMINT(6) unsigned,
             nickname VARCHAR(255),
             exp MEDIUMINT(7) unsigned,
             lvl TINYINT(3) unsigned,
@@ -67,7 +76,9 @@ class MySQL {
             item VARCHAR(3),
             owner VARCHAR(255),
             pos MEDIUMINT(7) unsigned,
-            shiny TINYINT(1) unsigned
+            shiny TINYINT(1) unsigned,
+    
+            PRIMARY KEY(email, num, id)
         ); ';
 
         $makeLogsTable = 'CREATE TABLE IF NOT EXISTS logs (
@@ -77,7 +88,7 @@ class MySQL {
             response LONGTEXT
         ); ';
 
-        $makeTables = $makeAccountsTable . $makeSavesTable . $makePokesTable . $makeLogsTable;
+        $makeTables = $makePokesTable . $makeSavesTable . $makeAccountsTable . $makeLogsTable;
         if($conn->multi_query($makeTables) or die($conn->error)) {
             do {
                 if ($result = $conn -> store_result()) {
@@ -89,9 +100,10 @@ class MySQL {
 
     public function createAccount($account) {
         $conn = $this->conn;
+        $email = str_replace('%', '', $account->email);
 
         $stmt = $conn->prepare('INSERT INTO accounts VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->bind_param('ssssss', $account->email, $account->pass, $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow);
+        $stmt->bind_param('ssssss', $email, $account->pass, $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow);
         $stmt->execute() or $stmt->close() && $conn->close() && die('Result=Failure&Reason=taken');
         $stmt->close();
         
@@ -101,37 +113,37 @@ class MySQL {
         for($i = 0; $i < count($saves); $i++) {
             $save = $saves[$i];
             $id = $account->email . ',' . $i;
+            $items = serialize($save->items);
 
             // Add items as last bind param
-            $stmt->bind_param('siisisisiiiiis', $id, $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, serialize($save->items));
+            $stmt->bind_param('siisisisiiiiis', $id, $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, $items);
             $stmt->execute();
         }
         
         $stmt->close();
-        
     }
     
     public function saveAccount($account) {
         $conn = $this->conn;
-        
-        $stmts = array();
-        $stmts[] = $stmt = $conn->prepare('UPDATE accounts SET accNickname = ?, dex1 = ?, dex1Shiny = ?, dex1Shadow = ? WHERE id = ?');
-        $stmt->bind_param('sssss', $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow, $account->email);
-        $stmt->execute();
-        
+
+        $accountStmt = $conn->prepare('UPDATE accounts SET accNickname = ?, dex1 = ?, dex1Shiny = ?, dex1Shadow = ? WHERE id = ?');
+        $accountStmt->bind_param('sssss', $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow, $account->email);
+        $accountStmt->execute();
+        $accountStmt->close();
+
+        $savesStmt = $conn->prepare('UPDATE saves SET advanced = ?, advanced_a = ?, nickname = ?, badges = ?, avatar = ?, classic = ?, classic_a = ?, challenge = ?, money = ?, npcTrade = ?, shinyHunt = ?, version = ?, items = ? WHERE id = ?') or die($conn->errno);
+
         for($i = 0; $i < count($account->saves); $i++) {
             $save = $account->saves[$i];
             
             $id = $account->email . ',' . $i;
+            $items = serialize($save->items);
 
-            // Add items entry
-            $stmts[] = $stmt = $conn->prepare('UPDATE saves SET advanced = ?, advanced_a = ?, nickname = ?, badges = ?, avatar = ?, classic = ?, classic_a = ?, challenge = ?, money = ?, npcTrade = ?, shinyHunt = ?, version = ? WHERE id = ?') or die($conn->errno);
-            $stmt->bind_param('iisisisiiiiis', $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, $id);
-            $stmt->execute();
+            $savesStmt->bind_param('iisisisiiiiiss', $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, $items, $id);
+            $savesStmt->execute();
 
             foreach($save -> pokes as $poke) {
-                $id = $poke->id;
-                $pokeReason = $poke-> reason;
+                $id = $account->email . ',' . $i . ',' . $poke->myID;
                 $pokeNum = $poke-> num;
                 $pokeNickname = $poke-> nickname;
                 $pokeExp = $poke-> exp;
@@ -146,33 +158,54 @@ class MySQL {
                 $pokeTag = $poke-> tag;
                 $pokeItem = $poke-> item;
                 $pokeOwner = $poke-> owner;
-                $pokeMyID = $poke-> myID;
                 $pokePos = $poke-> pos;
                 $pokeShiny = $poke-> shiny;
-                
-                $stmts[] = $stmt = $conn->prepare('INSERT INTO pokes VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE reason=?, num=?, nickname=?, exp=?, lvl=?, m1=?, m2=?, m3=?, m4=?, ability=?, mSel=?, targetType=?, tag=?, item=?, owner=?, myID=?, pos=?, shiny=?');
-                $stmt->bind_param('ssisiiiiiiiiisssiiisisiiiiiiiiisssiii', $id, $pokeReason, $pokeNum, $pokeNickname, $pokeExp, $pokeLvl, $pokeM1, $pokeM2, $pokeM3,
-                                    $pokeM4, $pokeAbility, $pokeMSel, $pokeTargetType, $pokeTag, $pokeItem, $pokeOwner, $pokeMyID, $pokePos, $pokeShiny, $pokeReason,
-                                    $pokeNum, $pokeNickname, $pokeExp, $pokeLvl, $pokeM1, $pokeM2, $pokeM3, $pokeM4, $pokeAbility, $pokeMSel, $pokeTargetType,
-                                    $pokeTag, $pokeItem, $pokeOwner, $pokeMyID, $pokePos, $pokeShiny);
-                $stmt->execute();
 
-                //echo $id . $pokeReason . $pokeNum . $pokeNickname . $pokeExp . $pokeLvl . $pokeM1 . $pokeM2 . $pokeM3 .
-                //                    $pokeM4 . $pokeAbility . $pokeMSel . $pokeTargetType . $pokeTag . $pokeItem . $pokeOwner . $pokeMyID . $pokePos . $pokeShiny;
+                switch ($poke -> reason) {
+                    case "cap":
+
+                        break;
+                }
+                $pokeStmt = $conn->prepare('INSERT INTO pokes VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE num=?, nickname=?, exp=?, lvl=?, m1=?, m2=?, m3=?, m4=?, ability=?, mSel=?, targetType=?, tag=?, item=?, owner=?, pos=?, shiny=?');
+                $pokeStmt->bind_param('sisiiiiiiiiisssiiisiiiiiiiiisssii', $id, $pokeNum, $pokeNickname, $pokeExp, $pokeLvl, $pokeM1, $pokeM2, $pokeM3,
+                                    $pokeM4, $pokeAbility, $pokeMSel, $pokeTargetType, $pokeTag, $pokeItem, $pokeOwner, $pokePos, $pokeShiny,
+                                    $pokeNum, $pokeNickname, $pokeExp, $pokeLvl, $pokeM1, $pokeM2, $pokeM3, $pokeM4, $pokeAbility, $pokeMSel, $pokeTargetType,
+                                    $pokeTag, $pokeItem, $pokeOwner, $pokePos, $pokeShiny);
+                $pokeStmt->execute();
+
+                //echo $id . $pokeNum . $pokeNickname . $pokeExp . $pokeLvl . $pokeM1 . $pokeM2 . $pokeM3 . $pokeM4 . $pokeAbility
+                //    . $pokeMSel . $pokeTargetType . $pokeTag . $pokeItem . $pokeOwner . $pokePos . $pokeShiny;
             }
-            
-            /*foreach($save->items as $item) {
-                $id = $account->email . ',' . $i . ',' . $item->id;
-                $itemNum = $item->num;
-                
-                $stmts[] = $stmt = $conn->prepare('INSERT INTO items VALUES(?, ?) ON DUPLICATE KEY UPDATE num=?');
-                $stmt->bind_param('sii', $id, $itemNum, $itemNum);
-                $stmt->execute();
-            }*/
         }
-        
-        foreach($stmts as $stmt) {
-            $stmt->close();
-        }
+
+        $savesStmt->close();
+        $pokeStmt->close();
+    }
+
+    public function newGame($account, $whichProfile) {
+        $conn = $this->conn;
+        // Possibly put functionality from createAccount for new save into function so both can reference it
+        // Resetting save
+        $stmt = $conn->prepare('UPDATE saves SET advanced = ?, advanced_a = ?, nickname = ?, badges = ?, avatar = ?, classic = ?, classic_a = ?, challenge = ?, money = ?, npcTrade = ?, shinyHunt = ?, version = ?, items = ? WHERE id = ?');
+
+        $save = $account -> saves[$whichProfile];
+        $id = $account->email . ',' . $whichProfile;
+        $items = serialize($save->items);
+
+        $stmt->bind_param('siisisisiiiiis', $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, $items, $id);
+        $stmt->execute();
+
+        $stmt->close();
+        //
+
+        // Removing all pokemon associated with save
+        $stmt = $conn->prepare('DELETE FROM pokes WHERE id LIKE ?');
+
+        $id = $account->email . ',' . $whichProfile . ',%';
+
+        $stmt->bind_param('s', $id);
+        $stmt->execute();
+
+        $stmt->close();
     }
 }

@@ -11,27 +11,26 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/../MySQL.php');
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     Utils::setEmptyFileContents(Utils::getConfigFile(), Utils::getConfigFileDefault());
     Utils::$config = $config = json_decode(file_get_contents(Utils::getConfigFile()), true);
-
-    $body = str_replace('saveString=', '', urldecode(file_get_contents('php://input')));
-    $post_data = Utils::urlVariablesToArray($body);
     //$start = milliseconds();
+
+    Utils::$mysql = $mysql = new MySQL();
+    $conn = $mysql->conn;
+
     if($config['maintenance']) {
         Utils::response('Result', 'Failure');
         Utils::response('Reason', 'maintenance');
         echo Utils::getResponse();
+        logMySQL($conn);
         return;
     }
- 
-    Utils::$mysql = $mysql = new MySQL();
-    $conn = $mysql->conn;
 
-    $accounts = getAccountByEmail($conn, 'accounts', $post_data['Email']);
+    $accounts = getAccountDataByEmail($conn, 'accounts', $_POST['Email']);
     
-    if($post_data['Action'] === 'createAccount') {
-        createAccount($post_data);
+    if($_POST['Action'] === 'createAccount') {
+        createAccount();
         
         echo Utils::getResponse();
-        logMySQL($conn, $body);
+        logMySQL($conn);
         
         $conn->close();
         return;
@@ -45,7 +44,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         echo Utils::getResponse();
         return;
-    } else if(count($accounts) >= 1 && $post_data['Pass'] !== $accounts1['pass']) {
+    } else if(count($accounts) >= 1 && $_POST['Pass'] !== $accounts1['pass']) {
         Utils::response('Result', 'Failure');
         Utils::response('Reason', 'taken');
 
@@ -62,7 +61,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $account -> dex1Shiny = $accounts1['dex1Shiny'];
     $account -> dex1Shadow = $accounts1['dex1Shadow'];
     
-    $saves = getAccountByEmail($conn, 'saves', $post_data['Email'] . ',%');
+    $saves = getAccountDataByEmail($conn, 'saves', $_POST['Email'] . ',%');
 
     foreach($saves as $saveArray) {
         $save = new Save();
@@ -81,10 +80,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $save -> shinyHunt = $saveArray['shinyHunt'];
         $save -> version = $saveArray['version'];
 
+        $items = unserialize($saveArray['items']);
+        // Items
+        foreach($items as $item) {
+            $save -> items[] = $item;
+        }
+
         $account -> saves[] = $save;
     }
 
-    $pokes = getAccountByEmail($conn, 'pokes', $post_data['Email'] . ',%');
+    $pokes = getAccountDataByEmail($conn, 'pokes', $_POST['Email'] . ',%');
     
     // Pokemon
     foreach($pokes as $pokeArray) {
@@ -114,15 +119,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         
     }
 
-    $items = getAccountByEmail($conn, 'items', $post_data['Email'] . ',%');
-
-    // Items
-    foreach($items as $itemArray) {
-        $id = explode(',', $itemArray['id']);
-
-        $account -> saves[$id[1]] -> items[] = $itemArray['num'];
-    }
-
     for($i = 0; $i < count($account -> saves); $i++) {
         $save = $account -> saves[$i];
         $pokes = $save -> pokes;
@@ -143,19 +139,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $account -> saves[$i] = $save;
     }
     
-    switch($post_data['Action']) {
+    switch($_POST['Action']) {
         case 'loadAccount':
             loadAccount($account);
             break;
         case 'saveAccount':
-            saveAccount($account, $post_data, $conn);
+            saveAccount($account, $mysql, Utils::urlVariablesToArray($_POST['saveString']));
             break;
         default:
             return;
     }
     
     echo Utils::getResponse();
-    logMySQL($conn, $body);
+    logMySQL($conn);
 
     $conn->close();
     
@@ -169,7 +165,7 @@ function milliseconds() : int {
     return ((int)$mt[1]) * 1000 + ((int)round($mt[0] * 1000));
 }
 
-function getAccountByEmail(mysqli $conn, string $table, string $id) : array {
+function getAccountDataByEmail(mysqli $conn, string $table, string $id) : array {
     $stmt = $conn->prepare("SELECT * FROM $table WHERE id LIKE ?");
     $stmt->bind_param('s', $id);
 
@@ -201,11 +197,12 @@ function getAccountByEmail(mysqli $conn, string $table, string $id) : array {
     return $columns;
 }
 
-function logMySQL($conn, $body) {
+function logMySQL($conn) {
     $response = Utils::urlVariablesToArray(Utils::getResponse());
-    $responseResult = 'Result=' . $response['Result'] . '&Reason=' . $response['Reason'];
+    $responseResult = "Result={$response['Result']}&Reason={$response['Reason']}";
     $ip = getallheaders()['X-Forwarded-For'];
     $time = time();
+    $body = file_get_contents('php://input');
 
     $stmt = $conn->prepare('INSERT INTO logs VALUES (?, ?, ?, ?);');
     $stmt->bind_param('isss', $time, $ip, $body, $responseResult);
