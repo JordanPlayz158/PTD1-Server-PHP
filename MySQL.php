@@ -100,112 +100,151 @@ class MySQL {
 
     public function createAccount($account) {
         $conn = $this->conn;
-        $email = str_replace('%', '', $account->email);
 
         $stmt = $conn->prepare('INSERT INTO accounts VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->bind_param('ssssss', $email, $account->pass, $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow);
+        $stmt->bind_param('ssssss', $account->email, $account->pass, $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow);
         $stmt->execute() or $stmt->close() && $conn->close() && die('Result=Failure&Reason=taken');
         $stmt->close();
-        
-        $stmt = $conn->prepare('INSERT INTO saves VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        
+
+        $stmt = $conn->prepare('INSERT INTO saves VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+
         $saves = $account->saves;
         for($i = 0; $i < count($saves); $i++) {
             $save = $saves[$i];
-            $id = $account->email . ',' . $i;
             $items = serialize($save->items);
 
             // Add items as last bind param
-            $stmt->bind_param('siisisisiiiiis', $id, $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, $items);
+            $stmt->bind_param('siiisisisiiiiis', $account->email, $i, $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, $items);
             $stmt->execute();
         }
-        
+
         $stmt->close();
     }
     
     public function saveAccount($account) {
         $conn = $this->conn;
 
-        $accountStmt = $conn->prepare('UPDATE accounts SET accNickname = ?, dex1 = ?, dex1Shiny = ?, dex1Shadow = ? WHERE id = ?');
-        $accountStmt->bind_param('sssss', $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow, $account->email);
+        $email = $account -> email;
+        // TODO:
+        // Make ID column in accounts that is auto-incremented and use id column as reference to account in accounts table
+        $accountStmt = $conn->prepare('UPDATE accounts SET accNickname = ?, dex1 = ?, dex1Shiny = ?, dex1Shadow = ? WHERE email = ?');
+        $accountStmt->bind_param('sssss', $account->accNickname, $account->dex1, $account->dex1Shiny, $account->dex1Shadow, $email);
         $accountStmt->execute();
         $accountStmt->close();
 
-        $savesStmt = $conn->prepare('UPDATE saves SET advanced = ?, advanced_a = ?, nickname = ?, badges = ?, avatar = ?, classic = ?, classic_a = ?, challenge = ?, money = ?, npcTrade = ?, shinyHunt = ?, version = ?, items = ? WHERE id = ?') or die($conn->errno);
+        $savesStmt = $conn->prepare('UPDATE saves SET advanced = ?, advanced_a = ?, nickname = ?, badges = ?, avatar = ?, classic = ?, classic_a = ?, challenge = ?, money = ?, npcTrade = ?, shinyHunt = ?, version = ?, items = ? WHERE email = ? AND num = ?') or die($conn->errno);
 
         for($i = 0; $i < count($account->saves); $i++) {
             $save = $account->saves[$i];
-            
-            $id = $account->email . ',' . $i;
+
             $items = serialize($save->items);
 
-            $savesStmt->bind_param('iisisisiiiiiss', $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, $items, $id);
+            $savesStmt->bind_param('iisisisiiiiissi', $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, $items, $email, $i);
             $savesStmt->execute();
 
-            foreach($save -> pokes as $poke) {
-                $id = $account->email . ',' . $i . ',' . $poke->myID;
-                $pokeNum = $poke-> num;
-                $pokeNickname = $poke-> nickname;
-                $pokeExp = $poke-> exp;
-                $pokeLvl = $poke-> lvl;
-                $pokeM1 = $poke-> m1;
-                $pokeM2 = $poke-> m2;
-                $pokeM3 = $poke-> m3;
-                $pokeM4 = $poke-> m4;
-                $pokeAbility = $poke-> ability;
-                $pokeMSel = $poke-> mSel;
-                $pokeTargetType = $poke-> targetType;
-                $pokeTag = $poke-> tag;
-                $pokeItem = $poke-> item;
-                $pokeOwner = $poke-> owner;
-                $pokePos = $poke-> pos;
-                $pokeShiny = $poke-> shiny;
+            foreach ($save->pokes as $poke) {
+                if (isset($poke->reason)) {
+                    $reason = $poke->reason;
+                    if ($reason === 'cap') {
+                        $pokeStmt = $conn->prepare('INSERT INTO pokes VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                        $pokeStmt->bind_param('siiisiiiiiiiiisssii', $email, $i, $poke->myID, $poke->num, $poke->nickname, $poke->exp, $poke->lvl, $poke->m1, $poke->m2, $poke->m3,
+                            $poke->m4, $poke->ability, $poke->mSel, $poke->targetType, $poke->tag, $poke->item, $poke->owner, $poke->pos, $poke->shiny);
 
-                switch ($poke -> reason) {
-                    case "cap":
+                    } else {
+                        $columns = $this->getColumns($reason);
+                        $query = 'UPDATE pokes SET ';
 
-                        break;
+                        for ($ii = 1; $ii < sizeof($columns); $ii++) {
+                            $column = $columns[$ii];
+                            $query .= $column . ' = ?, ';
+                            if ($column === 'pNum') {
+                                $columns[$ii] = $poke->num;
+                            } else {
+                                $columns[$ii] = $poke->$column;
+                            }
+                        }
+                        $query = substr($query, 0, strlen($query) - 2) . ' WHERE email = ? AND num = ? AND id = ?';
+                        $columns[0] .= 'sii';
+
+                        $pokeStmt = $conn->prepare($query);
+                        array_push($columns, $email, $i, $poke->myID);
+
+                        call_user_func_array(array($pokeStmt, 'bind_param'), $columns);
+                    }
+
+                    $pokeStmt->execute();
+                    $pokeStmt->close();
                 }
-                $pokeStmt = $conn->prepare('INSERT INTO pokes VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE num=?, nickname=?, exp=?, lvl=?, m1=?, m2=?, m3=?, m4=?, ability=?, mSel=?, targetType=?, tag=?, item=?, owner=?, pos=?, shiny=?');
-                $pokeStmt->bind_param('sisiiiiiiiiisssiiisiiiiiiiiisssii', $id, $pokeNum, $pokeNickname, $pokeExp, $pokeLvl, $pokeM1, $pokeM2, $pokeM3,
-                                    $pokeM4, $pokeAbility, $pokeMSel, $pokeTargetType, $pokeTag, $pokeItem, $pokeOwner, $pokePos, $pokeShiny,
-                                    $pokeNum, $pokeNickname, $pokeExp, $pokeLvl, $pokeM1, $pokeM2, $pokeM3, $pokeM4, $pokeAbility, $pokeMSel, $pokeTargetType,
-                                    $pokeTag, $pokeItem, $pokeOwner, $pokePos, $pokeShiny);
-                $pokeStmt->execute();
-
-                //echo $id . $pokeNum . $pokeNickname . $pokeExp . $pokeLvl . $pokeM1 . $pokeM2 . $pokeM3 . $pokeM4 . $pokeAbility
-                //    . $pokeMSel . $pokeTargetType . $pokeTag . $pokeItem . $pokeOwner . $pokePos . $pokeShiny;
             }
         }
 
         $savesStmt->close();
-        $pokeStmt->close();
     }
 
     public function newGame($account, $whichProfile) {
         $conn = $this->conn;
         // Possibly put functionality from createAccount for new save into function so both can reference it
         // Resetting save
-        $stmt = $conn->prepare('UPDATE saves SET advanced = ?, advanced_a = ?, nickname = ?, badges = ?, avatar = ?, classic = ?, classic_a = ?, challenge = ?, money = ?, npcTrade = ?, shinyHunt = ?, version = ?, items = ? WHERE id = ?');
+        $stmt = $conn->prepare('UPDATE saves SET advanced = ?, advanced_a = ?, nickname = ?, badges = ?, avatar = ?, classic = ?, classic_a = ?, challenge = ?, money = ?, npcTrade = ?, shinyHunt = ?, version = ?, items = ? WHERE email = ? AND num = ?');
 
         $save = $account -> saves[$whichProfile];
-        $id = $account->email . ',' . $whichProfile;
         $items = serialize($save->items);
 
-        $stmt->bind_param('siisisisiiiiis', $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, $items, $id);
+        $stmt->bind_param('iisisisiiiiissi', $save->advanced, $save->advanced_a, $save->nickname, $save->badges, $save->avatar, $save->classic, $save->classic_a, $save->challenge, $save->money, $save->npcTrade, $save->shinyHunt, $save->version, $items, $account->email, $whichProfile);
         $stmt->execute();
 
         $stmt->close();
         //
 
         // Removing all pokemon associated with save
-        $stmt = $conn->prepare('DELETE FROM pokes WHERE id LIKE ?');
+        $stmt = $conn->prepare('DELETE FROM pokes WHERE email = ? AND num = ?');
 
-        $id = $account->email . ',' . $whichProfile . ',%';
-
-        $stmt->bind_param('s', $id);
+        $stmt->bind_param('si', $account->email, $whichProfile);
         $stmt->execute();
 
         $stmt->close();
+    }
+
+    function getColumns(string $reason) : array {
+        $columnsToModify = array(0 => '');
+
+        $reason = explode('|', $reason);
+        foreach ($reason as $column) {
+            switch ($column) {
+                case 'evolve':
+                    $columnsToModify[0] .= 'is';
+                    array_push($columnsToModify, 'pNum', 'nickname');
+                    break;
+                case 'exp':
+                    $columnsToModify[0] .= 'i';
+                    $columnsToModify[] = 'exp';
+                    break;
+                case 'pos':
+                    $columnsToModify[0] .= 'i';
+                    $columnsToModify[] = 'pos';
+                    break;
+                case 'lvl':
+                    $columnsToModify[0] .= 'i';
+                    $columnsToModify[] = 'lvl';
+                    break;
+                case 'moves':
+                    $columnsToModify[0] .= 'iiii';
+                    array_push($columnsToModify, 'm1', 'm2', 'm3', 'm4');
+                    break;
+                case 'tag':
+                    $columnsToModify[0] .= 's';
+                    $columnsToModify[] = 'tag';
+                    break;
+                case 'target':
+                    $columnsToModify[0] .= 'i';
+                    $columnsToModify[] = 'targetType';
+                    break;
+                case 'mSel':
+                    $columnsToModify[0] .= 'i';
+                    $columnsToModify[] = 'mSel';
+            }
+        }
+
+        return $columnsToModify;
     }
 }

@@ -23,8 +23,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         logMySQL($conn);
         return;
     }
-
-    $accounts = getAccountDataByEmail($conn, 'accounts', $_POST['Email']);
     
     if($_POST['Action'] === 'createAccount') {
         createAccount();
@@ -36,6 +34,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         return;
     }
 
+    $accounts = getAccountDataByEmail($conn, 'accounts', $_POST['Email']);
     $accounts1 = $accounts[0];
 
     if(count($accounts) === 0) {
@@ -54,19 +53,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $account = new Account();
         
-    $account -> email = $accounts1['id'];
+    $account -> email = $accounts1['email'];
     $account -> pass = $accounts1['pass'];
     $account -> accNickname = $accounts1['accNickname'];
     $account -> dex1 = $accounts1['dex1'];
     $account -> dex1Shiny = $accounts1['dex1Shiny'];
     $account -> dex1Shadow = $accounts1['dex1Shadow'];
     
-    $saves = getAccountDataByEmail($conn, 'saves', $_POST['Email'] . ',%');
+    $saves = getAccountDataByEmail($conn, 'saves', $_POST['Email']);
 
     foreach($saves as $saveArray) {
         $save = new Save();
             
-        $save -> num = explode(',', $saveArray['id'])[1];
+        $save -> num = $saveArray['num'];
         $save -> advanced = $saveArray['advanced'];
         $save -> advanced_a = $saveArray['advanced_a'];
         $save -> nickname = $saveArray['nickname'];
@@ -89,15 +88,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $account -> saves[] = $save;
     }
 
-    $pokes = getAccountDataByEmail($conn, 'pokes', $_POST['Email'] . ',%');
+    $pokes = getAccountDataByEmail($conn, 'pokes', $_POST['Email']);
     
     // Pokemon
     foreach($pokes as $pokeArray) {
         $poke = new Poke();
-        
-        $id = explode(',', $pokeArray['id']);
 
-        $poke -> num = $pokeArray['num'];
+        $poke -> num = $pokeArray['pNum'];
         $poke -> nickname = $pokeArray['nickname'];
         $poke -> exp = $pokeArray['exp'];
         $poke -> lvl = $pokeArray['lvl'];
@@ -111,11 +108,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $poke -> tag = $pokeArray['tag'];
         $poke -> item = $pokeArray['item'];
         $poke -> owner = $pokeArray['owner'];
-        $poke -> myID = $id[2];
+        $poke -> myID = $pokeArray['id'];
         $poke -> pos = $pokeArray['pos'];
         $poke -> shiny = $pokeArray['shiny'];
 
-        $account -> saves[$id[1]] -> pokes[] = $poke;
+        $account -> saves[$pokeArray['num']] -> pokes[] = $poke;
         
     }
 
@@ -165,36 +162,31 @@ function milliseconds() : int {
     return ((int)$mt[1]) * 1000 + ((int)round($mt[0] * 1000));
 }
 
-function getAccountDataByEmail(mysqli $conn, string $table, string $id) : array {
-    $stmt = $conn->prepare("SELECT * FROM $table WHERE id LIKE ?");
-    $stmt->bind_param('s', $id);
+function getAccountDataByEmail(mysqli $conn, string $table, string $email) : array {
+    $stmt = $conn->prepare("SELECT * FROM $table WHERE email = ?");
+    $stmt->bind_param('s', $email);
 
     $stmt->execute();
 
-    $columns = array();
-
-    $metaResults = $stmt->result_metadata();
-    $fields = $metaResults->fetch_fields();
-    $statementParams='';
-    //build the bind_results statement dynamically, so I can get the results in an array
-    foreach($fields as $field){
-        if(empty($statementParams)){
-            $statementParams.="\$column['".$field->name."']";
-        } else {
-            $statementParams.=", \$column['".$field->name."']";
-        }
+    $meta = $stmt->result_metadata();
+    while ($field = $meta->fetch_field()) {
+        $params[] = &$row[$field->name];
     }
-    $statment="\$stmt->bind_result($statementParams);";
-    eval($statment);
-    while($stmt->fetch()){
-        $columns[] = $column;
-        //Now the data is contained in the assoc array $column. Useful if you need to do a foreach, or
-        //if your lazy and didn't want to write out each param to bind.
+
+    call_user_func_array(array($stmt, 'bind_result'), $params);
+
+    $result = array();
+
+    while ($stmt->fetch()) {
+        foreach ($row as $key => $val) {
+            $c[$key] = $val;
+        }
+        $result[] = $c;
     }
 
     $stmt->close();
 
-    return $columns;
+    return $result;
 }
 
 function logMySQL($conn) {

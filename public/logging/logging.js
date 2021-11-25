@@ -15,6 +15,7 @@ window.onload = function() {
         let buttonChildNodes = button.parentNode.childNodes;
         let decode = buttonChildNodes[4].innerHTML;
         decode = decode.replaceAll("¤tSave", "&amp;currentSave");
+        decode = decodeURIComponent(decode);
         buttonChildNodes[4].innerHTML = decode;
 
         let encode = encodeURIComponent(decode);

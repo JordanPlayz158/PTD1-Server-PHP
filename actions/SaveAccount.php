@@ -61,9 +61,8 @@ function saveAccount($account, $mysql, $saveData) {
             
         $poke->reason = $saveData[$pokeNum . 'reason'];
 
-        $email = $account->email . ',%';
-        $stmt = $conn->prepare('SELECT email FROM pokes WHERE email LIKE ?');
-        $stmt->bind_param('s', $email);
+        $stmt = $conn->prepare('SELECT id FROM pokes WHERE email = ?');
+        $stmt->bind_param('s', $account->email);
 
         $stmt->execute();
         $ids = array();
@@ -76,8 +75,8 @@ function saveAccount($account, $mysql, $saveData) {
 
         $stmt->close();
         
-        if (!isset($poke->id)) 
-            $poke->id = $account->email . ',' . $whichProfile . ',' . Utils::generateUniqueID($ids);
+        if (!isset($poke->myID))
+            $poke->myID = Utils::generateUniqueID($ids);
 
         Utils::setPokeData($saveData, $poke, $pokeNum . 'num', 'num');
         Utils::setPokeData($saveData, $poke, $pokeNum . 'nickname', 'nickname');

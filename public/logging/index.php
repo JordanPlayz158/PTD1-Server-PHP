@@ -67,7 +67,7 @@ if(session_start()) {
                         $value1 = match ($key1) {
                             'time' => '<td>' . date('d/M/Y H:i:  O', $value1),
                             'ip' => "<td id='ip'><p>$value1</p>",
-                            'post_data' => "<td class='post_data'>$buttons<p>$value1</p>",
+                            'post_data' => "<td class='post_data'>$buttons<p>" . urldecode($value1) . "</p>",
                             default => "<td>$value1",
                         };
             
