@@ -1,168 +1,98 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Account.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Poke.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/../Keygen.php');
+$response = '';
 
-class Utils {
-    public static MySQL $mysql;
-    private static string $response = '';
-    public static array $config;
+function urlVariablesToArray($urlVariables) : array {
+    $responseData = array();
 
-    public static function urlVariablesToArray($urlVariables) : array {
-        $responseData = array();
+    foreach (explode('&', $urlVariables) as $urlVariable) {
+        $keyAndValue = explode('=', $urlVariable);
 
-        foreach (explode('&', $urlVariables) as $urlVariable) {
-            $keyAndValue = explode('=', $urlVariable);
-    
-            $responseData[$keyAndValue[0]] = $keyAndValue[1];
+        $responseData[$keyAndValue[0]] = $keyAndValue[1];
+    }
+
+    return $responseData;
+}
+
+function getResponse() : string {
+    global $response;
+
+    return $response;
+}
+
+function response(string $key, $value) {
+    global $response;
+
+    $response .= trim(chr(38 * (strlen($response) != 0))) . $key . '=' . $value;
+}
+
+function httpsOnly() {
+    if (getallheaders()['X-Forwarded-Proto'] == "http") {
+        exit('You are unable to access the logging login page via http, please connect through https in order to do so!');
+    }
+}
+
+function getAccountDataByEmail(mysqli $conn, string $table, string $email) : array|null {
+    $stmt = $conn->prepare("SELECT * FROM $table WHERE email = ?");
+
+    if(!$stmt) {
+        echo $conn->errno . " " . $conn->error;
+        return null;
+    }
+
+    $bind = $stmt->bind_param('s', $email);
+
+    if(!$bind) {
+        echo $conn->errno . " " . $conn->error;
+        return null;
+    }
+
+    $execute = $stmt->execute();
+
+    if(!$execute) {
+        echo $conn->errno . " " . $conn->error;
+        return null;
+    }
+
+    $meta = $stmt->result_metadata();
+    while ($field = $meta->fetch_field()) {
+        $params[] = &$row[$field->name];
+    }
+
+    $bind = call_user_func_array(array($stmt, 'bind_result'), $params);
+
+    if(!$bind) {
+        echo $conn->errno . " " . $conn->error;
+        return null;
+    }
+
+    $result = null;
+
+    while ($stmt->fetch()) {
+        foreach ($row as $key => $val) {
+            $c[$key] = $val;
         }
-
-        return $responseData;
+        $result[] = $c;
     }
 
-    public static function getPokeByID($pokes, $id) : Poke {
-        foreach($pokes as $poke) {
-            if($poke->myID == $id)
-                return $poke;
-        }
-    
-        return new Poke();
+    $stmt->close();
+
+    return $result;
+}
+
+function logMySQL(mysqli $conn) {
+    $response = urlVariablesToArray(getResponse());
+    $responseResult = "Result={$response['Result']}";
+
+    if(isset($response['Reason'])) {
+        $responseResult .= "&Reason={$response['Reason']}";
     }
 
-    public static function setPokeData($saveData, Poke $poke, $postKey, $pokeVariable) {
-        if(isset($saveData[$postKey]))
-            $poke -> $pokeVariable = $saveData[$postKey];
-    }
+    $ip = getallheaders()['X-Forwarded-For'];
+    $time = time();
+    $body = file_get_contents('php://input');
 
-    public static function getResponse() : string {
-        global $response;
-
-        return $response;
-    }
-    
-    public static function response(string $key, $value) {
-        global $response;
-    
-        $response .= trim(chr(38 * (strlen($response) != 0))) . $key . '=' . $value;
-    }
-    
-    /*public static function generateValidTrainerID($trainerIds) : int {
-        $valid = false;
-
-        while (!$valid) {
-            $tmp = mt_rand(333, 99999);
-            $valid = true;
-
-            foreach ($trainerIds as $trainerId) {
-                if ($tmp == $trainerId[0]) {
-                    $valid = false;
-                    break;
-                }
-            }
-        }
-        
-        return $tmp;
-    }*/
-    
-    public static function generateValidProfileID(/*$trainerID*/) : string {
-        // this keygen is just for a hacker check, so I hardcoded the profileId
-        // if for whatever reason you want to have random trainer and profileIds then
-        // I'll leave the Keygen code in just in case (and as we made it look nice and perform well)
-        //return generateProfileId(10000000000000, $trainerID);
-
-        //generateProfileId(10000000000000, 333); results in the output below
-        return 'ikkg';
-    }
-    
-    public static function generateUniquePokeID($pokes) : int {
-        $valid = false;
-        
-        while (!$valid) {
-            $tmp = mt_rand(1, 999999);
-            $valid = true;
-
-            foreach ($pokes as $poke) {
-                if ($tmp == $poke->myID) {
-                    $valid = false;
-                    break;
-                }
-            }
-        }
-
-        return $tmp;
-    }
-
-    public static function generateUniqueID($ids) : int {
-        $valid = false;
-        
-        while (!$valid) {
-            $tmp = mt_rand(1, 999999);
-            $valid = true;
-
-            foreach($ids as $id) {
-                if ($tmp == $id[0]) {
-                    $valid = false;
-                    break;
-                }
-            }
-        }
-
-        return $tmp;
-    }
-
-    // If the file is empty or under 2 characters in length (invalid json) then the file will be overwritten with the desired contents from $string
-    public static function setEmptyFileContents($file, $string) {
-        if (!file_exists($file) || strlen(file_get_contents($file)) < 2) {
-            $file = fopen($file, 'w');
-            fwrite($file, $string);
-            fclose($file);
-        }
-    }
-
-    /**
-     * Generate a random string, using a cryptographically secure
-     * pseudorandom number generator (random_int)
-     *
-     * For PHP 7, random_int is a PHP core function
-     * For PHP 5.x, depends on https://github.com/paragonie/random_compat
-     *
-     * @param int $length How many characters do we want?
-     * @param string $keyspace A string of all possible characters
-     *                         to select from
-     * @return string
-     * @throws Exception
-     */
-    private static function generatePass(int $length, string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') : string {
-        $str = '';
-        $max = mb_strlen($keyspace, '8bit') - 1;
-
-        if ($max < 1)
-            throw new Exception('$keyspace must be at least two characters long');
-
-        for ($i = 0; $i < $length; ++$i)
-            $str .= $keyspace[random_int(0, $max)];
-
-        return $str;
-    }
-
-    public static function getConfigFileDefault() : string {
-        try {
-            return "{\n  \"maintenance\": false,\n  \"timezone\": \"\",\n  \"pass\":
-                         \"" . Utils::generatePass(32) . "\",\n  \"mysql\": {\n
-                            \"hostname\": \"\",\n    \"username\": \"\",\n 
-                                   \"password\": \"\",\n    \"db\": \"\"\n  }\n}";
-        } catch (Exception $e) {
-            return "Utils::generatePass thrown an exception, $e";
-        }
-    }
-
-    public static function getConfigFile() : string {
-        return $_SERVER['DOCUMENT_ROOT'] . '/../config.json';
-    }
-
-    public static function httpsOnly() {
-        if(getallheaders()['X-Forwarded-Proto'] == "http") {
-            exit('You are unable to access the logging login page via http, please connect through https in order to do so!');
-        }
-    }
+    $stmt = $conn->prepare('INSERT INTO logs VALUES (?, ?, ?, ?);');
+    $stmt->bind_param('isss', $time, $ip, $body, $responseResult);
+    $stmt->execute();
+    $stmt->close();
 }

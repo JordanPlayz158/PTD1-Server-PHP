@@ -26,4 +26,22 @@ class Save {
     public int $version = 2;
     public array $pokes = array();
     public array $items = array();
+
+    public function parse(array $save) {
+        $this->num = $save['num'];
+        $this->advanced = $save['advanced'];
+        $this->advanced_a = $save['advanced_a'];
+        $this->nickname = $save['nickname'];
+        $this->badges = $save['badges'];
+        $this->avatar = $save['avatar'];
+        $this->classic = $save['classic'];
+        $this->classic_a = $save['classic_a'];
+        $this->challenge = $save['challenge'];
+        $this->money = $save['money'];
+        $this->npcTrade = $save['npcTrade'];
+        $this->shinyHunt = $save['shinyHunt'];
+        $this->version = $save['version'];
+
+        $this->items = unserialize($save['items']);
+    }
 }

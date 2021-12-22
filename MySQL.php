@@ -6,8 +6,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/../objects/Poke.php';
 class MySQL {
     public mysqli $conn;
 
-    function __construct() {
-        $mysqlConfig = Utils::$config['mysql'];
+    function __construct(array $config) {
+        $mysqlConfig = $config['mysql'];
 
         //$driver = new mysqli_driver();
         //$driver->report_mode = MYSQLI_REPORT_STRICT|MYSQLI_REPORT_ERROR;
@@ -81,6 +81,26 @@ class MySQL {
             PRIMARY KEY(email, num, id)
         ); ';
 
+        $makeAchievementsTable = 'CREATE TABLE IF NOT EXISTS achievements (
+            email VARCHAR(255) NOT NULL,
+            one CHAR(4),
+            two TINYINT(1) unsigned,
+            three TINYINT(1) unsigned,
+            four TINYINT(1) unsigned,
+            five TINYINT(1) unsigned,
+            six TINYINT(1) unsigned,
+            seven TINYINT(1) unsigned,
+            eight TINYINT(1) unsigned,
+            nine TINYINT(1) unsigned,
+            ten TINYINT(1) unsigned,
+            eleven TINYINT(1) unsigned,
+            twelve TINYINT(1) unsigned,
+            thirteen TINYINT(1) unsigned,
+            fourteen TINYINT(1) unsigned,
+    
+            PRIMARY KEY(email)
+        ); ';
+
         $makeLogsTable = 'CREATE TABLE IF NOT EXISTS logs (
             time INT(10) unsigned,
             ip VARCHAR(255),
@@ -88,7 +108,7 @@ class MySQL {
             response LONGTEXT
         ); ';
 
-        $makeTables = $makePokesTable . $makeSavesTable . $makeAccountsTable . $makeLogsTable;
+        $makeTables = $makePokesTable . $makeSavesTable . $makeAchievementsTable . $makeAccountsTable . $makeLogsTable;
         if($conn->multi_query($makeTables) or die($conn->error)) {
             do {
                 if ($result = $conn -> store_result()) {
@@ -149,7 +169,6 @@ class MySQL {
                         $pokeStmt = $conn->prepare('INSERT INTO pokes VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
                         $pokeStmt->bind_param('siiisiiiiiiiiisssii', $email, $i, $poke->myID, $poke->num, $poke->nickname, $poke->exp, $poke->lvl, $poke->m1, $poke->m2, $poke->m3,
                             $poke->m4, $poke->ability, $poke->mSel, $poke->targetType, $poke->tag, $poke->item, $poke->owner, $poke->pos, $poke->shiny);
-
                     } else {
                         $columns = $this->getColumns($reason);
                         $query = 'UPDATE pokes SET ';
@@ -167,6 +186,15 @@ class MySQL {
                         $columns[0] .= 'sii';
 
                         $pokeStmt = $conn->prepare($query);
+
+                        if(!$pokeStmt) {
+                            if(isset($_POST['debug'])) {
+                                echo $query;
+                            }
+
+                            exit("Result=Failure&Reason=DatabaseConnection");
+                        }
+
                         array_push($columns, $email, $i, $poke->myID);
 
                         call_user_func_array(array($pokeStmt, 'bind_param'), $columns);
@@ -179,6 +207,13 @@ class MySQL {
         }
 
         $savesStmt->close();
+
+        $achievementsStmt = $conn->prepare('INSERT IGNORE INTO achievements VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $defaultAchievementOne = "0000";
+        $defaultAchievementValue = 0;
+        $achievementsStmt->bind_param('ssiiiiiiiiiiiii', $email, $defaultAchievementOne, $defaultAchievementValue, $defaultAchievementValue, $defaultAchievementValue, $defaultAchievementValue, $defaultAchievementValue, $defaultAchievementValue, $defaultAchievementValue, $defaultAchievementValue, $defaultAchievementValue, $defaultAchievementValue, $defaultAchievementValue, $defaultAchievementValue, $defaultAchievementValue);
+        $achievementsStmt->execute();
+        $achievementsStmt->close();
     }
 
     public function newGame($account, $whichProfile) {
@@ -205,12 +240,27 @@ class MySQL {
         $stmt->close();
     }
 
+    public function releasePoke($email, $saveNum, $pokeId) {
+        $conn = $this->conn;
+        $stmt = $conn->prepare('DELETE FROM pokes WHERE email = ? AND num = ? AND id = ?');
+
+        $stmt->bind_param('sii', $email, $saveNum, $pokeId);
+        $stmt->execute();
+
+        $stmt->close();
+    }
+
     function getColumns(string $reason) : array {
         $columnsToModify = array(0 => '');
 
         $reason = explode('|', $reason);
         foreach ($reason as $column) {
             switch ($column) {
+                case 'trade':
+                    $columnsToModify[0] .= 'isiiiiiiiiisssi';
+                    array_push($columnsToModify, 'pNum', 'nickname', 'exp', 'lvl', 'm1', 'm2', 'm3', 'm4', 'ability', 'mSel',
+                        'targetType', 'tag', 'item', 'owner', 'pos');
+                    break;
                 case 'evolve':
                     $columnsToModify[0] .= 'is';
                     array_push($columnsToModify, 'pNum', 'nickname');

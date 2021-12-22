@@ -1,7 +1,7 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 
-function saveAccount($account, $mysql, $saveData) {
+function saveAccount(Account $account, MySQL $mysql, array $saveData) {
     $conn = $mysql->conn;
 
     // myTID is TrainerID (saveAccount Action)
@@ -25,18 +25,41 @@ function saveAccount($account, $mysql, $saveData) {
 
     $save = $saves[$whichProfile];
 
+    /*
+     * UPDATE CODE:
+     * Minimum values are not accounted for, the minimum values the request sends after successful save is
+     * dex1
+     * dex1Shiny
+     * dex1Shadow
+     * whichProfile
+      * a_story (advanced)
+     * a_story_a (advanced_a)
+     * c_story (classic)
+     * c_story_a (classic_a)
+     * Badges
+     * Challenge
+     * NPCTrade
+     * ShinyHunt
+     * Money
+     * Nickname
+     * Version
+     * Avatar
+     * HMP
+     * HMI
+     */
+
     $aStory = 'a_story';
     $save->advanced = intval($saveData[$aStory]);
-    
+
     $aStory = $aStory . '_a';
     $save->advanced_a = intval($saveData[$aStory]);
-    
+
     $cStory = 'c_story';
     $save->classic = intval($saveData[$cStory]);
-    
+
     $cStory = $cStory . '_a';
     $save->classic_a = intval($saveData[$cStory]);
-    
+
     $save->badges = intval($saveData['badges']);
     $save->challenge = intval($saveData['challenge']);
     $save->npcTrade = intval($saveData['NPCTrade']);
@@ -47,18 +70,18 @@ function saveAccount($account, $mysql, $saveData) {
     $save->avatar = $saveData['Avatar'];
 
     $pokes = $save->pokes;
-    
+
     for ($i = 1; $i <= intval($saveData['HMP']); $i++) {
         $pokeNum = 'poke' . $i . '_';
         // This is not finding a pokemon so it is returning a new one
-        $poke = Utils::getPokeByID($pokes, intval($saveData[$pokeNum . 'myID']));
+        $poke = getPokeByID($pokes, intval($saveData[$pokeNum . 'myID']));
         // isset($poke->myID) ? true : false
         // Was changed from above, if issues occur, change back
         $pokeExisted = isset($poke->myID);
 
         if (!$pokeExisted || $poke->myID == 0)
-            $poke->myID = Utils::generateUniquePokeID($pokes);
-            
+            $poke->myID = generateUniquePokeID($pokes);
+
         $poke->reason = $saveData[$pokeNum . 'reason'];
 
         $stmt = $conn->prepare('SELECT id FROM pokes WHERE email = ?');
@@ -74,35 +97,37 @@ function saveAccount($account, $mysql, $saveData) {
         }
 
         $stmt->close();
-        
-        if (!isset($poke->myID))
-            $poke->myID = Utils::generateUniqueID($ids);
 
-        Utils::setPokeData($saveData, $poke, $pokeNum . 'num', 'num');
-        Utils::setPokeData($saveData, $poke, $pokeNum . 'nickname', 'nickname');
-        Utils::setPokeData($saveData, $poke, $pokeNum . 'exp', 'exp');
-        Utils::setPokeData($saveData, $poke, $pokeNum . 'lvl', 'lvl');
+        if (!isset($poke->myID))
+            $poke->myID = generateUniqueID($ids);
+
+        setPokeData($saveData, $poke, $pokeNum . 'num', 'num');
+        setPokeData($saveData, $poke, $pokeNum . 'nickname', 'nickname');
+        setPokeData($saveData, $poke, $pokeNum . 'exp', 'exp');
+        setPokeData($saveData, $poke, $pokeNum . 'lvl', 'lvl');
 
         for ($m = 1; $m <= 4; $m++)
-            Utils::setPokeData($saveData, $poke, $pokeNum . 'm' . $m, 'm' . $m);
+            setPokeData($saveData, $poke, $pokeNum . 'm' . $m, 'm' . $m);
 
-        Utils::setPokeData($saveData, $poke, $pokeNum . 'ability', 'ability');
-        Utils::setPokeData($saveData, $poke, $pokeNum . 'mSel', 'mSel');
-        Utils::setPokeData($saveData, $poke, $pokeNum . 'targetType', 'targetType');
-        Utils::setPokeData($saveData, $poke, $pokeNum . 'tag', 'tag');
-        Utils::setPokeData($saveData, $poke, $pokeNum . 'item', 'item');
-        Utils::setPokeData($saveData, $poke, $pokeNum . 'owner', 'owner');
-        Utils::setPokeData($saveData, $poke, $pokeNum . 'pos', 'pos');
+        setPokeData($saveData, $poke, $pokeNum . 'ability', 'ability');
+        setPokeData($saveData, $poke, $pokeNum . 'mSel', 'mSel');
+        setPokeData($saveData, $poke, $pokeNum . 'targetType', 'targetType');
+        setPokeData($saveData, $poke, $pokeNum . 'tag', 'tag');
+        setPokeData($saveData, $poke, $pokeNum . 'item', 'item');
+        setPokeData($saveData, $poke, $pokeNum . 'owner', 'owner');
+        setPokeData($saveData, $poke, $pokeNum . 'pos', 'pos');
 
         if (isset($saveData[$pokeNum . 'extra']))
-            $poke->shiny = intval(substr($saveData[$pokeNum . 'extra'], 0, 1));
+            $poke->shiny = getShiny($saveData[$pokeNum . 'extra']);
+
+        setPokeData($saveData, $poke, $pokeNum . 'shiny', 'shiny');
 
         if (!$pokeExisted) {
             /*
             if($poke->shiny == 1)
                 $save->p_hs++;
             */
-                $save->p_hs += ($poke->shiny == 1);
+            $save->p_hs += ($poke->shiny == 1);
 
             $pokes[] = $poke;
         }
@@ -115,21 +140,22 @@ function saveAccount($account, $mysql, $saveData) {
 
         $ii = 0;
         foreach ($pokes as $poke) {
-            $id = $poke -> myID;
+            $id = $poke->myID;
 
             if (in_array($id, $releasePokes)) {
                 /*
                 if ($poke -> shiny == 1)
                     $save -> p_hs--;
-                */  
-                    $save->p_hs -= ($poke->shiny == 1);
+                */
+                $save->p_hs -= ($poke->shiny == 1);
 
                 $numInArray[] = $ii;
+                $mysql->releasePoke($account->email, $whichProfile, $id);
             }
-        
+
             $ii++;
         }
-        
+
         foreach ($numInArray as $num)
             unset($pokes[$num]);
     }
@@ -137,23 +163,101 @@ function saveAccount($account, $mysql, $saveData) {
     $save->p_numPoke = count($pokes);
     $save->pokes = $pokes;
 
-    $iii = 1;
-    while (isset($saveData['item' . $iii . '_num'])) {
-        /*
-        $item = new Item();
-        $item->num = intval($saveData['item' . $iii . '_num']);
-        $save -> items[] = $item;
-        */
-            $itemNum = intval($saveData['item' . $iii . '_num']);
-            $save -> items[] = $itemNum;
-
-        $iii++;
+    /*
+     * We clear the list of items gathered from the db
+     * as the swf sends all the items in every save request
+     * so if we didn't clear the array, the items would be duplicated by 2 every time the person saves,
+     * which could cause something like this....
+     * https://cdn.jordanplayz158.xyz/uploads/db645002741a1f21f1787f60199e3a8548e83dc9.png
+     * https://cdn.jordanplayz158.xyz/uploads/2df7bb33b7040c9b02f04dc780c50049ce765b7e.png
+     * https://cdn.jordanplayz158.xyz/uploads/ad4df5ed9aa2e6a024ddf05e5190b10a55e56293.png
+     * https://cdn.jordanplayz158.xyz/uploads/3f52fb0489544ff69f090e3fd8e27152337bbb7f.png (especially this lol)
+     * https://cdn.jordanplayz158.xyz/uploads/a81b46ea69dc2b9f0921bcb9bf003e0b1436626d.png
+     */
+    if (isset($_POST['debug'])) {
+        print_r($save->items);
     }
-    
-    $save -> p_numItem = intval($saveData['HMI']);
+    $save->items = array();
+    for ($i = 1; $i <= intval($saveData['HMI']); $i++) {
+        $save->items[] = intval($saveData['item' . $i . '_num']);
+    }
+    if(isset($_POST['debug'])) {
+        print_r($save->items);
+    }
 
-    //print_r($account);
+    $save->p_numItem = intval($saveData['HMI']);
 
-    Utils::$mysql->saveAccount($account);
-    loadAccount($account);
+    $mysql->saveAccount($account);
+
+    response('Result', 'Success');
+    response('newSave', 10000000000000);
+
+    foreach ($pokes as $poke) {
+        response('newPokePos_' . $poke->pos, $poke->myID);
+    }
+}
+
+function getPokeByID($pokes, $id) : Poke {
+    foreach($pokes as $poke) {
+        if($poke->myID == $id)
+            return $poke;
+    }
+
+    return new Poke();
+}
+
+// SHOULD NOT EXIST
+// Note to self: Please stop being lazy and refactor the code to actually see what values are sent
+// rather than this garbage (refer to MySQL function getColumns)
+function setPokeData($saveData, Poke $poke, $postKey, $pokeVariable) {
+    if(isset($saveData[$postKey]))
+        $poke -> $pokeVariable = $saveData[$postKey];
+}
+
+function generateUniquePokeID(array $pokes) : int {
+    $valid = false;
+
+    while (!$valid) {
+        $tmp = mt_rand(1, 999999);
+        $valid = true;
+
+        foreach ($pokes as $poke) {
+            if ($tmp == $poke->myID) {
+                $valid = false;
+                break;
+            }
+        }
+    }
+
+    return $tmp;
+}
+
+function generateUniqueID(array $ids) : int {
+    $valid = false;
+
+    while (!$valid) {
+        $tmp = mt_rand(1, 999999);
+        $valid = true;
+
+        foreach($ids as $id) {
+            if ($tmp == $id[0]) {
+                $valid = false;
+                break;
+            }
+        }
+    }
+
+    return $tmp;
+}
+
+function getShiny(string $extra) : int {
+    return match ($extra) {
+        // extra 151 = shiny
+        '151' => 1,
+        // extra 555 = shadow
+        '555' => 2,
+        // extra 210 = normal
+        // assuming anything else is normal at the moment
+        default => 0,
+    };
 }

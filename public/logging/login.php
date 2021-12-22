@@ -1,7 +1,7 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 
-Utils::httpsOnly();
+httpsOnly();
 
 if($_SERVER['REQUEST_METHOD'] == "POST") {
     if (session_start()) {
@@ -16,7 +16,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 <html lang="en">
 <head>
     <title>Logging - Login</title>
-    <link rel="stylesheet" type="text/css" href="logging.css">
+    <link rel="stylesheet" type="text/css" href="../games/ptd/admin/admin.css">
 </head>
 <body>
     <h1>Login</h1>

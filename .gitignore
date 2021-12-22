@@ -1,4 +1,4 @@
-config.json
+config.php
 accounts.beforeTesting.json
 
 # Eclipse PDT Files
@@ -11,6 +11,9 @@ accounts.beforeTesting.json
 
 # IntelliJ PHPStorm Files
 .idea
+
+# Composer files
+vendor
 
 # Personal Files that I use for various purposes such as getting the items and saves table and
 # merging them in php and pushing them to new table in mysql as I can't be asked to learn mysql

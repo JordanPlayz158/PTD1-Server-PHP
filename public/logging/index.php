@@ -1,15 +1,14 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 
-Utils::httpsOnly();
+httpsOnly();
 
 if(session_start()) {
     if (isset($_SESSION['token'])) {
-        Utils::setEmptyFileContents(Utils::getConfigFile(), Utils::getConfigFileDefault());
+        $config = require($_SERVER['DOCUMENT_ROOT'] . '/../config.php');
+        $pass = $config['pass'];
 
-        Utils::$config = $config = json_decode(file_get_contents(Utils::getConfigFile()), true);
-
-        if ($config['pass'] == $_SESSION['token']) {
+        if (!empty($pass) && $pass == $_SESSION['token']) {
             if (strlen($config['timezone']) > 0) {
                 date_default_timezone_set($config['timezone']);
             }
@@ -33,8 +32,9 @@ if(session_start()) {
 <body>
     <?php
         require_once($_SERVER['DOCUMENT_ROOT'] . '/../MySQL.php');
+        global $config;
 
-        $mysql = new MySQL();
+        $mysql = new MySQL($config);
 
         $result = $mysql->conn->query('SELECT * FROM logs');
         $arr = array_reverse($result -> fetch_all(MYSQLI_ASSOC));
