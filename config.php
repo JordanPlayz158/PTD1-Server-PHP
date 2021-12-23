@@ -1,19 +1,19 @@
 <?php
 return [
     'maintenance' => false,
-    'timezone' => 'America/New_York',
-    'pass' => 'UOA84Wd0XkHGzre6PSmKAW3tZs2CzuE4',
+    'timezone' => '',
+    'pass' => '',
     'mysql' => [
-        'hostname' => '192.168.1.100',
-        'username' => 'ptd1',
-        'password' => 'WFvisPQu%^3^@7^9emg3863hDQ42nmY8',
-        'db' => 'ptd1'
+        'hostname' => '',
+        'username' => '',
+        'password' => '',
+        'db' => ''
     ],
     'mail' => [
-        'host' => 'smtp.gmail.com',
-        'port' => 587,
-        'encryption' => 'tls',
-        'username' => 'PokemonTowerDefense.noreply@gmail.com',
-        'password' => 'v*xUvGA!yqeTUC%y628$P*kTmf8R4e7n'
+        'host' => '',
+        'port' => 0,
+        'encryption' => '',
+        'username' => '',
+        'password' => ''
     ]
 ];
