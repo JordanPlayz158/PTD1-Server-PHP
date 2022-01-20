@@ -105,6 +105,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             $achievements = $achievements[0];
             $number = strtolower(substr($action, 11));
 
+            if(intval($number) != 0) {
+              $number = intNumberToString($number);
+            }
+
             foreach (str_split($achievements[$number]) as $num) {
                 if($num == 0) {
                     response("Result", "Failure");
@@ -112,6 +116,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                     exit(getResponse());
                 }
             }
+
+            // Need to code 7 and above as they send pokemon to pokecenter
+            // So will need to do that on the backend
 
             response("Result", "Success");
             response("Reason", "getPrize" . stringNumberToInt($number));

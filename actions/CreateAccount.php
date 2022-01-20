@@ -6,7 +6,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/../objects/Save.php');
 function createAccount(MySQL $mysql) {
     $account = new Account();
     $account->email = $_POST['Email'];
-    $account->pass = $_POST['Pass'];
+    $account->pass = password_hash($_POST['Pass'], PASSWORD_DEFAULT);
 
     /*
      * Don't make any saves on create account

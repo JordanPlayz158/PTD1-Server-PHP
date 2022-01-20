@@ -41,13 +41,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $accounts = getAccountDataByEmail($conn, 'accounts', $_POST['Email']);
 
-    if(count($accounts) === 0) {
+    if($accounts == null || count($accounts) === 0) {
         response('Result', 'Failure');
         response('Reason', 'NotFound');
 
         echo getResponse();
         return;
-    } else if(count($accounts) >= 1 && $_POST['Pass'] !== $accounts[0]['pass']) {
+    } else if(count($accounts) >= 1 && password_verify($_POST['Pass'], $accounts[0]['pass']) === false) {
         response('Result', 'Failure');
         response('Reason', 'taken');
 
