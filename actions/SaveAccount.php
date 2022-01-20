@@ -252,12 +252,36 @@ function generateUniqueID(array $ids) : int {
 
 function getShiny(string $extra) : int {
     return match ($extra) {
-        // extra 151 = shiny
-        '151' => 1,
-        // extra 555 = shadow
-        '555' => 2,
-        // extra 210 = normal
-        // assuming anything else is normal at the moment
+        /* Shiny
+         * Geodude & Graveler = 1
+         * Magnemite & Magneton = 2
+         * Tentacool & Tentacruel = 3
+         * Onix = 4
+         * Staryu & Starmie = 5
+         * Voltorb & Electrode = 6
+         * Hitmonlee & Hitmonchan = 153
+         * Omanyte & Omastar & Kabuto & Kabutops = 168
+         * Missing No. = 182
+         * Articuno & Zapdos & Moltres = 854
+         * Generic = 151
+         */
+        '1', '2', '3', '4', '5', '6', '151', '153', '168', '182', '854' => 1,
+        /* Shadow
+         * Lickitung = 180
+         * Articuno & Zapdos & Moltres = 855
+         * Generic = 555
+         */
+        '180', '555', '855' => 2,
+        /* Normal
+         * Hitmonlee & Hitmonchan = 152
+         * Missing No. = 181
+         * Mew = 201
+         * Omanyte & Omastar & Kabuto & Kabutops = 154
+         * Articuno & Zapdos & Moltres = 857
+         * Generic = 0
+         *
+         * Assuming anything else is normal at the moment
+         */
         default => 0,
     };
 }

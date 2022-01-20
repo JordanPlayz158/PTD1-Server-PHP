@@ -87,9 +87,14 @@ function logMySQL(mysqli $conn) {
         $responseResult .= "&Reason={$response['Reason']}";
     }
 
-    $ip = getallheaders()['X-Forwarded-For'];
+    $ip = $_SERVER['REMOTE_ADDR'];
+
     $time = time();
     $body = file_get_contents('php://input');
+
+    $passVariable = strpos($body, "Pass=");
+    $endOfAnd = strpos($body, "&", $passVariable);
+    $body = substr($body, 0, $passVariable) . substr($body, $endOfAnd + 1);
 
     $stmt = $conn->prepare('INSERT INTO logs VALUES (?, ?, ?, ?);');
     $stmt->bind_param('isss', $time, $ip, $body, $responseResult);

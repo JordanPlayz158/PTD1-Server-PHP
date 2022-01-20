@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Trading</title>
+    <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
+    <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
+    <link rel='stylesheet' type='text/css' href="/_static/css/style.css">
+    <!--<script type='text/javascript' src='logging.js'></script>-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
+    </script>
+    <script>
+        $(function () {
+            $('#header').load('/_static/html/header.html');
+            $('#nav').load('/_static/html/nav.html');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            let saveNum = urlParams.get('save');
+
+            if(saveNum === null || saveNum < 0) {
+                saveNum = 0;
+            } else if(saveNum > 2) {
+                saveNum = 2;
+            }
+
+            $.ajax({
+                url: '/api/getSaves/?save=' + saveNum,
+                type: "GET",
+                success: function (result) {
+                    const saves = JSON.parse(result);
+
+                    let save = saves[0];
+                    document.getElementById('saveName').innerHTML = save['nickname'];
+                    document.getElementById('badges').innerHTML += save['badges'];
+                    document.getElementById('money').innerHTML += save['money'];
+
+                    if(save['pokes'] != null) {
+                        let counter = 3;
+                        let row = -1;
+                        save['pokes'].forEach(poke => {
+                            if (counter % 3 === 0) {
+                                document.getElementById('contentDiv').innerHTML += "<div style='width: 100%; display: flex; flex-direction: row; justify-content: center;' class='center' id='row" + counter + "'>"
+                                row = counter;
+                            }
+
+                            let elementId = 'contentDiv';
+
+                            if (document.getElementById('row' + row) !== null) {
+                                elementId = 'row' + row;
+                            }
+
+                            console.log(poke);
+
+                            var div = document.createElement('div');
+                            div.className = 'block content center';
+
+                            var img = document.createElement('img');
+
+                            if (poke['shiny'] === 1) {
+                                img.src = '/_static/images/pokemon/s_' + poke['pNum'] + '.png'
+                            } else {
+                                img.src = '/_static/images/pokemon/' + poke['pNum'] + '.png';
+                            }
+                            img.alt = '[Avatar]';
+
+                            div.append(img, document.createElement('br'), poke['nickname'], document.createElement('hr'),
+                                'Level: ', poke['lvl'], document.createElement('br'));
+
+                            var a = document.createElement('a');
+                            a.href = '/games/ptd/trade.php?save=' + saveNum + '&pokeId=' + poke['id'];
+                            a.text = 'Trade';
+
+                            div.append(a);
+
+                            document.getElementById(elementId).append(div);
+
+                            if (counter % 6 === 0) {
+                                document.getElementById('contentDiv').innerHTML += '</div>'
+                            }
+
+                            counter++;
+                        })
+                    } else {
+                        document.getElementById('contentDiv').innerHTML += 'No Pokemon Found!'
+                    }
+
+
+                    console.log(saves);
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+            })
+        })
+    </script>
+</head>
+<body>
+<div id="header"></div>
+<div id="content">
+    <div id="nav"></div>
+    <table id="content_table">
+        <tbody>
+        <tr>
+            <td id="sidebar">
+                <div class="block currentProfile">
+                        <h3 style="padding: 0">Current Profile:</h3>
+                        <img src="/_static/images/4826.svg" alt="Avatar" width="11">
+                        <p style="display: inline-block" id="saveName"></p>
+                        <hr>
+                        <div id="profileInfo">
+                            <p id="badges">Badges: </p>
+                            <p id="money">Money: </p>
+                        </div>
+                    </div>
+            </td>
+            <td id="main">
+                <div class="block">
+                    <div class="title center">
+                        <p>Pokemon</p>
+                    </div>
+                    <div class="content center" id="contentDiv"></div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
