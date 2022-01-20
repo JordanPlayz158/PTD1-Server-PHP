@@ -1,4 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE cross-domain-policy SYSTEM
+        "https://www.adobe.com/xml/dtds/cross-domain-policy.dtd">
 <cross-domain-policy>
    <site-control permitted-cross-domain-policies="master-only"/>
-   <allow-access-from domain="*"/>
+   <allow-access-from-identity>
+      <signatory>
+         <certificate
+                 fingerprint="C1:56:AC:CC:91:23:04:D9:49:40:93:08:3F:15:0D:97:F0:0B:6A:85"
+                 fingerprint-algorithm="sha-1"/>
+      </signatory>
+   </allow-access-from-identity>
+   <allow-access-from domain="*" to-ports="*" secure="true"/>
 </cross-domain-policy>
