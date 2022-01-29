@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Save Selection</title>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
+    <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
+    <link rel='stylesheet' type='text/css' href="/_static/css/style.css">
+    <!--<script type='text/javascript' src='logging.js'></script>-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
+    </script>
+    <script>
+        $(function () {
+            $("#header").load("../../_static/html/header.html");
+            $("#nav").load("../../_static/html/nav.html");
+        });
+
+        $.ajax({
+            url: "/api/getSaves/?exclude=pokes",
+            type: "GET",
+            success: function (result) {
+                const saves = JSON.parse(result);
+
+                let counter = 0;
+                saves.forEach(save => {
+                    const buttonDiv = document.createElement("div");
+                    buttonDiv.className = 'save'
+
+                    const button = document.createElement("button");
+                    button.id = counter;
+                    button.onclick = function () {
+                        location.href = '/games/ptd/trading.html?save=' + button.id;
+                    }
+
+                    const div = document.createElement("div");
+                    div.className = 'block content';
+
+                    const avatar = document.createElement("img");
+                    avatar.src = '/_static/images/avatars/' + save['avatar'] + '.png';
+                    avatar.alt = 'avatar';
+
+                    div.append(avatar)
+                    div.innerHTML += "<br>" + save['nickname'];
+
+                    console.log(save['nickname']);
+                    console.log(save['avatar']);
+
+                    counter++;
+
+                    button.append(div);
+
+                    buttonDiv.append(button);
+                    document.getElementById('contentDiv').append(buttonDiv);
+                });
+
+
+                //console.log(saves);
+            },
+            error: function (error) {
+                console.log(error);
+            },
+        })
+    </script>
+</head>
+<body>
+<div id="header"></div>
+<div id="content">
+    <div id="nav"></div>
+    <table id="content_table">
+            <td id="main">
+                <div class="block center">
+                    <div class="title">
+                        <p>Profile Save Selection</p>
+                    </div>
+                    <div class="content" id="contentDiv"></div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

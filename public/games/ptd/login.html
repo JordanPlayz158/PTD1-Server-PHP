@@ -14,6 +14,17 @@
         $(function () {
             $("#header").load("../../_static/html/header.html");
             $("#nav").load("../../_static/html/nav.html");
+
+            $.ajax({
+                url: '/api/login/',
+                type: "POST",
+                success: function (result) {
+                    console.log(saves);
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+            })
         });
     </script>
 </head>
@@ -30,7 +41,7 @@
                         <p>Log in</p>
                     </div>
                     <div class="content">
-                        <form action="account.php" method="post">
+                        <form action="/api/login/" method="post">
                             EMAIL:
                             <br>
                             <input class="text" name="email" type="text">
@@ -42,7 +53,7 @@
                             <br>
                             <br>
                             <div class="login_actions">
-                                <a href="reset_password.html">Lost Password?</a>
+                                <a href="reset_password_form.html">Lost Password?</a>
                                 <input value="Login" type="submit" class="login_btn">
                             </div>
                         </form>
