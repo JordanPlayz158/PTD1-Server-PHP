@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <title>Trading</title>
+    <meta charset="UTF-8">
     <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
     <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
     <link rel='stylesheet' type='text/css' href="/_static/css/style.css">
@@ -9,6 +10,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
     </script>
+    <script src="/_static/js/moves.js"></script>
     <script>
         $(function () {
             $('#header').load('/_static/html/header.html');
@@ -30,6 +32,7 @@
                     const saves = JSON.parse(result);
 
                     let save = saves[0];
+                    document.getElementById('saveAvatar').setAttribute('src', '/_static/images/avatars/' + save['avatar'] + '.png')
                     document.getElementById('saveName').innerHTML = save['nickname'];
                     document.getElementById('badges').innerHTML += save['badges'];
                     document.getElementById('money').innerHTML += save['money'];
@@ -52,25 +55,64 @@
                             console.log(poke);
 
                             var div = document.createElement('div');
-                            div.className = 'block content center';
+                            div.classList.add('block', 'pokemon_compact');
 
                             var img = document.createElement('img');
+                            img.className = 'image'
 
                             if (poke['shiny'] === 1) {
                                 img.src = '/_static/images/pokemon/s_' + poke['pNum'] + '.png'
-                            } else {
+                                div.classList.add('shiny');
+                            } else if (poke['shiny'] === 2)  {
                                 img.src = '/_static/images/pokemon/' + poke['pNum'] + '.png';
+                                div.classList.add('shadow');
+                            } else {
+                                img.src = "/_static/images/pokemon/" + poke['pNum'] + ".png";
                             }
                             img.alt = '[Avatar]';
 
-                            div.append(img, document.createElement('br'), poke['nickname'], document.createElement('hr'),
-                                'Level: ', poke['lvl'], document.createElement('br'));
+                            const nickname = document.createElement('span');
+                            nickname.className = 'name';
+                            nickname.innerHTML = poke['nickname'];
 
-                            var a = document.createElement('a');
+                            const level = document.createElement('span');
+                            level.className = 'level';
+                            level.innerHTML= 'lvl ' + poke['lvl'];
+
+                            const moves = document.createElement('div');
+                            moves.className = 'moves';
+
+                            const moves_table = document.createElement('table');
+
+                            for (let i = 1; i < 4; i += 2) {
+                                const moves_tr = document.createElement('tr');
+
+                                let move = document.createElement('td');
+                                move.className = 'left';
+                                move.innerHTML = get_move(poke['m' + i]);
+
+                                moves_tr.append(move);
+
+                                move = document.createElement('td')
+                                move.className = 'right';
+                                move.innerHTML = get_move(poke['m' + (i + 1)]);
+
+                                moves_tr.append(move);
+
+                                moves_table.append(moves_tr)
+                            }
+
+                            moves.append(moves_table);
+
+                            const actions = document.createElement('div');
+                            actions.className = 'actions';
+
+                            let a = document.createElement('a');
                             a.href = '/games/ptd/trade.php?save=' + saveNum + '&pokeId=' + poke['id'];
                             a.text = 'Trade';
+                            actions.append(a);
 
-                            div.append(a);
+                            div.append(img, nickname, level, moves, actions);
 
                             document.getElementById(elementId).append(div);
 
@@ -83,7 +125,6 @@
                     } else {
                         document.getElementById('contentDiv').innerHTML += 'No Pokemon Found!'
                     }
-
 
                     console.log(saves);
                 },
@@ -104,7 +145,7 @@
             <td id="sidebar">
                 <div class="block currentProfile">
                         <h3 style="padding: 0">Current Profile:</h3>
-                        <img src="/_static/images/4826.svg" alt="Avatar" width="11">
+                        <img id="saveAvatar" alt="Avatar">
                         <p style="display: inline-block" id="saveName"></p>
                         <hr>
                         <div id="profileInfo">
