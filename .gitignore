@@ -19,3 +19,6 @@ vendor
 # merging them in php and pushing them to new table in mysql as I can't be asked to learn mysql
 # syntax that's that advanced lol
 public/php/admin.php
+
+# Used for IntelliJ to properly check the validity of the crossdomain.xml file
+cross-domain-policy.dtd
