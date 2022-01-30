@@ -9,6 +9,10 @@ return [
         'password' => '',
         'db' => ''
     ],
+    'redis' => [
+        'port' => 6379,
+        'pass' => ""
+    ],
     'mail' => [
         'host' => '',
         'port' => 0,
