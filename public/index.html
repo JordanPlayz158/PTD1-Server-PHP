@@ -33,6 +33,10 @@
         tr:nth-child(even) {
             background-color: #dddddd;
         }
+
+        pre, code {
+            white-space: pre-line;
+        }
     </style>
 </head>
 <body>
@@ -55,15 +59,23 @@
         <td>
             This method required a bit more work
 
-            <p>Add the line below to your C:\Windows\System32\drivers\etc\hosts (Windows), /etc/hosts (Linux), ...
-                (Don't know about Mac)</p>
-            <code>
-                74.76.108.71 www.sndgames.com
-                <br>
-                74.76.108.71 samdangames.blogspot.com
-                <br>
-                74.76.108.71 www.snd-storage.com
-            </code>
+            Open Notepad as administrator
+
+            Hit File->Open then navigate to your hosts file for your specified OS found below
+
+            <p>Add the lines below to your hosts file</p>
+            <p>Windows: <code>C:\Windows\System32\drivers\etc\hosts</code></p>
+            <p>Mac & Linux: <code>/etc/hosts</code></p>
+            <pre>
+                <code>
+                    74.76.108.71 www.sndgames.com
+                    74.76.108.71 samdangames.blogspot.com
+                    74.76.108.71 www.snd-storage.com
+                    2603:7081:2a3e:99ac:c38b:2e46:cdd:2e82 www.sndgames.com
+                    2603:7081:2a3e:99ac:c38b:2e46:cdd:2e82 samdangames.blogspot.com
+                    2603:7081:2a3e:99ac:c38b:2e46:cdd:2e82 www.snd-storage.com
+                </code>
+            </pre>
             <p>After that, just get the <b>Vanilla</b> SWF from <a
                     href="https://web.archive.org/web/20210309125235/http://www.snd-storage.com/games/ptd/main.swf">archive.org</a>.
             </p>
