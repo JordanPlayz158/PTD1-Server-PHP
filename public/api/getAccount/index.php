@@ -15,7 +15,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
     $redis = new RedisCache($config);
 
     session_start();
-    $email = $redis->conn->get($_SESSION['account_token']);
+    $email = $redis->conn->get('sessions.' . $_SESSION['account_token']);
 
     $accounts = getAccountDataByEmail($conn, 'accounts', $email);
 

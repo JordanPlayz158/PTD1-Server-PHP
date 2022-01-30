@@ -35,21 +35,21 @@ function getAccountDataByEmail(mysqli $conn, string $table, string $email) : arr
     $stmt = $conn->prepare("SELECT * FROM $table WHERE email = ?");
 
     if(!$stmt) {
-        echo $conn->errno . " " . $conn->error;
+        echo $conn->errno . ' ' . $conn->error;
         return null;
     }
 
     $bind = $stmt->bind_param('s', $email);
 
     if(!$bind) {
-        echo $conn->errno . " " . $conn->error;
+        echo $conn->errno . ' ' . $conn->error;
         return null;
     }
 
     $execute = $stmt->execute();
 
     if(!$execute) {
-        echo $conn->errno . " " . $conn->error;
+        echo $conn->errno . ' ' . $conn->error;
         return null;
     }
 
@@ -61,7 +61,7 @@ function getAccountDataByEmail(mysqli $conn, string $table, string $email) : arr
     $bind = call_user_func_array(array($stmt, 'bind_result'), $params);
 
     if(!$bind) {
-        echo $conn->errno . " " . $conn->error;
+        echo $conn->errno . ' ' . $conn->error;
         return null;
     }
 
@@ -100,4 +100,28 @@ function logMySQL(mysqli $conn) {
     $stmt->bind_param('isss', $time, $ip, $body, $responseResult);
     $stmt->execute();
     $stmt->close();
+}
+
+/**
+ * Generate a random string, using a cryptographically secure
+ * pseudorandom number generator (random_int)
+ *
+ * For PHP 7, random_int is a PHP core function
+ * For PHP 5.x, depends on https://github.com/paragonie/random_compat
+ *
+ * @param int $length      How many characters do we want?
+ * @param string $keyspace A string of all possible characters
+ *                         to select from
+ * @return string
+ */
+function generatePass($length, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') : String {
+    $str = '';
+    $max = mb_strlen($keyspace, '8bit') - 1;
+    if ($max < 1) {
+        throw new Exception('$keyspace must be at least two characters long');
+    }
+    for ($i = 0; $i < $length; ++$i) {
+        $str .= $keyspace[random_int(0, $max)];
+    }
+    return $str;
 }

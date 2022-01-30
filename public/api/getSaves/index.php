@@ -21,7 +21,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
     $conn = $mysql->conn;
 
     $redis = new RedisCache($config);
-    $email = $redis->conn->get($_SESSION['account_token']);
+    $email = $redis->conn->get('sessions.' . $_SESSION['account_token']);
 
     if(isset($_GET['save'])) {
         $num = $_GET['save'];
