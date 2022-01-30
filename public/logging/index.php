@@ -98,35 +98,37 @@ if(session_start()) {
                 global $mysql;
                 $str = '';
 
-                foreach (array_keys($result[0]) as $key) {
-                    $str .= "                <th>$key</th>\n";
-                }
-                    
-                foreach ($result as $key => $value) {
-                    $str .= "\n            <tr>";
-                
-                    foreach ($value as $key1 => $value1) {
-                        $buttons = "<button id='Pretty'>Pretty</button><button id='Decode'>Decode</button><button id='Original'>Original</button><br>";
-
-                        $value1 = match ($key1) {
-                            'time' => '<td>' . date('d/M/Y H:i:  O', $value1),
-                            'ip' => "<td id='ip'><p>$value1</p>",
-                            'post_data' => "<td class='post_data'>$buttons<p>" . urldecode($value1) . "</p>",
-                            default => "<td>$value1",
-                        };
-            
-                        $value1 = "\n                $value1";
-            
-                        $str .= "$value1</td>";
+                if($result != null && count($result) > 0) {
+                    foreach (array_keys($result[0]) as $key) {
+                        $str .= "                <th>$key</th>\n";
                     }
-            
-                    $str .= "\n            </tr>";
-                }
-                $str .= '</tr>';
-            
-                echo $str;
 
-                $mysql->conn->close();
+                    foreach ($result as $key => $value) {
+                        $str .= "\n            <tr>";
+
+                        foreach ($value as $key1 => $value1) {
+                            $buttons = "<button id='Pretty'>Pretty</button><button id='Decode'>Decode</button><button id='Original'>Original</button><br>";
+
+                            $value1 = match ($key1) {
+                                'time' => '<td>' . date('d/M/Y H:i:  O', $value1),
+                                'ip' => "<td id='ip'><p>$value1</p>",
+                                'post_data' => "<td class='post_data'>$buttons<p>" . urldecode($value1) . "</p>",
+                                default => "<td>$value1",
+                            };
+
+                            $value1 = "\n                $value1";
+
+                            $str .= "$value1</td>";
+                        }
+
+                        $str .= "\n            </tr>";
+                    }
+                    $str .= '</tr>';
+
+                    echo $str;
+
+                    $mysql->conn->close();
+                }
             ?>
         </tbody>
     </table>
