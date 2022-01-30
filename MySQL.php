@@ -24,6 +24,7 @@ class MySQL {
             die('Database connection failed: ' . $conn->connect_error);
         }
 
+        # FOREIGN KEY(email) REFERENCES saves(email)
         $makeAccountsTable = 'CREATE TABLE IF NOT EXISTS accounts (
             email VARCHAR(255) NOT NULL,
             pass VARCHAR(255) NOT NULL,
@@ -32,10 +33,10 @@ class MySQL {
             dex1Shiny VARCHAR(151),
             dex1Shadow VARCHAR(151),
     
-            PRIMARY KEY(email),
-            FOREIGN KEY(email) REFERENCES saves(email)
+            PRIMARY KEY(email)
         ); ';
 
+        # FOREIGN KEY (email, num) REFERENCES pokes(email, num)
         $makeSavesTable = 'CREATE TABLE IF NOT EXISTS saves (
             email VARCHAR(255) NOT NULL,
             num TINYINT(1) unsigned NOT NULL,
@@ -53,8 +54,7 @@ class MySQL {
             version TINYINT(1) unsigned,
             items LONGTEXT,
     
-            PRIMARY KEY(email, num),
-            FOREIGN KEY (email, num) REFERENCES pokes(email, num)
+            PRIMARY KEY(email, num)
         ); ';
 
         $makePokesTable = 'CREATE TABLE IF NOT EXISTS pokes (
