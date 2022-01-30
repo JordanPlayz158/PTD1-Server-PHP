@@ -26,7 +26,7 @@ function response(string $key, $value) {
 }
 
 function httpsOnly() {
-    if (getallheaders()['X-Forwarded-Proto'] == "http") {
+    if ($_SERVER['REQUEST_SCHEME'] == "http") {
         exit('You are unable to access the logging login page via http, please connect through https in order to do so!');
     }
 }
