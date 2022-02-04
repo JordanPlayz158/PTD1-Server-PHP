@@ -134,10 +134,6 @@ ul li {
     clear: both;
 }
 
-#main .nopadding {
-    padding: 0;
-}
-
 #main .block .title {
     color: #000;
     font-size: 14px;
