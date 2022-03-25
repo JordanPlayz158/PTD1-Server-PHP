@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Pokémon Center - Create Trade</title>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
+    <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
+    <link rel='stylesheet' type='text/css' href="/_static/css/style.css">
+    <!--<script type='text/javascript' src='logging.js'></script>-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
+    </script>
+    <script src="/_static/js/base.js"></script>
+    <script src="/_static/js/moves.js"></script>
+    <script src="/_static/js/utils.js"></script>
+    <script>
+        $(function () {
+            let saveNum = getCookie('save');
+
+            if(saveNum === null || saveNum.length < 1 || saveNum < 0) {
+                saveNum = 0;
+            } else if(saveNum > 2) {
+                saveNum = 2;
+            }
+
+            $.ajax({
+                url: '/api/getSaves/?save=' + saveNum,
+                type: "GET",
+                success: function (saves) {
+                    if(!successCheck(saves)) {
+                        return;
+                    }
+
+                    let save = saves[0];
+                    initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
+
+                    if(save['pokes'] != null) {
+                        save['pokes'].forEach(poke => {
+                            console.log(poke);
+
+                            document.getElementById('main').append(pokemonDiv(poke));
+                        })
+                    } else {
+                        document.getElementById('main').innerText += 'No Pokemon Found!';
+                    }
+
+                    console.log(saves);
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+            })
+        });
+
+        function trade(id) {
+            const result = window.confirm("Trade the pokemon?");
+
+            if(result) {
+                $.ajax({
+                    url: '/api/createTrade/',
+                    type: 'POST',
+                    data: {
+                        'save' : getCookie('save'),
+                        'id' : id,
+                    },
+                    success: function (result) {
+                        if(result['success'] === true) {
+                            document.getElementById('trade_' + id).remove()
+                        }
+
+                        console.log(result);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                })
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="header"></div>
+<div id="content">
+    <div id="nav"></div>
+    <table id="content_table">
+        <tbody>
+        <tr>
+            <td id="sidebar"></td>
+            <td id="main">
+                <div class="block">
+                    <div class="title"><p>Create Trade - <a
+                            href="https://ptd1.jordanplayz158.xyz/games/ptd/checkPokemon.php?save=0">Go Back</a></p></div>
+                    <div class="content">
+                        <p>Here is a list of your Pokémon from this profile, click on Trade to create a new Trade.</p>
+                        <p>NOTE: This will remove the Pokémon from your profile. To get him back to your profile go back
+                            to the "Your Trade Request" section and call your Pokémon back.</p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

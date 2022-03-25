@@ -1,6 +1,8 @@
 <?php
 
-function generateProfileId(int $currentSave, int $trainerId): string {
+use JetBrains\PhpStorm\Pure;
+
+#[Pure] function generateProfileId(int $currentSave, int $trainerId): string {
 	$currentSaveInt = currentSaveToInt($currentSave);
 
 	// CurrentSave must be 14 characters long, trainerId must be between 333 and 99999, and currentSaveInt must not be 0.
@@ -19,7 +21,7 @@ function generateProfileId(int $currentSave, int $trainerId): string {
 	return $profileId;
 }
 
-function currentSaveToInt(int $currentSave): int {
+#[Pure] function currentSaveToInt(int $currentSave): int {
 	$num = 0;
 	$currentSaveString = "$currentSave";
 
@@ -41,7 +43,9 @@ function charToInt(string $char) : int {
 
 /**
  * Converts a number into a letter in the alphabet
- * ex. 0 = a, 1 = b, 2 = c, etc.
+ * ex. 0 = a
+ *     1 = b
+ *     2 = c, etc.
  */
 function numToChar(int $num) : string {
 	return chr($num + 97);

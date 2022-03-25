@@ -4,6 +4,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/../MySQL.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../RedisCache.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 
+header('Content-Type: application/json');
+
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $config = require($_SERVER['DOCUMENT_ROOT'] . '/../config.php');
@@ -17,10 +19,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mailer = $mail->mailer;
         try {
             $redis = new RedisCache($config);
-            $redisConn = $redis->conn;
 
             $token = generatePass(64);
-            $redisConn->set('resetPassword.' . $token, $email, 86400);
+            $redis->setResetPassword($token, $email);
+            $redis->close();
 
             $mailer->addAddress($email);
             $mailer->Subject = 'Pokemon Tower Defense 1 - Password Reset';
@@ -31,21 +33,43 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mailer->Body = "To reset your password click the link below\n\n$link\n\nPassword Reset links expire in 24 hours!";
 
             if($mailer->send()){
-                echo "success";
+                echo json_encode([
+                    'success' => true
+                ]);
             } else {
-                echo 0;
+                echo json_encode([
+                    'success' => false,
+                    'error' => getError(0),
+                    'errorCode' => 0
+                ]);
+
                 if(isset($_POST['debug'])) {
                     echo 'Mailer Error: ' . $mailer->ErrorInfo;
                 }
             }
         } catch (\PHPMailer\PHPMailer\Exception $e) {
-            echo 0;
+            echo json_encode([
+                'success' => false,
+                'error' => getError(0),
+                'errorCode' => 0
+            ]);
+
             if(isset($_POST['debug'])) {
                 echo 'Mailer Error: ' . $mailer->ErrorInfo . "\n$e";
             }
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Generating the token failed',
+                'errorCode' => 5
+            ]);
         }
     } else {
-        echo $isValid;
+        echo json_encode([
+            'success' => false,
+            'error' => getError($isValid),
+            'errorCode' => $isValid
+        ]);
     }
 
     return;
@@ -80,4 +104,15 @@ function validEmail(string $email, array $config) : bool|int {
     }
 
     return true;
+}
+
+function getError(int $error) : string {
+    return match ($error) {
+        1 => 'Email field cannot be empty!',
+        2 => 'Email must contain "@"',
+        3 => 'Domain must have an mx record associated with it',
+        4 => 'Email not in db',
+        8 => 'Haha! Nice try!',
+        default => 'Unknown error occurred while trying to send email',
+    };
 }

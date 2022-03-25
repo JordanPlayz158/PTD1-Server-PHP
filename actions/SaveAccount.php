@@ -1,11 +1,14 @@
 <?php
+
+use JetBrains\PhpStorm\Pure;
+
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../Utils.php');
 
 function saveAccount(Account $account, MySQL $mysql, array $saveData) {
     $conn = $mysql->conn;
 
     // myTID is TrainerID (saveAccount Action)
-    // ONLY 1 (not per save)
+    // ONLY 1 (not per save) (global)
     $account->dex1 = $saveData['dex1'];
     $account->dex1Shiny = $saveData['dex1Shiny'];
     $account->dex1Shadow = $saveData['dex1Shadow'];
@@ -71,12 +74,11 @@ function saveAccount(Account $account, MySQL $mysql, array $saveData) {
 
     $pokes = $save->pokes;
 
+    // TODO: Check if the id matches the corresponding expected name before saving, if not hacking (You can't change pokemon's name in swf so the id will always have the default nickname)
     for ($i = 1; $i <= intval($saveData['HMP']); $i++) {
         $pokeNum = 'poke' . $i . '_';
-        // This is not finding a pokemon so it is returning a new one
+        // This is not finding a Pokémon, so it is returning a new one
         $poke = getPokeByID($pokes, intval($saveData[$pokeNum . 'myID']));
-        // isset($poke->myID) ? true : false
-        // Was changed from above, if issues occur, change back
         $pokeExisted = isset($poke->myID);
 
         if (!$pokeExisted || $poke->myID == 0)
@@ -101,6 +103,7 @@ function saveAccount(Account $account, MySQL $mysql, array $saveData) {
         if (!isset($poke->myID))
             $poke->myID = generateUniqueID($ids);
 
+        // TODO: Don't save Pokémon if on trade list
         setPokeData($saveData, $poke, $pokeNum . 'num', 'num');
         setPokeData($saveData, $poke, $pokeNum . 'nickname', 'nickname');
         setPokeData($saveData, $poke, $pokeNum . 'exp', 'exp');
@@ -197,7 +200,7 @@ function saveAccount(Account $account, MySQL $mysql, array $saveData) {
     }
 }
 
-function getPokeByID($pokes, $id) : Poke {
+#[Pure] function getPokeByID($pokes, $id) : Poke {
     foreach($pokes as $poke) {
         if($poke->myID == $id)
             return $poke;
@@ -217,6 +220,8 @@ function setPokeData($saveData, Poke $poke, $postKey, $pokeVariable) {
 function generateUniquePokeID(array $pokes) : int {
     $valid = false;
 
+    $tmp = -1;
+
     while (!$valid) {
         $tmp = mt_rand(1, 999999);
         $valid = true;
@@ -234,6 +239,8 @@ function generateUniquePokeID(array $pokes) : int {
 
 function generateUniqueID(array $ids) : int {
     $valid = false;
+
+    $tmp = -1;
 
     while (!$valid) {
         $tmp = mt_rand(1, 999999);

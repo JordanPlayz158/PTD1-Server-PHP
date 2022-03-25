@@ -10,14 +10,12 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
     </script>
+    <script src="/_static/js/base.js"></script>
     <script src="/_static/js/moves.js"></script>
+    <script src="/_static/js/utils.js"></script>
     <script>
         $(function () {
-            $('#header').load('/_static/html/header.html');
-            $('#nav').load('/_static/html/nav.html');
-
-            const urlParams = new URLSearchParams(window.location.search);
-            let saveNum = urlParams.get('save');
+            let saveNum = getCookie('save');
 
             if(saveNum === null || saveNum < 0) {
                 saveNum = 0;
@@ -28,14 +26,12 @@
             $.ajax({
                 url: '/api/getSaves/?save=' + saveNum,
                 type: "GET",
-                success: function (result) {
-                    const saves = JSON.parse(result);
-
+                success: function (saves) {
+                    if(!successCheck(saves)) {
+                        return;
+                    }
                     let save = saves[0];
-                    document.getElementById('saveAvatar').setAttribute('src', '/_static/images/avatars/' + save['avatar'] + '.png')
-                    document.getElementById('saveName').innerHTML = save['nickname'];
-                    document.getElementById('badges').innerHTML += save['badges'];
-                    document.getElementById('money').innerHTML += save['money'];
+                    initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
 
                     if(save['pokes'] != null) {
                         let counter = 3;
@@ -61,23 +57,23 @@
                             img.className = 'image'
 
                             if (poke['shiny'] === 1) {
-                                img.src = '/_static/images/pokemon/s_' + poke['pNum'] + '.png'
+                                img.src = '/_static/images/pokemon/s_' + poke['num'] + '.png'
                                 div.classList.add('shiny');
                             } else if (poke['shiny'] === 2)  {
-                                img.src = '/_static/images/pokemon/' + poke['pNum'] + '.png';
+                                img.src = '/_static/images/pokemon/' + poke['num'] + '.png';
                                 div.classList.add('shadow');
                             } else {
-                                img.src = "/_static/images/pokemon/" + poke['pNum'] + ".png";
+                                img.src = "/_static/images/pokemon/" + poke['num'] + ".png";
                             }
                             img.alt = '[Avatar]';
 
                             const nickname = document.createElement('span');
                             nickname.className = 'name';
-                            nickname.innerHTML = poke['nickname'];
+                            nickname.innerText = poke['nickname'];
 
                             const level = document.createElement('span');
                             level.className = 'level';
-                            level.innerHTML= 'lvl ' + poke['lvl'];
+                            level.innerText = 'lvl ' + poke['lvl'];
 
                             const moves = document.createElement('div');
                             moves.className = 'moves';
@@ -89,13 +85,13 @@
 
                                 let move = document.createElement('td');
                                 move.className = 'left';
-                                move.innerHTML = get_move(poke['m' + i]);
+                                move.innerText = get_move(poke['m' + i]);
 
                                 moves_tr.append(move);
 
                                 move = document.createElement('td')
                                 move.className = 'right';
-                                move.innerHTML = get_move(poke['m' + (i + 1)]);
+                                move.innerText = get_move(poke['m' + (i + 1)]);
 
                                 moves_tr.append(move);
 
@@ -108,7 +104,7 @@
                             actions.className = 'actions';
 
                             let a = document.createElement('a');
-                            a.href = '/games/ptd/trade.php?save=' + saveNum + '&pokeId=' + poke['id'];
+                            a.href = '/games/ptd/createTrade.html?save=' + saveNum + '&pokeId=' + poke['myID'];
                             a.text = 'Trade';
                             actions.append(a);
 
@@ -123,7 +119,7 @@
                             counter++;
                         })
                     } else {
-                        document.getElementById('contentDiv').innerHTML += 'No Pokemon Found!'
+                        document.getElementById('contentDiv').innerText += 'No Pokemon Found!'
                     }
 
                     console.log(saves);
@@ -141,28 +137,19 @@
     <div id="nav"></div>
     <table id="content_table">
         <tbody>
-        <tr>
-            <td id="sidebar">
-                <div class="block currentProfile">
-                        <h3 style="padding: 0">Current Profile:</h3>
-                        <img id="saveAvatar" alt="Avatar">
-                        <p style="display: inline-block" id="saveName"></p>
-                        <hr>
-                        <div id="profileInfo">
-                            <p id="badges">Badges: </p>
-                            <p id="money">Money: </p>
+            <tr>
+                <td id="sidebar"></td>
+                <td id="main">
+                    <div class="block">
+                        <div class="title center">
+                            <p>Pokemon</p>
+                        </div>
+                        <div class="content center" id="contentDiv">
+                            <div id="pokemonResult"></div>
                         </div>
                     </div>
-            </td>
-            <td id="main">
-                <div class="block">
-                    <div class="title center">
-                        <p>Pokemon</p>
-                    </div>
-                    <div class="content center" id="contentDiv"></div>
-                </div>
-            </td>
-        </tr>
+                </td>
+            </tr>
         </tbody>
     </table>
 </div>

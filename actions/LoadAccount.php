@@ -36,6 +36,7 @@ function loadAccount($account) {
 
         $pokes = $save->pokes;
 
+        // TODO: Don't give swf Pokémon if on trade list
         for($ii = 0; $ii < count($pokes); $ii++) {
             $pokeNum = $ii + 1;
             $pokePrefix = 'p' . $saveNum . '_poke_' . $pokeNum . '_';

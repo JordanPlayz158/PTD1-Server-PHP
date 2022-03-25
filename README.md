@@ -1,5 +1,5 @@
 # PTD1-Server-Code
-I am attempting to recreate the PTD1 Server code so a local server can be ran and the swf will work fine with just a /etc/hosts change to a different ip.
+I am attempting to recreate the PTD1 Server code so a local server can be run and the swf will work fine with just a /etc/hosts change to a different ip.
 
 # My Nginx Config
 [nginx.conf](nginx.conf)

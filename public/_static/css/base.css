@@ -11,11 +11,6 @@ img {
     border: 0;
 }
 
-form {
-    margin: 0;
-    padding: 0;
-}
-
 p {
     margin: 0;
     padding: 0;
@@ -185,4 +180,12 @@ ul li {
 
 .clear {
     clear: both !important;
+}
+
+input {
+    margin-bottom: 20px;
+}
+
+form {
+    padding-top: 10px;
 }

@@ -2,7 +2,7 @@ window.onload = function() {
     document.querySelectorAll("td[id=ip]").forEach(function(ipTd) {
         let p = document.createElement('p');
         p.style.display = 'none';
-        p.innerHTML = "Privacy Mode Enabled!";
+        p.innerText = "Privacy Mode Enabled!";
 
         ipTd.appendChild(p);
 
@@ -13,10 +13,10 @@ window.onload = function() {
 
     document.querySelectorAll("button[id=Original]").forEach(function(button) {
         let buttonChildNodes = button.parentNode.childNodes;
-        let decode = buttonChildNodes[4].innerHTML;
+        let decode = buttonChildNodes[4].innerText;
         decode = decode.replaceAll("¤tSave", "&amp;currentSave");
         decode = decodeURIComponent(decode);
-        buttonChildNodes[4].innerHTML = decode;
+        buttonChildNodes[4].innerText = decode;
 
         let encode = encodeURIComponent(decode);
         let pretty = decode.replaceAll('&amp;', '<br>');
@@ -27,19 +27,19 @@ window.onload = function() {
 
         let p = document.createElement('p');
         p.style.display = 'none';
-        p.innerHTML = encode;
+        p.innerText = encode;
 
         button.parentNode.appendChild(p);
 
         p = document.createElement('p');
         p.style.display = 'none';
-        p.innerHTML = pretty;
+        p.innerText = pretty;
 
         button.parentNode.appendChild(p);
 
         p = document.createElement('p');
         p.style.display = 'none';
-        p.innerHTML = privacy;
+        p.innerText = privacy;
 
         button.parentNode.appendChild(p);
 

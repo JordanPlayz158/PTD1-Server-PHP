@@ -117,7 +117,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
 
-            // Need to code 7 and above as they send pokemon to pokecenter
+            // Need to code 7 and above as they send Pokémon to Pokémon center
             // So will need to do that on the backend
 
             response("Result", "Success");

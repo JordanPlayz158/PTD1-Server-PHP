@@ -21,60 +21,62 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $mysql = new MySQL($config);
     $conn = $mysql->conn;
 
-    if($config['maintenance']) {
+    if ($config['maintenance']) {
         response('Result', 'Failure');
         response('Reason', 'maintenance');
         echo getResponse();
         logMySQL($conn);
         return;
     }
-    
-    if($_POST['Action'] === 'createAccount') {
+
+    if ($_POST['Action'] === 'createAccount') {
         createAccount($mysql);
-        
+
         echo getResponse();
         logMySQL($conn);
-        
+
         $conn->close();
         return;
     }
 
     $accounts = getAccountDataByEmail($conn, 'accounts', $_POST['Email']);
 
-    if($accounts == null || count($accounts) === 0) {
+    if ($accounts == null || count($accounts) === 0) {
         response('Result', 'Failure');
         response('Reason', 'NotFound');
 
         echo getResponse();
         return;
-    } else if(count($accounts) >= 1 && password_verify($_POST['Pass'], $accounts[0]['pass']) === false) {
+    } else if (count($accounts) >= 1 && password_verify($_POST['Pass'], $accounts[0]['pass']) === false) {
         response('Result', 'Failure');
         response('Reason', 'taken');
 
         echo getResponse();
         return;
     }
-    
+
     $account = new Account();
     $account->parse($accounts[0]);
-    
+
     $saves = getAccountDataByEmail($conn, 'saves', $_POST['Email']);
 
-    foreach($saves as $saveArray) {
+    foreach ($saves as $saveArray) {
         $save = new Save();
         $save->parse($saveArray);
 
-        $account -> saves[] = $save;
+        $account->saves[] = $save;
     }
 
     $pokes = getAccountDataByEmail($conn, 'pokes', $_POST['Email']);
-    
-    // Pokemon
-    foreach($pokes as $pokeArray) {
-        $poke = new Poke();
-        $poke->parse($pokeArray);
 
-        $account -> saves[$pokeArray['num']] -> pokes[] = $poke;
+    // Pokemon
+    if ($pokes !== null) {
+        foreach ($pokes as $pokeArray) {
+            $poke = new Poke();
+            $poke->parse($pokeArray);
+
+            $account->saves[$pokeArray['num']]->pokes[] = $poke;
+        }
     }
 
     for($i = 0; $i < count($account -> saves); $i++) {

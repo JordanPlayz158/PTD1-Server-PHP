@@ -4,5 +4,9 @@
       "ext-mysqli": "*",
       "ext-redis": "*",
       "ext-mbstring": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.3.0",
+        "guzzlehttp/guzzle": "^7.0"
     }
 }

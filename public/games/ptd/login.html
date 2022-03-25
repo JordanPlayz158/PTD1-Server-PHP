@@ -8,24 +8,37 @@
     <link rel='stylesheet' type='text/css' href="../../_static/css/style.css">
     <!--<script type='text/javascript' src='logging.js'></script>-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
-    </script>
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="/_static/js/utils.js"></script>
     <script>
         $(function () {
             $("#header").load("../../_static/html/header.html");
             $("#nav").load("../../_static/html/nav.html");
+        });
+
+        function login(event) {
+            event.preventDefault();
 
             $.ajax({
                 url: '/api/login/',
                 type: "POST",
+                data: {
+                    email: document.getElementById('email').value,
+                    pass: document.getElementById('pass').value
+                },
                 success: function (result) {
-                    console.log(saves);
+                    if(!successCheck(result)) {
+                        console.log(result);
+                        return;
+                    }
+
+                    location.href = 'account.html';
                 },
                 error: function (error) {
                     console.log(error);
                 },
             })
-        });
+        }
     </script>
 </head>
 <body>
@@ -34,44 +47,42 @@
     <div id="nav"></div>
     <table id="content_table">
         <tbody>
-        <tr>
-            <td id="sidebar">
-                <div class="block">
-                    <div class="title">
-                        <p>Log in</p>
+            <tr>
+                <td id="sidebar">
+                    <div class="block">
+                        <div class="title">
+                            <p>Log in</p>
+                        </div>
+                        <div class="content">
+                            <!-- Implement CSRF Protection -->
+                            <form action="/api/login/" method="POST" onsubmit="login(event)" autocomplete="off">
+                                <label><b>Email:</b>
+                                    <input id="email" class="text" name="email" type="text">
+                                </label>
+                                <label><b>Password:</b>
+                                    <input id="pass" name="pass" type="password" class="text" maxlength="10">
+                                </label>
+                                <div class="login_actions">
+                                    <a href="reset_password_form.html">Lost Password?</a>
+                                    <input value="Login" type="submit" class="login_btn">
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="content">
-                        <form action="/api/login/" method="post">
-                            EMAIL:
-                            <br>
-                            <input class="text" name="email" type="text">
-                            <br>
-                            <br>
-                            PASSWORD:
-                            <br>
-                            <input name="pass" type="password" class="text" maxlength="10">
-                            <br>
-                            <br>
-                            <div class="login_actions">
-                                <a href="reset_password_form.html">Lost Password?</a>
-                                <input value="Login" type="submit" class="login_btn">
-                            </div>
-                        </form>
+                </td>
+                <div id="profileResult"></div>
+                <td id="main">
+                    <div class="block">
+                        <div class="title">
+                            <p>Pokémon Tower Defense: Pokémon Center</p>
+                        </div>
+                        <div class="content">
+                            <p>In order to use the Pokémon Center you must first log in. After this is done you'll be able to access the trade center and much more.</p>
+                            <p>NOTE: Don't play your account while you use the Pokémon Center! It may cause you to lose saved data!</p>
+                        </div>
                     </div>
-                </div>
-            </td>
-            <td id="main">
-                <div class="block">
-                    <div class="title">
-                        <p>Pokémon Tower Defense: Pokémon Center</p>
-                    </div>
-                    <div class="content">
-                        <p>In order to use the Pokémon Center you must first log in. After this is done you'll be able to access the trade center and much more.</p>
-                        <p>NOTE: Don't play your account while you use the Pokémon Center! It may cause you to lose saved data!</p>
-                    </div>
-                </div>
-            </td>
-        </tr>
+                </td>
+            </tr>
         </tbody>
     </table>
 </div>

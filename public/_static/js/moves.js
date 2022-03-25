@@ -720,3 +720,5 @@ function get_move(m_num) {
         };
         return moves_list[m_num];
 }
+
+console.log("moves.js loaded");

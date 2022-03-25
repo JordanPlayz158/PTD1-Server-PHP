@@ -1,6 +1,8 @@
 PHP:
 - mysqli
+- dom
 - mbstring
 - composer ("composer install --no-dev")
-  - phpmailer (supplied by composer)
+  - phpmailer
+  - phpunit
 Redis

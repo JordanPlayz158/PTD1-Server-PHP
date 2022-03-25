@@ -2,22 +2,44 @@
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../RedisCache.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/../MySQL.php');
 
+header('Content-Type: application/json');
+
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     if(!isset($_POST['newPass'])) {
-        echo 2;
+        echo json_encode([
+            'success' => false,
+            'error' => '"newPass" not sent in POST data',
+            'errorCode' => 2
+        ]);
         return;
     }
+
+    if(isset($_POST['confirmPass'])) {
+        if($_POST['confirmPass']) {
+            echo json_encode([
+                'success' => false,
+                'error' => '"newPass" did not match "confirmPass"',
+                'errorCode' => 3
+            ]);
+            return;
+        }
+    }
+
     $pass = password_hash($_POST['newPass'], PASSWORD_DEFAULT);
 
     $config = require($_SERVER['DOCUMENT_ROOT'] . '/../config.php');
 
     $redis = new RedisCache($config);
-    $redisConn = $redis->conn;
 
-    $email = $redisConn->get('resetPassword.' . $_POST['reset_token']);
+    $email = $redis->getResetPassword($_POST['reset_token']);
+    $redis->close();
 
     if(!$email) {
-        echo 1;
+        echo json_encode([
+            'success' => false,
+            'error' => 'Invalid "reset_token" in POST',
+            'errorCode' => 1
+        ]);
         return;
     }
 
@@ -26,10 +48,13 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt = $conn->prepare('UPDATE accounts SET pass = ? WHERE email = ?');
     $stmt->bind_param('ss', $pass, $email);
-    $stmt->execute() or $stmt->close() && $conn->close() && die(0);
+    $stmt->execute() or $stmt->close() && $conn->close() && die(json_encode(['success' => false, 'error' => 'Unknown error while changing password']));
     $stmt->close();
 
-    $redisConn->del('resetPassword.' . $_POST['reset_token']);
+    $redis->deleteResetPassword($_POST['reset_token']);
+    $redis->close();
 
-    echo 'success';
+    echo json_encode([
+        'success' => true
+    ]);
 }

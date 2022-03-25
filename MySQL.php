@@ -9,8 +9,8 @@ class MySQL {
     function __construct(array $config) {
         $mysqlConfig = $config['mysql'];
 
-        //$driver = new mysqli_driver();
-        //$driver->report_mode = MYSQLI_REPORT_STRICT|MYSQLI_REPORT_ERROR;
+        $driver = new mysqli_driver();
+        $driver->report_mode = MYSQLI_REPORT_OFF;
 
         $this->conn = $conn = new mysqli($mysqlConfig['hostname'], $mysqlConfig['username'], $mysqlConfig['password'], $mysqlConfig['db']);
 
@@ -26,7 +26,7 @@ class MySQL {
 
         # FOREIGN KEY(email) REFERENCES saves(email)
         $makeAccountsTable = 'CREATE TABLE IF NOT EXISTS accounts (
-            email VARCHAR(255) NOT NULL,
+            email VARCHAR(50) NOT NULL,
             pass VARCHAR(255) NOT NULL,
             accNickname VARCHAR(255),
             dex1 VARCHAR(151),
@@ -38,7 +38,7 @@ class MySQL {
 
         # FOREIGN KEY (email, num) REFERENCES pokes(email, num)
         $makeSavesTable = 'CREATE TABLE IF NOT EXISTS saves (
-            email VARCHAR(255) NOT NULL,
+            email VARCHAR(50) NOT NULL,
             num TINYINT(1) unsigned NOT NULL,
             advanced TINYINT(3) unsigned,
             advanced_a TINYINT(3) unsigned,
@@ -58,7 +58,7 @@ class MySQL {
         ); ';
 
         $makePokesTable = 'CREATE TABLE IF NOT EXISTS pokes (
-            email VARCHAR(255) NOT NULL,
+            email VARCHAR(50) NOT NULL,
             num TINYINT(1) unsigned NOT NULL,
             id MEDIUMINT(7) unsigned NOT NULL,
             pNum MEDIUMINT(6) unsigned,
@@ -82,7 +82,7 @@ class MySQL {
         ); ';
 
         $makeAchievementsTable = 'CREATE TABLE IF NOT EXISTS achievements (
-            email VARCHAR(255) NOT NULL,
+            email VARCHAR(50) NOT NULL,
             one CHAR(4),
             two TINYINT(1) unsigned,
             three TINYINT(1) unsigned,
@@ -108,7 +108,15 @@ class MySQL {
             response LONGTEXT
         ); ';
 
-        $makeTables = $makePokesTable . $makeSavesTable . $makeAchievementsTable . $makeAccountsTable . $makeLogsTable;
+        $makeTradesTable = 'CREATE TABLE IF NOT EXISTS trades (
+            email VARCHAR(50) NOT NULL,
+            num TINYINT(1) unsigned NOT NULL,
+            id MEDIUMINT(7) unsigned NOT NULL,
+    
+            PRIMARY KEY(email, num, id)
+        ); ';
+
+        $makeTables = $makePokesTable . $makeSavesTable . $makeAchievementsTable . $makeAccountsTable . $makeLogsTable . $makeTradesTable;
         if($conn->multi_query($makeTables) or die($conn->error)) {
             do {
                 if ($result = $conn -> store_result()) {
@@ -138,6 +146,35 @@ class MySQL {
             $stmt->execute();
         }
 
+        $stmt->close();
+    }
+
+    public function deleteAccount($email) {
+        $conn = $this->conn;
+
+        $stmt = $conn->prepare('DELETE FROM accounts WHERE email = ?');
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt = $conn->prepare('DELETE FROM saves WHERE email = ?');
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt = $conn->prepare('DELETE FROM pokes WHERE email = ?');
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt = $conn->prepare('DELETE FROM achievements WHERE email = ?');
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt = $conn->prepare('DELETE FROM trades WHERE email = ?');
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
         $stmt->close();
     }
     
@@ -197,7 +234,7 @@ class MySQL {
 
                         array_push($columns, $email, $i, $poke->myID);
 
-                        call_user_func_array(array($pokeStmt, 'bind_param'), $columns);
+                        call_user_func_array(array($pokeStmt, 'bind_param'), $this->refValues($columns));
                     }
 
                     $pokeStmt->execute();
@@ -231,7 +268,7 @@ class MySQL {
         $stmt->close();
         //
 
-        // Removing all pokemon associated with save
+        // Removing all Pokémon associated with save
         $stmt = $conn->prepare('DELETE FROM pokes WHERE email = ? AND num = ?');
 
         $stmt->bind_param('si', $account->email, $whichProfile);
@@ -296,5 +333,16 @@ class MySQL {
         }
 
         return $columnsToModify;
+    }
+
+    function refValues($arr){
+        if (strnatcmp(phpversion(),'5.3') >= 0) //Reference is required for PHP 5.3+
+        {
+            $refs = array();
+            foreach($arr as $key => $value)
+                $refs[$key] = &$arr[$key];
+            return $refs;
+        }
+        return $arr;
     }
 }

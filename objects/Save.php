@@ -9,7 +9,7 @@ class Save {
     // called HMI (in saveAccount Action)
     // Inventory Size
     public int $p_numItem = 0;
-    // used for hacker check, number of shiny pokemon you have (NOT SHADOW)
+    // used for hacker check, number of shiny Pokémon you have (NOT SHADOW)
     public int $p_hs = 0;
     public ?string $nickname = null;
     public int $badges = 0;
