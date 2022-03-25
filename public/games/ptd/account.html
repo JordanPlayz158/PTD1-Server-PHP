@@ -10,57 +10,40 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
     </script>
-    <script>
-        $(function () {
-            $("#header").load("../../_static/html/header.html");
-            $("#nav").load("../../_static/html/nav.html");
-        });
+    <script src="/_static/js/base.js" async></script>
+    <script src="/_static/js/utils.js" async></script>
+    <script defer>
+        window.onload = () => {
+            loadProfile(() => {
+                let saveNum = getCookie('save');
 
-        $.ajax({
-            url: "/api/getSaves/?exclude=pokes",
-            type: "GET",
-            success: function (result) {
-                const saves = JSON.parse(result);
+                if (saveNum === null || saveNum < 0) {
+                    saveNum = 0;
+                } else if (saveNum > 2) {
+                    saveNum = 2;
+                }
 
-                let counter = 0;
-                saves.forEach(save => {
-                    const buttonDiv = document.createElement("div");
-                    buttonDiv.className = 'save'
+                $.ajax({
+                    url: '/api/getSaves/?exclude=pokes&save=' + saveNum,
+                    type: "GET",
+                    success: function (saves) {
+                        if (!successCheck(saves)) {
+                            return;
+                        }
 
-                    const button = document.createElement("button");
-                    button.id = counter;
-                    button.onclick = function () {
-                        location.href = '/games/ptd/trading.html?save=' + button.id;
-                    }
+                        let save = saves[0];
+                        initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
 
-                    const div = document.createElement("div");
-                    div.className = 'block content';
+                        validationCheck(saves);
 
-                    const avatar = document.createElement("img");
-                    avatar.src = '/_static/images/avatars/' + save['avatar'] + '.png';
-                    avatar.alt = 'avatar';
-
-                    div.append(avatar)
-                    div.innerHTML += "<br>" + save['nickname'];
-
-                    console.log(save['nickname']);
-                    console.log(save['avatar']);
-
-                    counter++;
-
-                    button.append(div);
-
-                    buttonDiv.append(button);
-                    document.getElementById('contentDiv').append(buttonDiv);
-                });
-
-
-                //console.log(saves);
-            },
-            error: function (error) {
-                console.log(error);
-            },
-        })
+                        console.log(saves);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                })
+            })
+        };
     </script>
 </head>
 <body>
@@ -68,15 +51,10 @@
 <div id="content">
     <div id="nav"></div>
     <table id="content_table">
-            <td id="main">
-                <div class="block center">
-                    <div class="title">
-                        <p>Profile Save Selection</p>
-                    </div>
-                    <div class="content" id="contentDiv"></div>
-                </div>
-            </td>
-        </tr>
+        <tbody>
+            <tr>
+                <td id="sidebar"></td>
+            </tr>
         </tbody>
     </table>
 </div>
