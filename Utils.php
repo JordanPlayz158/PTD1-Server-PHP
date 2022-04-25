@@ -133,7 +133,8 @@ function getEmail($config) : string {
         if(!isset($_SESSION['account_token'])) {
             echo json_encode([
                 'success' => false,
-                'error' => '"account_token" not set in session, please login at "/games/ptd/login.html"'
+                'error' => '"account_token" not set in session, please login at "/games/ptd/login.html"',
+                'errorCode' => -1
             ]);
             exit();
         }
@@ -152,7 +153,8 @@ function getEmail($config) : string {
     if(!$email) {
         echo json_encode([
             'success' => false,
-            'error' => '"account_token" has expired'
+            'error' => '"account_token" has expired',
+            'errorCode' => -1
         ]);
         exit();
     }
