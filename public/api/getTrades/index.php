@@ -27,6 +27,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
     foreach ($pokesMySQL as $poke) {
         $pokemon = new Poke();
         $pokemon->parse($poke);
+
         //$pokemon->email = $poke['email'];
         $pokes[] = $pokemon;
     }
