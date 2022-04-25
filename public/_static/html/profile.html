@@ -40,10 +40,10 @@
                         blockDiv.id = remainingSave;
                         blockDiv.className = 'block';
                         blockDiv.onclick = function () {
-                            Cookies.set('save', blockDiv.id, 365);
+                            Cookies.set('save', blockDiv.id, { expires: 365 });
                             location.reload();
                         };
-                        blockDiv.setAttribute('style', 'cursor: pointer');
+                        blockDiv.style.cursor = 'pointer';
 
                         const saveDiv = document.createElement('div');
 

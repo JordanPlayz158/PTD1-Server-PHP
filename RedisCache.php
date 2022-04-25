@@ -35,27 +35,27 @@ class RedisCache {
         }
     }*/
 
-    public function getSession() : string {
+    public function getSession() : string|false {
         return $this->conn->get($this->sessionPrefix . $_SESSION['account_token']);
     }
 
-    public function setSession(string $token, string $email) : bool|string {
+    public function setSession(string $token, string $email) : bool {
         return $this->conn->set($this->sessionPrefix . $token, $email, 86400);
     }
 
-    public function getResetPassword(string $resetPasswordKey): string {
+    public function getResetPassword(string $resetPasswordKey): string|false {
         return $this->conn->get($this->resetPasswordPrefix . $resetPasswordKey);
     }
 
-    public function setResetPassword(string $resetPasswordKey, string $email) {
-        $this->conn->set($this->resetPasswordPrefix . $resetPasswordKey, $email, 86400);
+    public function setResetPassword(string $resetPasswordKey, string $email): bool {
+        return $this->conn->set($this->resetPasswordPrefix . $resetPasswordKey, $email, 86400);
     }
 
-    public function deleteResetPassword(string $resetPasswordKey) {
-        $this->conn->del($this->resetPasswordPrefix . $resetPasswordKey);
+    public function deleteResetPassword(string $resetPasswordKey): int {
+        return $this->conn->del($this->resetPasswordPrefix . $resetPasswordKey);
     }
 
-    public function close() {
-        $this->conn->close();
+    public function close(): bool {
+        return $this->conn->close();
     }
 }
