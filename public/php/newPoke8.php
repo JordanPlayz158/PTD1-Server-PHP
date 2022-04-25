@@ -50,6 +50,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else if (count($accounts) >= 1 && password_verify($_POST['Pass'], $accounts[0]['pass']) === false) {
         response('Result', 'Failure');
         response('Reason', 'taken');
+        // Not needed for SWF, good for clarify for logs
+        // Named real reason because it's not constrained/confined to PTD known error messages
+        response('RealReason', 'wrongPassword');
 
         echo getResponse();
         return;

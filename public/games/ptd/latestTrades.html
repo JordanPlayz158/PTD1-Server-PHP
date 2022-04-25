@@ -14,89 +14,115 @@
     <script src="/_static/js/moves.js"></script>
     <script src="/_static/js/utils.js"></script>
     <script>
-        $(function () {
-            let saveNum = getCookie('save');
+        window.onload = () => {
+            loadProfile(() => {
+                $(function () {
+                    let saveNum = getCookie('save');
 
-            if(saveNum === null || saveNum < 0) {
-                saveNum = 0;
-            } else if(saveNum > 2) {
-                saveNum = 2;
-            }
-
-            $.ajax({
-                url: '/api/getSaves/?exclude=pokes&save=' + saveNum,
-                type: "GET",
-                success: function (saves) {
-                    if(!successCheck(saves)) {
-                        return;
+                    if (saveNum === null || saveNum < 0) {
+                        saveNum = 0;
+                    } else if (saveNum > 2) {
+                        saveNum = 2;
                     }
 
-                    let save = saves[0];
-                    initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
+                    $.ajax({
+                        url: '/api/getSaves/?exclude=pokes&save=' + saveNum,
+                        type: "GET",
+                        success: function (saves) {
+                            if (!successCheck(saves)) {
+                                return;
+                            }
 
-                    console.log(saves);
-                },
-                error: function (error) {
-                    console.log(error);
-                },
-            })
+                            let save = saves[0];
+                            initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
 
-            $.ajax({
-                url: '/api/getTrades/',
-                type: "GET",
-                success: function (pokes) {
-                    if(!successCheck(pokes, POKEMON)) {
-                        return;
-                    }
-
-                    var requestTable = document.createElement('div');
-                    requestTable.classList.add('block', 'request_table');
-
-                    let counter = 1;
-                    let partyDiv = document.createElement('div');
-                    partyDiv.classList.add('block', 'party');
-                    pokes.forEach(poke => {
-                        console.log(poke);
-
-                        if(counter === 1) {
-                            partyDiv = document.createElement('div');
-                            partyDiv.classList.add('block', 'party');
-                        }
-
-                        var tradeDiv = document.createElement('td');
-
-                        switch (counter) {
-                            case 1:
-                                tradeDiv.classList.add('request_left');
-                                break;
-                            case 2:
-                                tradeDiv.classList.add('request_middle');
-                                break;
-                            case 3:
-                                tradeDiv.classList.add('request_right');
-                        }
-
-                        tradeDiv.append(pokemonDiv(poke));
-
-                        partyDiv.append(tradeDiv)
-
-                        if (counter % 3 === 0) {
-                            counter = 1;
-                            requestTable.append(partyDiv);
-                        } else {
-                            counter++;
-                        }
+                            console.log(saves);
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        },
                     })
 
-                    document.getElementById('main').append(requestTable);
+                    $.ajax({
+                        url: '/api/getTrades/',
+                        type: "GET",
+                        success: function (pokes) {
+                            if (!successCheck(pokes, POKEMON)) {
+                                return;
+                            }
 
-                    console.log(pokes);
-                },
-                error: function (error) {
-                    console.log(error);
-                },
+                            const requestTable = document.createElement('div');
+                            requestTable.classList.add('block', 'request_table');
+
+                            // let counter = 1;
+                            // let partyDiv = document.createElement('div');
+                            // partyDiv.classList.add('block', 'party');
+                            pokes.forEach(poke => {
+                                console.log(poke);
+
+                                // if(counter === 1) {
+                                //     partyDiv = document.createElement('div');
+                                //     partyDiv.classList.add('block', 'party');
+                                // }
+
+                                const tradeDiv = document.createElement('td');
+
+                                // switch (counter) {
+                                //     case 1:
+                                //         tradeDiv.classList.add('request_left');
+                                //         break;
+                                //     case 2:
+                                //         tradeDiv.classList.add('request_middle');
+                                //         break;
+                                //     case 3:
+                                //         tradeDiv.classList.add('request_right');
+                                // }
+
+                                const makeAnOffer = document.createElement('a');
+                                makeAnOffer.text = 'Make an Offer';
+                                makeAnOffer.href = '/games/ptd/makeAnOffer.html?id=' + poke['id'];
+                                makeAnOffer.style.textAlign = 'center';
+
+                                const pokemon = pokemonDiv(poke);
+                                const actionDiv = pokemon.childNodes[4];
+
+                                for (let i = 0; i < actionDiv.childNodes.length;) {
+                                    actionDiv.removeChild(actionDiv.childNodes[i]);
+                                }
+
+                                actionDiv.appendChild(makeAnOffer);
+
+                                pokemon.replaceChild(actionDiv, pokemon.childNodes[4]);
+
+                                
+
+                                pokemon.insertBefore(document.createElement('hr'), actionDiv);
+                                //console.log(pokemon.childNodes);
+
+                                tradeDiv.append(pokemon);
+                                requestTable.append(tradeDiv);
+
+                                // partyDiv.append(tradeDiv);
+                                //
+                                // if (counter % 3 === 0) {
+                                //     counter = 1;
+                                //     requestTable.append(partyDiv);
+                                // } else {
+                                //     counter++;
+                                // }
+                            })
+
+                            document.getElementById('main').append(requestTable);
+
+                            console.log(pokes);
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        },
+                    });
+                });
             });
-        });
+        };
     </script>
 </head>
 <body>

@@ -1,5 +1,6 @@
 <?php
 class Poke {
+    public string $id;
     public string $reason;
     public int $num;
     public string $nickname;
@@ -21,6 +22,7 @@ class Poke {
     public int $shiny = 0;
 
     public function parse(array $poke) {
+        $this->id = $poke['uuid'];
         $this->num = $poke['pNum'];
         $this->nickname = $poke['nickname'];
         $this->exp = $poke['exp'];

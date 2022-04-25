@@ -32,7 +32,14 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
     $stmt->bind_param('si', $email, $_GET['save']);
     $stmt->execute();
 
-    $pokes = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $pokes = array();
+    $pokesResult = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+    foreach ($pokesResult as $pokeResult) {
+        $poke = new Poke();
+        $poke->parse($pokeResult);
+        $pokes[] = $poke;
+    }
 
     $stmt->close();
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Pokémon Center - Create Trade</title>
+    <title>Pokémon Center - View Trades</title>
     <meta charset="UTF-8">
     <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
     <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
@@ -19,14 +19,16 @@
                 $(function () {
                     let saveNum = getCookie('save');
 
-                    if (saveNum === null || saveNum.length < 1 || saveNum < 0) {
+                    if (saveNum === null || saveNum < 0) {
                         saveNum = 0;
                     } else if (saveNum > 2) {
                         saveNum = 2;
                     }
 
+                    console.log(saveNum);
+
                     $.ajax({
-                        url: '/api/getSaves/?save=' + saveNum,
+                        url: '/api/getSaves/?exclude=pokes&save=' + saveNum,
                         type: "GET",
                         success: function (saves) {
                             if (!successCheck(saves)) {
@@ -36,24 +38,76 @@
                             let save = saves[0];
                             initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
 
-                            if (save['pokes'] != null) {
-                                save['pokes'].forEach(poke => {
-                                    console.log(poke);
-
-                                    document.getElementById('main').append(pokemonDiv(poke));
-                                })
-                            } else {
-                                document.getElementById('main').innerText += 'No Pokemon Found!';
-                            }
-
                             console.log(saves);
                         },
                         error: function (error) {
                             console.log(error);
                         },
                     })
+
+                    $.ajax({
+                        url: '/api/getUserTrades/?save=' + saveNum,
+                        type: "GET",
+                        success: function (pokes) {
+                            if (!successCheck(pokes, POKEMON)) {
+                                return;
+                            }
+
+                            pokes.forEach(poke => {
+                                console.log(poke);
+
+                                var recall = document.createElement('a');
+                                recall.text = 'Recall';
+                                recall.href = 'javascript:recall(' + poke['myID'] + ')';
+                                recall.style.textAlign = 'center';
+
+                                var pokemon = pokemonDiv(poke);
+                                var actionDiv = pokemon.childNodes[4];
+
+                                for (let i = 0; i < actionDiv.childNodes.length;) {
+                                    actionDiv.removeChild(actionDiv.childNodes[i]);
+                                }
+
+                                actionDiv.appendChild(recall);
+
+                                pokemon.replaceChild(actionDiv, pokemon.childNodes[4]);
+
+                                document.getElementById('main').append(pokemon);
+                            })
+
+                            console.log(pokes);
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        },
+                    });
                 });
             });
+        }
+
+        function recall(id) {
+            const result = window.confirm("Recall the pokemon?");
+
+            if(result) {
+                $.ajax({
+                    url: '/api/removeTrade/',
+                    type: 'POST',
+                    data: {
+                        'save' : getCookie('save'),
+                        'id' : id,
+                    },
+                    success: function (result) {
+                        if(result['success'] === true) {
+                            document.getElementById('trade_' + id).remove()
+                        }
+
+                        console.log(result);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                })
+            }
         }
     </script>
 </head>
@@ -75,6 +129,7 @@
                             to the "Your Trade Request" section and call your Pokémon back.</p>
                     </div>
                 </div>
+                <div id="pokemonResult"></div>
             </td>
         </tr>
         </tbody>

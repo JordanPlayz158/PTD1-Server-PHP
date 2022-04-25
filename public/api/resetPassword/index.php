@@ -14,24 +14,34 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    if(isset($_POST['confirmPass'])) {
-        if($_POST['confirmPass']) {
-            echo json_encode([
-                'success' => false,
-                'error' => '"newPass" did not match "confirmPass"',
-                'errorCode' => 3
-            ]);
-            return;
-        }
+    $newPass = $_POST['newPass'];
+
+    if(isset($_POST['confirmPass']) && ($_POST['confirmPass'] !== $newPass)) {
+        echo json_encode([
+            'success' => false,
+            'error' => '"newPass" did not match "confirmPass"',
+            'errorCode' => 3
+        ]);
+        return;
     }
 
-    $pass = password_hash($_POST['newPass'], PASSWORD_DEFAULT);
+    $pass = password_hash($newPass, PASSWORD_DEFAULT);
 
     $config = require($_SERVER['DOCUMENT_ROOT'] . '/../config.php');
 
     $redis = new RedisCache($config);
 
-    $email = $redis->getResetPassword($_POST['reset_token']);
+    if(!isset($_POST['reset_token'])) {
+        echo json_encode([
+            'success' => false,
+            'error' => '"reset_token" not sent in POST data',
+            'errorCode' => 2
+        ]);
+        return;
+    }
+
+    $resetToken = $_POST['reset_token'];
+    $email = $redis->getResetPassword($resetToken);
     $redis->close();
 
     if(!$email) {
@@ -51,7 +61,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute() or $stmt->close() && $conn->close() && die(json_encode(['success' => false, 'error' => 'Unknown error while changing password']));
     $stmt->close();
 
-    $redis->deleteResetPassword($_POST['reset_token']);
+    $redis->deleteResetPassword($resetToken);
     $redis->close();
 
     echo json_encode([

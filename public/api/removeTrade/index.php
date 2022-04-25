@@ -68,7 +68,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $findPoke->bind_param('sii', $email, $_POST['save'], $_POST['id']);
     $findPoke->execute();
 
-    $pokeRow = $findPoke->get_result()->fetch_row();
+    $pokeRow = $findPoke->get_result()->fetch_assoc();
 
     if($pokeRow === null) {
         $findPoke->close();
@@ -76,12 +76,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         return;
     }
 
-    $pokeNum = $pokeRow[3];
-    $pokeNickname = $pokeRow[4];
+    $pokeNum = (int) $pokeRow['pNum'];
+    $pokeNickname = (int) $pokeRow['nickname'];
 
     $findPoke->close();
 
     $updatePoke = $conn->prepare('UPDATE pokes SET pNum = ?, nickname = ? WHERE email = ? AND num = ? AND id = ?');
+
+
 
     $evolveNum = match ($pokeNum) {
         // Kadabra => Alakazam

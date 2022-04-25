@@ -134,7 +134,7 @@ class MySQL {
         $stmt->execute() or $stmt->close() && $conn->close() && die('Result=Failure&Reason=taken');
         $stmt->close();
 
-        $stmt = $conn->prepare('INSERT INTO saves VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt = $conn->prepare('INSERT INTO saves VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
 
         $saves = $account->saves;
         for($i = 0; $i < count($saves); $i++) {
@@ -203,7 +203,7 @@ class MySQL {
                 if (isset($poke->reason)) {
                     $reason = $poke->reason;
                     if ($reason === 'cap') {
-                        $pokeStmt = $conn->prepare('INSERT INTO pokes VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                        $pokeStmt = $conn->prepare('INSERT INTO pokes VALUES(0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
                         $pokeStmt->bind_param('siiisiiiiiiiiisssii', $email, $i, $poke->myID, $poke->num, $poke->nickname, $poke->exp, $poke->lvl, $poke->m1, $poke->m2, $poke->m3,
                             $poke->m4, $poke->ability, $poke->mSel, $poke->targetType, $poke->tag, $poke->item, $poke->owner, $poke->pos, $poke->shiny);
                     } else {
