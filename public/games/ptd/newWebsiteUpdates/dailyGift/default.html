@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<!-- saved from url=(0095)https://ptd1.jordanplayz158.xyz/games/ptd/dailyGift.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Pokémon Center - Daily Gift</title>
+    
+    <link rel="stylesheet" type="text/css" href="./Pokémon Center - Daily Gift Locked_files/base.css">
+    <link rel="stylesheet" type="text/css" href="./Pokémon Center - Daily Gift Locked_files/suckerfish.css">
+    <link rel="stylesheet" type="text/css" href="./Pokémon Center - Daily Gift Locked_files/style.css">
+    <!--<script type='text/javascript' src='logging.js'></script>-->
+    <script src="./Pokémon Center - Daily Gift Locked_files/jquery-3.6.0.min.js.download" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
+    </script>
+    <script src="./Pokémon Center - Daily Gift Locked_files/base.js.download"></script>
+    <script src="./Pokémon Center - Daily Gift Locked_files/moves.js.download"></script>
+    <script src="./Pokémon Center - Daily Gift Locked_files/utils.js.download"></script>
+    <script>
+        window.onload = () => {
+            loadProfile(() => {
+                let saveNum = getCookie('save');
+
+                if (saveNum === null || saveNum < 0) {
+                    saveNum = 0;
+                } else if (saveNum > 2) {
+                    saveNum = 2;
+                }
+
+                $.ajax({
+                    url: '/api/getSaves/?exclude=pokes&save=' + saveNum,
+                    type: "GET",
+                    success: function (saves) {
+                        if (!successCheck(saves)) {
+                            return;
+                        }
+
+                        let save = saves[0];
+                        initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
+
+                        validationCheck(saves);
+
+                        console.log(saves);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                })
+            })
+        };
+    </script>
+</head>
+<body>
+<div id="header">
+
+
+<!-- Header -->
+<a href="https://ptd1.jordanplayz158.xyz/games/ptd/account.html">
+    <img src="./Pokémon Center - Daily Gift Locked_files/logo.png" alt="Logo">
+</a>
+
+</div>
+<div id="content">
+    <div id="nav">
+
+
+<!-- Navbar -->
+<div id="suckerfish">
+    <ul class="menu">
+        <li><a href="https://ptd1.jordanplayz158.xyz/">Blog</a></li>
+        <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/checkPokemon.php?live=true">Home</a></li>
+        <li class="expanded"><a href="https://ptd1.jordanplayz158.xyz/games/ptd/createTrade.php">Account</a>
+            <ul class="menu">
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/changeNickname.html">Change Nickname</a></li>
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/changeAvatar.php">Change Avatar</a></li>
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/reset_password_form.html">Change Password</a></li>
+            </ul>
+        </li>
+        <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/adoption.php">Pokemon Adoption</a></li>
+        <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/avatarStore.php">Avatar Store</a></li>
+        <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/dailyCode.php">Daily Gift</a></li>
+        <li class="expanded"><a href="https://ptd1.jordanplayz158.xyz/games/ptd/inventory.php">Inventory</a>
+            <ul class="menu">
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/inventory_items.php">Items</a></li>
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/inventory_avatar.php">Avatars</a></li>
+            </ul>
+        </li>
+        <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/gameCorner_test.php">Game Corner</a></li>
+        <li class="expanded"><a href="https://ptd1.jordanplayz158.xyz/games/ptd/createTrade.html">Trading Center</a>
+            <ul class="menu">
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/createTrade.html">Create Trade</a></li>
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/myTrades.html">Your Trades</a></li>
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/myOffers.html">Your Offers/Requests</a></li>
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/searchTrades.php">Search Trades</a></li>
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/latestTrades.html">Latest Trades</a></li>
+            </ul>
+        </li>
+        <li class="expanded"><a href="https://ptd1.jordanplayz158.xyz/games/ptd/createTrade.php">Utilities</a>
+            <ul class="menu">
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/transferTo2.php">Transfer to PTD 2</a></li>
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/removeHack.php">Remove Hacked Tag</a></li>
+                <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/elite4fix.php">Elite 4 Black Screen Fix</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+</div>
+    <table id="content_table">
+        <tbody>
+        <tr>
+            <td id="sidebar">
+
+<script src="./Pokémon Center - Daily Gift Locked_files/js.cookie.js.download"></script>
+<script>
+    function initProfile(avatar, name, badges, money, num) {
+        document.getElementById('saveAvatar').setAttribute('src', '/_static/images/avatars/' + avatar + '.png');
+        document.getElementById('saveName').innerText = name;
+        document.getElementById('badges').innerText = badges;
+        document.getElementById('money').innerText = money;
+
+        let remainingSaves = null;
+
+        num = parseInt(num)
+
+        if(isNaN(num)) {
+            console.log('Invalid number. 0 Substituted')
+            num = 0;
+        }
+
+        switch (num) {
+            case 0:
+                remainingSaves = [1,2];
+                break;
+            case 1:
+                remainingSaves = [0,2];
+                break;
+            case 2:
+                remainingSaves = [0,1];
+        }
+
+        if(remainingSaves != null) {
+            remainingSaves.forEach(remainingSave => {
+                $.ajax({
+                    url: '/api/getSaves/?exclude=pokes&save=' + remainingSave,
+                    type: "GET",
+                    success: function (saves) {
+                        let save = saves[0];
+
+                        const blockDiv = document.createElement('div');
+                        blockDiv.id = remainingSave;
+                        blockDiv.className = 'block';
+                        blockDiv.onclick = function () {
+                            Cookies.set('save', blockDiv.id, { expires: 365 });
+                            location.reload();
+                        };
+                        blockDiv.style.cursor = 'pointer';
+
+                        const saveDiv = document.createElement('div');
+
+                        const avatarDiv = document.createElement('div');
+                        avatarDiv.className = 'avatar';
+
+                        const avatarImage = document.createElement('img');
+                        avatarImage.src = '/_static/images/avatars/' + save['avatar'] + '.png';
+
+                        avatarDiv.append(avatarImage);
+
+                        const nameDiv = document.createElement('div');
+                        nameDiv.className = 'name';
+                        nameDiv.innerText = save['nickname'];
+
+                        const profileDiv = document.createElement('div');
+                        profileDiv.className = 'profile_middle';
+
+                        const badgesLabelSpan = document.createElement('span');
+                        badgesLabelSpan.className = 'info_text';
+                        badgesLabelSpan.innerText = 'Badges:';
+
+                        const badgesSpan = document.createElement('span');
+                        badgesSpan.innerText = save['badges'];
+
+                        profileDiv.append(badgesLabelSpan, badgesSpan);
+
+                        const moneyLabelSpan = document.createElement('span');
+                        moneyLabelSpan.className = 'info_text';
+                        moneyLabelSpan.innerText = 'Money:';
+
+                        const moneySpan = document.createElement('span');
+                        moneySpan.innerText = save['money'];
+
+                        profileDiv.append(moneyLabelSpan, moneySpan);
+
+                        saveDiv.append(avatarDiv, nameDiv, profileDiv);
+
+                        blockDiv.append(saveDiv)
+
+                        document.getElementById('saves').append(blockDiv);
+
+                        console.log(saves);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                })
+            })
+        } else {
+            console.log("remainingSaves is null");
+        }
+    }
+
+    console.log("profile JS loaded")
+</script>
+
+<!-- Profile -->
+<div class="block">
+    <div class="title"><p>Current Profile:</p></div>
+    <div class="content">
+        <div class="profile_top">
+            <div class="avatar">
+                <img id="saveAvatar" alt="" style="height:auto;width:auto;" src="./Pokémon Center - Daily Gift Locked_files/b_5.png">
+            </div>
+            <div class="name" id="saveName">Ben</div>
+        </div>
+        <div class="profile_middle">
+            <span class="info_text">Badges:</span><span id="badges">8</span><br>
+            <span class="info_text">Money:</span><span id="money">100125067</span>
+        </div>
+    </div>
+</div>
+<div id="saves"><div id="1" class="block" style="cursor: pointer;"><div><div class="avatar"><img src="./Pokémon Center - Daily Gift Locked_files/b_12.png"></div><div class="name">Invalids</div><div class="profile_middle"><span class="info_text">Badges:</span><span>0</span><span class="info_text">Money:</span><span>50</span></div></div></div><div id="2" class="block" style="cursor: pointer;"><div><div class="avatar"><img src="./Pokémon Center - Daily Gift Locked_files/none.png"></div><div class="name">Testing</div><div class="profile_middle"><span class="info_text">Badges:</span><span>0</span><span class="info_text">Money:</span><span>50</span></div></div></div></div>
+
+</td>
+            <td id="main">
+                <div class="block">
+                    <div class="title"><p>Daily Gift - <a href="https://ptd1.jordanplayz158.xyz/games/ptd/checkPokemon.php?save=0">Go Back</a></p></div>
+                    <div class="content">
+                        <p>Your have 100125067 pokedollars. <a href="https://ptd1.jordanplayz158.xyz/games/ptd/prizeList.php">View Prize List.</a></p>
+                        <p><a href="https://ptd1.jordanplayz158.xyz/games/ptd/commonGift.php">Buy a Common Daily Gift for 1,000 pokedollars.</a></p>
+                    <p>You don't meet the requirements for the Uncommon Daily Gift in this profile.</p><p>You don't meet the requirements for the Rare Daily Gift in this profile.</p></div>
+                </div>
+                
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body></html>
