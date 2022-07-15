@@ -1,0 +1,191 @@
+body {
+    margin: 0;
+    padding: 0;
+    color: #000;
+    background: #727272 url(../images/body_background.png) repeat;
+    font-family: Tahoma, "Trebuchet MS", Helvetica,sans-serif;
+    font-size: 12px;
+}
+
+img {
+    border: 0;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    margin: 0;
+}
+
+ul li {
+    margin: 3px 0;
+}
+
+#header, #content, #footer {
+    min-width: 1200px;
+}
+
+#header {
+    height: 150px;
+    background: #f20000 url(../images/header.png) repeat-x;
+    border-bottom: 1px solid #000;
+}
+
+#header img {
+    padding-left: 10px;
+}
+
+#nav {
+    width: 100%;
+    height: 28px;
+    text-align: center;
+    background: #818181 url(../images/menu-bg.png) repeat-x;
+    border-bottom: 1px solid #000;
+    box-shadow: 0 3px 3px #8c8c8c;
+}
+
+#content {
+    clear:both;
+    width: 100%;
+    background: #e5e5e5 url(../images/background.png) repeat;
+    box-shadow: 0 3px 3px #333333;
+}
+
+#content_table {
+    margin-top: 10px;
+    padding: 0 4px;
+    width: 100%;
+}
+
+#sidebar {
+    width: 336px;
+    vertical-align: top;
+    padding: 0 4px;
+}
+
+#sidebar .menu {
+    width: 336px;
+    margin: 0 0 12px;
+    background-color: #FFFFFF;
+    box-shadow: 0 3px 3px #8c8c8c;
+    border-left: 1px solid #696969;
+    border-right: 1px solid #696969;
+    border-top: 1px solid #696969;
+    border-radius: 5px;
+}
+
+#sidebar .menu a {
+    height: 20px;
+    margin: 0;
+    padding: 6px 3px 3px;
+    display: block;
+    text-decoration: none;
+    color: #000;
+    line-height: 17px;
+    border-bottom: 1px solid #696969;
+}
+
+#sidebar .menu a:hover {
+    background-color: #101010;
+}
+
+
+#sidebar .block {
+    padding: 8px;
+    margin: 0 0 10px;
+    border: 1px solid #818181;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    box-shadow: 0 3px 3px #8c8c8c;
+}
+#sidebar .block .title p {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#sidebar .block .content p {
+    margin: 15px 0 0;
+}
+
+#sidebar .block .content p:first-child {
+    margin: 0;
+}
+
+#main {
+    padding: 0 4px;
+    vertical-align: top;
+}
+#main .block {
+    padding: 8px;
+    margin: 0 0 10px;
+    border: 1px solid #818181;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    box-shadow: 0 3px 3px #8c8c8c;
+    clear: both;
+}
+
+#main .block .title {
+    color: #000;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+#main .block .title.thin {
+    margin-bottom: 0;
+}
+
+#main .block .content p {
+    margin: 15px 0 0;
+}
+
+#main .block .content p:first-child {
+    margin: 0;
+}
+
+#main .block .footer {
+    margin: 6px 0 0;
+    text-align: right;
+}
+
+#footer {
+    clear: both;
+    padding: 15px 0;
+    border-top: 1px solid #000;
+    color:#FFF;
+    text-align: center;
+    font-size: 11px;
+}
+#footer p {
+    margin: 0 0 15px;
+}
+
+#footer p a {
+    color: #FFF;
+    border-bottom: 1px dashed #FFF;
+}
+#footer p a:hover {
+    text-decoration: none;
+    border-bottom: 1px dashed #AAA;
+}
+
+.center {
+    text-align: center;
+}
+
+.clear {
+    clear: both !important;
+}
+
+input {
+    margin-bottom: 20px;
+}
+
+form {
+    padding-top: 10px;
+}

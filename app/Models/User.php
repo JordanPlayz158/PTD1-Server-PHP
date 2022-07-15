@@ -1,16 +1,21 @@
 <?php
-
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
-{
+class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable;
+
+     /**
+     * The storage format of the model's date columns.
+     *
+     * @var string
+     */
+    //protected $dateFormat = 'U';
 
     /**
      * The attributes that are mass assignable.
@@ -40,5 +45,28 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
+
+    /*
+    //public string $email;
+    //public string $pass;
+
+    public array $saves = array();
+
+    //public ?string $accNickname = null;
+    public ?string $dex1 = null;
+    public ?string $dex1Shiny = null;
+    public ?string $dex1Shadow = null;
+
+    public function parse(array $account) {
+        //$this->email = $account['email'];
+        //$this->pass = $account['pass'];
+        //$this->accNickname = $account['accNickname'];
+        $this->dex1 = $account['dex1'];
+        $this->dex1Shiny = $account['dex1Shiny'];
+        $this->dex1Shadow = $account['dex1Shadow'];
+    }
+    */
 }

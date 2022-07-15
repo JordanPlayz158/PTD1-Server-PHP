@@ -1,0 +1,137 @@
+#suckerfish	{
+	line-height: 28px;
+	background: #7a7a7a url(../images/menu-bg.png) repeat-x;
+	display: inline-block;
+}
+
+#suckerfish ul { /* top level ul */
+	padding: 0 0 0 0;
+	list-style: none;
+	z-index: 3;
+	display: inline;
+	text-align: left;
+} 
+
+#suckerfish a {
+	background: #7a7a7a url(../images/menu-bg.png) repeat-x;
+	color: #fff;
+	display: block;
+	padding: 0 14px 0 14px; /* padding between menu elements */
+	text-decoration: none;
+	font-size: 95%;
+	font-weight: bold;
+}
+
+#suckerfish a:active, #suckerfish a:hover {
+	background: #4c4c4c url(../images/menu-bg-over.png) repeat-x;
+	text-decoration: none;
+}
+
+#suckerfish li {
+	display: inline;
+	float: left;
+	margin: 0;
+	padding: 0;
+	height: 1%;
+}
+
+#suckerfish ul.menu li {	
+	border-left: #999 solid 1px;
+}
+
+#suckerfish ul.menu li:first-child, #suckerfish ul.menu ul li {	
+	border-left: none;
+}
+
+/* second-level lists */
+
+#suckerfish ul.menu ul {
+	padding: 0;
+	margin-left: -1px;
+	list-style: none;
+	background: #999;
+	box-shadow: 0 3px 3px #8c8c8c;
+}
+
+#suckerfish ul.menu li ul {
+	position: absolute;
+	width: 200px;
+	left: -999em; /* to hide menus because display: none isn't read by screen readers */
+}
+
+
+#suckerfish ul.menu li li {
+	/* height: auto; */
+	float: left;
+	width: 200px;
+	margin-bottom: 1px;
+}
+
+
+#suckerfish ul.menu li li a:link, #suckerfish ul.menu li li a:visited {
+	color: #fff;
+	background:#7a7a7a;
+	width: 170px;
+	border-bottom: 1px #999 solid;
+	border-left: 1px #999 solid;
+	font-weight: normal;
+}
+
+#suckerfish ul.menu li li.expanded a {
+	background: #7a7a7a url(../images/menu_arrow.png) 100% 50% no-repeat;
+}
+
+#suckerfish ul.menu li li.expanded a:active, #suckerfish ul.menu li li.expanded a:hover {
+	background: #E70000 url(../images/menu_arrow.png) 100% 50% no-repeat;
+}
+
+#suckerfish ul.menu li ul a:active, #suckerfish ul.menu li ul a:hover {
+	background: #E70000;
+	text-decoration: none;
+}
+
+#suckerfish ul.menu li li.expanded ul.menu a {
+	background: #7a7a7a;
+}
+
+#suckerfish ul.menu li li.expanded ul.menu a:active, #suckerfish ul.menu li li.expanded ul.menu a:hover {
+	background: #E70000;
+}
+
+#suckerfish ul.menu li li.expanded ul.menu li.expanded a {
+	background: #7a7a7a url(../images/menu_arrow.png) 100% 50% no-repeat;
+}
+
+#suckerfish ul.menu li li.expanded ul.menu li.expanded a:active, #suckerfish ul.menu li li.expanded ul.menu li.expanded a:hover {
+	background: #E70000 url(../images/menu_arrow.png) 100% 50% no-repeat;
+}
+
+#suckerfish ul.menu li li {
+
+}
+
+#suckerfish ul.menu li ul a {
+	color: #fff;
+	width: 200px;
+	line-height: 24px;
+	font-size: 95%;
+}
+
+#suckerfish ul.menu li ul a:active, #suckerfish ul.menu li ul a:hover {
+	color: #fff;
+	background:#E70000;
+	text-decoration: none;
+}
+
+/* margin for pullouts */
+#suckerfish ul.menu li ul ul {
+	margin: -25px 0 0 199px;
+}
+
+#suckerfish ul.menu li:hover ul ul, #suckerfish ul.menu li:hover ul ul ul, #suckerfish ul.menu li:hover ul ul ul ul {
+	left: -999em;
+}
+
+#suckerfish ul.menu li:hover ul, #suckerfish ul.menu li li:hover ul, #suckerfish ul.menu li li li:hover ul, #suckerfish ul.menu li li li li:hover ul {
+	left: auto;
+}
