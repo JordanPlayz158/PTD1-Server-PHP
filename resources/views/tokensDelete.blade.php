@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Pokémon Center - API Keys</title>
+    <title>Pokémon Center - API Key Deletion</title>
     <meta charset="UTF-8">
     <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
     <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
@@ -14,48 +14,32 @@
     <script src="/_static/js/utils.js" async></script>
     <script src="/_static/js/js.cookie.js" async></script>
     <script defer>
+        const apiKeyId = location.href.substring(location.href.lastIndexOf('/') + 1);
+
         window.onload = () => {
             loadProfile(() => {
                 const apiToken = getCookie('apiToken');
 
-                fetch('/api/tokens', {
+                fetch('/api/tokens/' + apiKeyId, {
                     headers: {
                         'Authorization': 'Bearer ' + apiToken
                     }
                 })
                     .then(response => response.json())
-                    .then(tokens => {
-                        for (let i = 0; i < tokens.length; i++) {
-                            const token = tokens[i];
-                            const tokenId = token['id'];
-                            const tokenLastUsedDate = token['last_used_at'];
+                    .then(data => {
+                        const token = data[0];
 
-                            const tokenDiv = document.createElement('div');
-                            tokenDiv.id = tokenId;
+                        const tokenLastUsedDate = token['last_used_at'];
 
-                            const tokenElement = document.createElement('p');
-                            tokenElement.style.display = 'inline';
+                        const tokenDiv = document.createElement('div');
+                        const tokenElement = document.createElement('p');
+                        tokenElement.textContent = 'ID: ' + token['id']
+                            + ' | Last Used: ' + (tokenLastUsedDate === null ? 'Never' : tokenLastUsedDate)
+                            + ' | Created: ' + token['created_at'];
 
-                            const tokenDeleteButton = document.createElement('button');
-                            tokenDeleteButton.innerText = 'Delete API Key';
-                            tokenDeleteButton.style.float = 'right';
-                            tokenDeleteButton.onclick = function (event) {
-                                location.href = '/apiKeys/' + event.target.parentElement.id
-                            }
+                        tokenDiv.appendChild(tokenElement)
 
-                            tokenElement.textContent = 'ID: ' + tokenId
-                                + ' | Last Used: ' + (tokenLastUsedDate === null ? 'Never' : tokenLastUsedDate)
-                                + ' | Created: ' + token['created_at'];
-
-                            tokenDiv.appendChild(tokenElement);
-                            tokenDiv.appendChild(tokenDeleteButton);
-                            tokenDiv.appendChild(document.createElement('br'));
-                            tokenDiv.appendChild(document.createElement('br'));
-                            tokenDiv.appendChild(document.createElement('br'));
-                            tokenDiv.appendChild(document.createElement('br'));
-
-                            document.getElementById('tokens').appendChild(tokenDiv);
-                        }
+                        document.getElementById('tokens').appendChild(tokenDiv);
 
                         console.log('Success: ', data);
                     })
@@ -65,12 +49,13 @@
             })
         };
 
-        function makeToken(event) {
+        function deleteToken(event) {
             event.preventDefault();
+            event.target.setAttribute('action', '/api/tokens/' + apiKeyId);
 
-            jsonFetch(event).then(response => {
-                if(response.status === 200) {
-                    location.reload();
+            jsonFetch(event, getCookie('apiToken')).then(response => {
+                if(response.status === 204) {
+                    location.href = '/apiKeys/';
                 }
             })
         }
@@ -110,15 +95,15 @@
                 </td>
                 <td id="main">
                     <div class="block">
-                        <div class="title"><p>API Keys</p></div>
+                        <div class="title"><p>API Key Deletion</p></div>
                         <div class="content">
-                            <form action="/tokens" method="POST" onsubmit="makeToken(event)" autocomplete="off">
-                                @csrf
-                                <input value="Create an API Key" type="submit" class="login_btn">
-                            </form>
-
-                            <p>These are all the API Keys currently active for your account:</p><br><br>
+                            <p>The API Key you are about to delete:</p><br><br>
                             <div id="tokens"></div>
+
+                            <form method="DELETE" onsubmit="deleteToken(event)" autocomplete="off">
+                                @csrf
+                                <input value="Delete API Key" type="submit" class="login_btn">
+                            </form>
                         </div>
                     </div>
                 </td>

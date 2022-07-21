@@ -1,5 +1,9 @@
 <?php
-class Save {
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Save extends Model {
     public int $num;
     // called levelUnlocked (in SWF)
     public int $advanced = 0;

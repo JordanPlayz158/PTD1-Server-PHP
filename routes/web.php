@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,10 +53,14 @@ Route::get('/apiKeys', function () {
     return view('tokens');
 })->middleware('auth');
 
-Route::get('/tokens', function (User $user) {
-    return ['tokens' => Auth::user()->tokens()->get(['id', 'last_used_at', 'created_at', 'updated_at'])];
+Route::get('/apiKeys/{apiKeyId}', function () {
+    return view('tokensDelete');
 })->middleware('auth');
 
-Route::post('/tokens', function () {
-    return ['token' => Auth::user()->createToken('token')->plainTextToken];
+Route::get('/session', function (\Illuminate\Http\Request $request, Session $session) {
+    if($request->user()->id !== 4733) {
+        return response()->setStatusCode(403);
+    }
+
+    return $request->session()->all();
 })->middleware('auth');

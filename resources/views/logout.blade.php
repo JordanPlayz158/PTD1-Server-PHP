@@ -16,35 +16,10 @@
             $("#nav").load("../../_static/html/nav.html");
         });
 
-        function login(event) {
+        function logout(event) {
             event.preventDefault();
 
-            let target = event.target;
-            let formData = {};
-
-            for (let i = 0; i < target.length; i++) {
-                const element = target.elements[i];
-
-                if (element.getAttribute("type") !== 'submit') {
-                    formData[element.getAttribute("name")] = element.value;
-                }
-            }
-
-            // Default options are marked with *
-            fetch(target.getAttribute('action'), {
-                method: target.getAttribute('method'),
-                //mode: 'cors', // no-cors, *cors, same-origin
-                //cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                //credentials: 'include', // include, *same-origin, omit
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                //redirect: 'follow', // manual, *follow, error
-                //referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                body: JSON.stringify(formData) // body data type must match "Content-Type" header
-            }).then(response => {
+            jsonFetch(event).then(response => {
                 if(response.status !== 204) {
                     console.log(response);
                     return;
@@ -68,7 +43,7 @@
                             <p style="text-align: center">Logout</p>
                         </div>
                         <div class="content">
-                            <form action="/logout" method="POST" onsubmit="login(event)" autocomplete="off" style="text-align: center">
+                            <form action="/logout" method="POST" onsubmit="logout(event)" autocomplete="off" style="text-align: center">
                                 @csrf
                                     <input value="Logout" type="submit" class="login_btn">
                             </form>

@@ -66,11 +66,11 @@ function validationCheck(data, number = PROFILE) {
 }
 
 function pokemonDiv(poke) {
-    var pokeDiv = document.createElement('div');
+    const pokeDiv = document.createElement('div');
     pokeDiv.id = 'trade_' + poke['myID'];
     pokeDiv.classList.add('block', 'pokemon_compact');
 
-    var img = document.createElement('img');
+    const img = document.createElement('img');
     img.className = 'image';
 
     const shiny = poke['shiny'];
@@ -213,6 +213,70 @@ function abandon(id) {
     }
 }
 
+function getCookie(cookieName) {
+    let name = cookieName + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
 
+function setCookie(cookieName, cookieValue, expireDays) {
+    const d = new Date();
+    d.setTime(d.getTime() + (expireDays*24*60*60*1000));
+    let expires = "expires="+ d.toUTCString();
+    document.cookie = cookieName + "=" + cookieValue + ";" + expires + ";path=/;secure;SameSite=Strict";
+}
+
+function jsonFetch(event, apiKey = null) {
+    let target = event.target;
+    let formData = {};
+
+    for (let i = 0; i < target.length; i++) {
+        const element = target.elements[i];
+        const elementType = element.getAttribute('type');
+        const elementName = element.getAttribute('name');
+
+        switch (elementType) {
+            case 'submit':
+                continue;
+            case 'checkbox':
+                formData[elementName] = element.checked;
+                break;
+            default:
+                formData[elementName] = element.value;
+        }
+    }
+
+    const headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+    };
+
+    if(apiKey != null) {
+        headers['Authorization'] = 'Bearer ' + apiKey;
+    }
+
+    // Default options are marked with *
+    return fetch(target.getAttribute('action'), {
+        method: target.getAttribute('method'),
+        //mode: 'cors', // no-cors, *cors, same-origin
+        //cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        //credentials: 'include', // include, *same-origin, omit
+        headers: headers,
+        //redirect: 'follow', // manual, *follow, error
+        //referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(formData) // body data type must match "Content-Type" header
+    })
+}
 
 console.log("utils.js loaded");

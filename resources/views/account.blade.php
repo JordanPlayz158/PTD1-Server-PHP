@@ -16,65 +16,73 @@
     <script defer>
         window.onload = () => {
             //loadProfile(() => {
-                let saveNumString = getCookie('save');
 
-                if(saveNumString === null) {
-                    saveNumString = 0
-                }
+            fetch('/api/user')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success: ', data);
+                });
 
-                let saveNum = Number.parseInt(saveNumString);
+            fetch('/session')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success: ', data);
+                });
 
-                if(isNaN(saveNum)) {
-                    console.log('Invalid number. 0 Substituted')
-                    saveNum = 0;
-                }
+            let saveNumString = getCookie('save');
 
-                if (saveNum < 0) {
-                    saveNum = 0;
-                } else if (saveNum > 2) {
-                    saveNum = 2;
-                }
+            if (saveNumString === null) {
+                saveNumString = 0
+            }
 
-                $.ajax({
-                    url: '/api/getSaves/?exclude=pokes',
-                    type: "GET",
-                    success: function (saves) {
-                        if (!successCheck(saves)) {
-                            return;
+            let saveNum = Number.parseInt(saveNumString);
+
+            if (isNaN(saveNum)) {
+                console.log('Invalid number. 0 Substituted')
+                saveNum = 0;
+            }
+
+            if (saveNum < 0) {
+                saveNum = 0;
+            } else if (saveNum > 2) {
+                saveNum = 2;
+            }
+
+            fetch('/api/saves/?exclude=pokes')
+                .then(response => response.json())
+                .then(saves => {
+                    if (!successCheck(saves)) {
+                        return;
+                    }
+
+                    for (let i = 0; i < saves.length; i++) {
+                        let save = saves[i];
+
+                        let nickname = save['nickname'];
+                        let avatarPath = '/_static/images/avatars/' + save['avatar'] + '.png';
+
+                        if (i === saveNum) {
+                            document.getElementById('saveNamePrimary').innerText = nickname;
+                            document.getElementById('saveAvatarPrimary').setAttribute('src', avatarPath);
                         }
 
-                        for (let i = 0; i < saves.length; i++) {
-                            let save = saves[i];
+                        document.getElementById('saveName' + i).innerText = nickname;
+                        document.getElementById('saveAvatar' + i).setAttribute('src', avatarPath);
+                        document.getElementById('badges' + i).innerText = save['badges'];
+                        document.getElementById('money' + i).innerText = save['money'];
 
-                            let nickname = save['nickname'];
-                            let avatarPath = '/_static/images/avatars/' + save['avatar'] + '.png';
+                        let blockDiv = document.getElementById('profile1_' + i);
+                        blockDiv.onclick = function () {
+                            Cookies.set('save', i, {expires: 365});
+                            location.reload();
+                        };
+                        blockDiv.style.cursor = 'pointer';
+                    }
+                    //initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
 
-                            if(i === saveNum) {
-                                document.getElementById('saveNamePrimary').innerText = nickname;
-                                document.getElementById('saveAvatarPrimary').setAttribute('src', avatarPath);
-                            }
+                    validationCheck(saves);
 
-                            document.getElementById('saveName' + i).innerText = nickname;
-                            document.getElementById('saveAvatar' + i).setAttribute('src', avatarPath);
-                            document.getElementById('badges' + i).innerText = save['badges'];
-                            document.getElementById('money' + i).innerText = save['money'];
-
-                            let blockDiv = document.getElementById('profile1_' + i);
-                            blockDiv.onclick = function () {
-                                Cookies.set('save', i, { expires: 365 });
-                                location.reload();
-                            };
-                            blockDiv.style.cursor = 'pointer';
-                        }
-                        //initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
-
-                        validationCheck(saves);
-
-                        console.log(saves);
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    },
+                    console.log(saves);
                 })
             //})
         };

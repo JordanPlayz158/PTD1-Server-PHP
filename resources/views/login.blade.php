@@ -10,7 +10,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="/_static/js/utils.js"></script>
+    <script src="/_static/js/js.cookie.js"></script>
     <script>
+        Cookies.remove('apiToken');
+
         $(function () {
             $("#header").load("../../_static/html/header.html");
             $("#nav").load("../../_static/html/nav.html");
@@ -19,41 +22,8 @@
         function login(event) {
             event.preventDefault();
 
-            let target = event.target;
-            let formData = {};
-
-            for (let i = 0; i < target.length; i++) {
-                const element = target.elements[i];
-                const elementType = element.getAttribute('type');
-                const elementName = element.getAttribute('name');
-
-                switch (elementType) {
-                    case 'submit':
-                        continue;
-                    case 'checkbox':
-                        formData[elementName] = element.checked;
-                        break
-                    default:
-                        formData[elementName] = element.value;
-                }
-            }
-
-            // Default options are marked with *
-            fetch(target.getAttribute('action'), {
-                method: target.getAttribute('method'),
-                //mode: 'cors', // no-cors, *cors, same-origin
-                //cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                //credentials: 'include', // include, *same-origin, omit
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                //redirect: 'follow', // manual, *follow, error
-                //referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                body: JSON.stringify(formData) // body data type must match "Content-Type" header
-            }).then(response => {
-                if(response.status !== 204) {
+            jsonFetch(event).then(response => {
+                if (response.status !== 204) {
                     console.log(response);
                     return;
                 }

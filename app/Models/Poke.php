@@ -1,4 +1,6 @@
 <?php
+namespace App\Models;
+
 class Poke {
     public string $id;
     public string $reason;

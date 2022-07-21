@@ -20,6 +20,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        $request->session()->put('apiKey', Auth::user()->createToken('loginApiKey')->plainTextToken);
 
         return response()->noContent();
     }
