@@ -24,6 +24,8 @@ class TokenController extends Controller {
             return response()->setStatusCode(405, 'The login api key is used for the duration of the log in and deleted on log out or login expiration and required for all actions on the pokecenter Cannot delete login api key as it is being currently used to perform this action. If you wish to delete it, simply log out.');
         }
 
+        $tokenBuilder->delete();
+
         return response()->noContent();
     }
 }

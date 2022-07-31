@@ -70,7 +70,11 @@
 
             jsonFetch(event).then(response => {
                 if(response.status === 200) {
-                    location.reload();
+                    const apiKey = response.json().then(response => {
+                        if(confirm("The API Key can NOT be shown to you again. Do you understand?\n\n\"" + response['plainTextToken'] + "\"")) {
+                            location.reload();
+                        }
+                    });
                 }
             })
         }
@@ -112,7 +116,7 @@
                     <div class="block">
                         <div class="title"><p>API Keys</p></div>
                         <div class="content">
-                            <form action="/tokens" method="POST" onsubmit="makeToken(event)" autocomplete="off">
+                            <form action="/api/tokens" method="POST" onsubmit="makeToken(event)" autocomplete="off">
                                 @csrf
                                 <input value="Create an API Key" type="submit" class="login_btn">
                             </form>
