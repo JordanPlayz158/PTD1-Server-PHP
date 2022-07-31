@@ -11,7 +11,7 @@ use Laravel\Sanctum\NewAccessToken;
 
 class TokensController extends Controller {
     public function get(): Collection {
-        return Auth::user()->tokens()->get(['id', 'last_used_at', 'created_at', 'updated_at']);
+        return Auth::user()->tokens()->where('name', '!=', 'loginApiKey')->get(['id', 'last_used_at', 'created_at', 'updated_at']);
     }
 
     public function create(): NewAccessToken {

@@ -18,13 +18,7 @@
 
         window.onload = () => {
             loadProfile(() => {
-                const apiToken = getCookie('apiToken');
-
-                fetch('/api/tokens/' + apiKeyId, {
-                    headers: {
-                        'Authorization': 'Bearer ' + apiToken
-                    }
-                })
+                fetch('/api/tokens/' + apiKeyId)
                     .then(response => response.json())
                     .then(data => {
                         const token = data[0];
