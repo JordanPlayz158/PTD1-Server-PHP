@@ -1,7 +1,59 @@
 <?php
 namespace App\Models;
 
-class Poke {
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * App\Models\Poke
+ *
+ * @property int $id
+ * @property int $save_id
+ * @property string $email
+ * @property int $num
+ * @property int $pId
+ * @property int|null $pNum
+ * @property string|null $nickname
+ * @property int|null $exp
+ * @property int|null $lvl
+ * @property int|null $m1
+ * @property int|null $m2
+ * @property int|null $m3
+ * @property int|null $m4
+ * @property int|null $ability
+ * @property int|null $mSel
+ * @property int|null $targetType
+ * @property string|null $tag
+ * @property string|null $item
+ * @property string|null $owner
+ * @property int|null $pos
+ * @property int|null $shiny
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereAbility($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereExp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereItem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereLvl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereM1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereM2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereM3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereM4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereMSel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereNickname($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereNum($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereOwner($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke wherePId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke wherePNum($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke wherePos($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereSaveId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereShiny($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereTag($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Poke whereTargetType($value)
+ * @mixin \Eloquent
+ */
+class Poke extends Model {
     public string $id;
     public string $reason;
     public int $num;
