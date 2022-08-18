@@ -32,24 +32,25 @@ class ListUser extends Command
     public function handle()
     {
         $email = $this->argument('email');
-        $users = DB::table('users')->where('users.email', $email)
-            ->join('saves', 'users.id', '=', 'saves.user_id')
-            ->join('pokes', 'saves.id', '=', 'pokes.save_id')
-            ->join('trades', 'users.email', '=', 'trades.email')
-            ->join('achievements', 'users.email', '=', 'achievements.email')
-            //->join('offers', 'offers.offerSave', '=', 'saves.id')
-            //->join('offers', 'offers.requestSave', '=', 'saves.id')
-            ->get()->all();
 
-        if(sizeof($users) === 0) {
-            $users = [];
+        $user = User::whereEmail($email)->limit(1);
 
-            $users = array_merge($users, DB::table('pokes')->where('email', $email)->get()->all());
-            $users = array_merge($users, DB::table('trades')->where('email', $email)->get()->all());
-            $users = array_merge($users, DB::table('achievements')->where('email', $email)->get()->all());
+        if($user->count() < 1) {
+            $user = ['email' => $email];
+
+            $user['pokes'] = DB::table('pokes')->where('email', $email)->get()->all();
+            $user['trades'] = DB::table('trades')->where('email', $email)->get()->all();
+            $user['achievements'] = DB::table('achievements')->where('email', $email)->get()->all();
+
+            $this->info(json_encode($user));
+            return 0;
         }
 
-        $this->info(print_r($users, true));
+        $user = $user->with(['saves', 'saves.pokes', 'achievement'])->first();
+
+        //$offers[] = DB::table('offers')->where('offerSave', $saveId)->orWhere('requestSave', $saveId)->get()->all();
+
+        $this->info(json_encode($user));
         return 0;
     }
 }
