@@ -22,7 +22,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Save[] $saves
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Save[] $saves
  * @property-read int|null $saves_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
@@ -42,6 +42,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereShinyDex($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \App\Models\Achievement|null $achievement
  */
 class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable;
@@ -100,11 +101,15 @@ class User extends Authenticatable {
         return $this->hasMany(Save::class);
     }
 
+    public function achievement() {
+        return $this->hasOne(Achievement::class, 'email', 'email');
+    }
+
     // Added this back as likely will still be needed
 
     //public string $email;
     //public string $pass;
-    public array $saves = array();
+    //public array $saves = array();
     //public ?string $accNickname = null;
     public ?string $dex1 = null;
     public ?string $dex1Shiny = null;

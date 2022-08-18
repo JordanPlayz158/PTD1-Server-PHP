@@ -44,9 +44,18 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property int $user_id
  * @method static \Illuminate\Database\Eloquent\Builder|Save whereUserId($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Poke[] $pokes
+ * @property-read int|null $pokes_count
  */
 class Save extends Model {
-    public int $num;
+    /**
+     * Get the ptd1 pokes for the save.
+     */
+    public function pokes() {
+        return $this->hasMany(Poke::class);
+    }
+
+    ////public int $num;
     // called levelUnlocked (in SWF)
     public int $advanced = 0;
     public int $advanced_a = 0;
