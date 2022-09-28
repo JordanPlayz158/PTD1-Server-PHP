@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::table('pokes', function (Blueprint $table) {
             $table->dropPrimary();
             $table->primary('id');
-            $table->dropUnique('pokes_uuid_unique');
+            $table->dropUnique('uuid');
             $table->unique(['save_id', 'pId'], 'pokes_save_id_pId_unique');
         });
 

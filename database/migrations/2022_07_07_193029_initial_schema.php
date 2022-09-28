@@ -59,6 +59,10 @@ return new class extends Migration
             });
         }
 
+        Schema::table('saves', function (Blueprint $table) {
+            $table->unsignedBigInteger('uuid', true)->change();
+        });
+
         if(!Schema::hasTable('pokes')) {
             Schema::create('pokes', function (Blueprint $table) {
                 $table->charset = 'utf8mb4';
@@ -93,6 +97,10 @@ return new class extends Migration
                 $table->bigInteger('uuid', true, true)->change();
             });
         }
+
+        Schema::table('pokes', function (Blueprint $table) {
+            $table->unsignedBigInteger('uuid', true)->change();
+        });
 
         if(!Schema::hasTable('achievements')) {
             Schema::create('achievements', function (Blueprint $table) {

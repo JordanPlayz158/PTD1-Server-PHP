@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Symfony\Component\Console\Output\ConsoleOutput;
+//use Symfony\Component\Console\Output\ConsoleOutput;
 
 return new class extends Migration
 {
@@ -20,10 +20,10 @@ return new class extends Migration
             });
         }
 
-        $out = new ConsoleOutput();
-        DB::table('pokes')->chunkById(100, function ($pokes) use ($out) {
+        //$out = new ConsoleOutput();
+        DB::table('pokes')->chunkById(100, function ($pokes) /*use ($out)*/ {
             foreach ($pokes as $poke) {
-                $out->writeln($poke->id);
+                //$out->writeln($poke->id);
 
                 if($poke->save_id !== 0) {
                     continue;
@@ -37,7 +37,11 @@ return new class extends Migration
                     $message = 'User not found with email "' . $poke->email . '"';
                     Log::info($message);
 
-                    $out->writeln($message);
+                    //$out->writeln($message);
+
+                    // If the user is not found, we know this pokes record is invalid, so we will delete it
+                    DB::table('pokes')->where('id', '=', $poke->id)->delete();
+                    continue;
                 }
 
                 $save = DB::table('saves')

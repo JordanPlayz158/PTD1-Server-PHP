@@ -15,9 +15,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('pokes', function (Blueprint $table) {
-            if(!Schema::hasColumn('pokes', 'save_id')) {
-                $table->foreign('save_id')->references('id')->on('saves');
-            }
+            $table->foreign('save_id')->references('id')->on('saves');
         });
     }
 

@@ -37,7 +37,7 @@ return new class extends Migration
         Schema::table('saves', function (Blueprint $table) {
             $table->dropPrimary();
             $table->primary('id');
-            $table->dropUnique('saves_uuid_unique');
+            $table->dropUnique('uuid');
             $table->unique(['user_id', 'num']);
         });
 

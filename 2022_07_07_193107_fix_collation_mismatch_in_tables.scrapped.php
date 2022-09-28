@@ -4,7 +4,7 @@ use App\Models\Save;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Symfony\Component\Console\Output\ConsoleOutput;
+//use Symfony\Component\Console\Output\ConsoleOutput;
 
 return new class extends Migration
 {
@@ -16,7 +16,7 @@ return new class extends Migration
     public function up()
     {
         $tableSuffix = '_new';
-        $out = new ConsoleOutput();
+        //$out = new ConsoleOutput();
 
 
         foreach (DB::select('SHOW TABLE STATUS') as $tableInfo) {
@@ -37,7 +37,7 @@ return new class extends Migration
                     $idColumn = 'time';
             }
 
-            Schema::create($tableName . $tableSuffix, function (Blueprint $table) use ($out, $tableName) {
+            Schema::create($tableName . $tableSuffix, function (Blueprint $table) use (/*$out, */$tableName) {
                 $table->charset = 'utf8mb4';
                 $table->collation = 'utf8mb4_unicode_ci';
                 $table->engine = 'InnoDB';
@@ -130,9 +130,9 @@ return new class extends Migration
                 if($arraySize > 0) {
                     $key = $multiColumnIndex[$arraySize - 1];
                     $keyName = $key->Key_name;
-                    //$out->writeln(print_r($multiColumnIndex, true));
+                    // //$out->writeln(print_r($multiColumnIndex, true));
 
-                    $out->writeln(print_r($ignorePrimary, true));
+                    //$out->writeln(print_r($ignorePrimary, true));
 
                     if($keyName === 'PRIMARY') {
                         if(!in_array($key->Column_name, $ignorePrimary)) {
@@ -149,7 +149,7 @@ return new class extends Migration
                     $multiColumnIndex = [];
                 }
 
-                //$out->writeln(print_r($table, true));
+                // //$out->writeln(print_r($table, true));
             });
 
             /*DB::table($tableName)->chunkById(100, function ($rows) {
