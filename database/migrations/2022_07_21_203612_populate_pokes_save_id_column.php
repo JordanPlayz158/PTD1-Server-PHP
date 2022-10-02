@@ -29,7 +29,7 @@ return new class extends Migration
         $progress = new ProgressBar($output, $rowNum);
         $progress->start();
 
-        foreach (DB::table('pokes')->lazyById() as $poke) {
+        foreach (DB::table('pokes')->select(['save_id', 'email', 'id', 'num'])->lazyById() as $poke) {
             if ($poke->save_id !== 0) {
                 Log::info("Pokemon's Save ID is already set, no need to reassign it.", [$poke->save_id]);
                 continue;
@@ -77,7 +77,7 @@ return new class extends Migration
         $progress = new ProgressBar($output, $rowNum);
         $progress->start();
 
-        foreach (DB::table('pokes')->lazyById() as $poke) {
+        foreach (DB::table('pokes')->select(['save_id', 'id'])->lazyById() as $poke) {
             $save = DB::table('saves')
                 ->where('id', $poke->save_id)
                 ->select('user_id', 'num')->limit(1)->first();

@@ -102,7 +102,7 @@ return new class extends Migration
             $progress = new ProgressBar($output, $rowNum);
             $progress->start();
 
-            foreach (DB::table('users')->lazyById() as $user) {
+            foreach (DB::table('users')->select(['email', 'password', 'name', 'dex', 'shinyDex', 'shadowDex'])->lazyById() as $user) {
                 DB::table('accounts')->insert([
                     'email' => $user->email,
                     'pass' => $user->password,

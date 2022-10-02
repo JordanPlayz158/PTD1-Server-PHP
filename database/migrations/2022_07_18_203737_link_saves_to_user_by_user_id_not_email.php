@@ -29,7 +29,7 @@ return new class extends Migration
         $progress = new ProgressBar($output, $rowNum);
         $progress->start();
 
-        foreach (DB::table('saves')->lazyById() as $save) {
+        foreach (DB::table('saves')->select(['user_id', 'email', 'id'])->lazyById() as $save) {
             if ($save->user_id !== 0) {
                 Log::info("Save's User ID is already set, no need to reassign it.", [$save->user_id]);
                 continue;
@@ -78,7 +78,7 @@ return new class extends Migration
         $progress = new ProgressBar($output, $rowNum);
         $progress->start();
 
-        foreach (DB::table('saves')->lazyById() as $save) {
+        foreach (DB::table('saves')->select(['user_id', 'id'])->lazyById() as $save) {
             $user = DB::table('users')->where('id', '=', $save->user_id)->select('email')->limit(1)->first();
             DB::table('saves')->where('id', '=', $save->id)->update(['email' => $user->email]);
             $rowUpdateCounter++;
