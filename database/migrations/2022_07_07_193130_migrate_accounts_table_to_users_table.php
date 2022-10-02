@@ -4,6 +4,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 return new class extends Migration
 {
@@ -37,23 +39,36 @@ return new class extends Migration
             $table->dateTime('updated_at')->change();
         });
 
-        DB::table('accounts')->orderBy('email')->chunk(100, function ($accounts) {
-            foreach ($accounts as $account) {
-                $email = $account->email;
-                $name = $account->accNickname;
+        $rowNum = DB::table('accounts')->count('email');
+        $rowInsertCounter = 0;
 
-                DB::table('users')->insert([
-                    'name' => $name == null ? $email : $name,
-                    'email' => $email,
-                    'password' => $account->pass,
-                    'dex' => $account->dex1,
-                    'shinyDex' => $account->dex1Shiny,
-                    'shadowDex' => $account->dex1Shadow,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
-                ]);
-            }
-        });
+        $output = new ConsoleOutput();
+        $output->writeln('');
+        $progress = new ProgressBar($output, $rowNum);
+        $progress->start();
+
+        foreach (DB::table('accounts')->lazyById(1000, 'email') as $account) {
+            $email = $account->email;
+            $name = $account->accNickname;
+
+            DB::table('users')->insert([
+                'name' => $name == null ? $email : $name,
+                'email' => $email,
+                'password' => $account->pass,
+                'dex' => $account->dex1,
+                'shinyDex' => $account->dex1Shiny,
+                'shadowDex' => $account->dex1Shadow,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]);
+
+            $rowInsertCounter++;
+            $progress->advance();
+        }
+
+        $progress->finish();
+
+        Log::info($rowInsertCounter . ' users inserted from ' . $rowNum . ' accounts');
 
         Schema::dropIfExists('accounts');
     }
@@ -79,18 +94,31 @@ return new class extends Migration
                 $table->string('dex1Shadow', 151);
             });
 
-            DB::table('users')->orderBy('id')->chunk(100, function ($users) {
-                foreach ($users as $user) {
-                    DB::table('accounts')->insert([
-                        'email' => $user->email,
-                        'pass' => $user->password,
-                        'accNickname' => $user->name,
-                        'dex1' => $user->dex,
-                        'dex1Shiny' => $user->shinyDex,
-                        'dex1Shadow' => $user->shadowDex
-                    ]);
-                }
-            });
+            $rowNum = DB::table('users')->count('email');
+            $rowInsertCounter = 0;
+
+            $output = new ConsoleOutput();
+            $output->writeln('');
+            $progress = new ProgressBar($output, $rowNum);
+            $progress->start();
+
+            foreach (DB::table('users')->lazyById() as $user) {
+                DB::table('accounts')->insert([
+                    'email' => $user->email,
+                    'pass' => $user->password,
+                    'accNickname' => $user->name,
+                    'dex1' => $user->dex,
+                    'dex1Shiny' => $user->shinyDex,
+                    'dex1Shadow' => $user->shadowDex
+                ]);
+
+                $rowInsertCounter++;
+                $progress->advance();
+            }
+
+            $progress->finish();
+
+            Log::info($rowInsertCounter . ' accounts inserted from ' . $rowNum . ' users');
 
             DB::table('users')->truncate();
 
