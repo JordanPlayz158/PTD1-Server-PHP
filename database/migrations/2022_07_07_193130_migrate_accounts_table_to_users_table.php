@@ -58,8 +58,7 @@ return new class extends Migration
                 'dex' => $account->dex1,
                 'shinyDex' => $account->dex1Shiny,
                 'shadowDex' => $account->dex1Shadow,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
+                'created_at' => Carbon::now()
             ]);
 
             $rowInsertCounter++;
