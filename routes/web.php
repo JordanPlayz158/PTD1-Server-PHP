@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Web\SWFController;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Route;
@@ -57,10 +58,4 @@ Route::get('/apiKeys/{apiKeyId}', function () {
     return view('tokensDelete');
 })->middleware('auth');
 
-Route::get('/session', function (\Illuminate\Http\Request $request, Session $session) {
-    if($request->user()->id !== 4733) {
-        return response()->setStatusCode(403);
-    }
-
-    return $request->session()->all();
-})->middleware('auth');
+Route::post('/php/newPoke8.php', [SWFController::class, 'post']);
