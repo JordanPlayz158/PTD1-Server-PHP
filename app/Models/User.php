@@ -47,14 +47,6 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The primary key associated with the table.
-     *
-     * @var string
-     */
-    // Once I make the migration removing the users table id column, uncomment this.
-    //protected $primaryKey = 'email';
-
      /**
      * The storage format of the model's date columns.
      *
@@ -84,17 +76,6 @@ class User extends Authenticatable {
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
-
-    /**
      * Get the ptd1 saves for the user.
      */
     public function saves() {
@@ -104,24 +85,4 @@ class User extends Authenticatable {
     public function achievement() {
         return $this->hasOne(Achievement::class, 'email', 'email');
     }
-
-    // Added this back as likely will still be needed
-
-    //public string $email;
-    //public string $pass;
-    //public array $saves = array();
-    //public ?string $accNickname = null;
-    public ?string $dex1 = null;
-    public ?string $dex1Shiny = null;
-    public ?string $dex1Shadow = null;
-
-    public function parse(array $account) {
-        //$this->email = $account['email'];
-        //$this->pass = $account['pass'];
-        //$this->accNickname = $account['accNickname'];
-        $this->dex1 = $account['dex1'];
-        $this->dex1Shiny = $account['dex1Shiny'];
-        $this->dex1Shadow = $account['dex1Shadow'];
-    }
-
 }
