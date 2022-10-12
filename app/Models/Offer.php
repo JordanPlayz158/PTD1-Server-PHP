@@ -21,6 +21,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Offer whereRequestIds($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Offer whereRequestSave($value)
  * @mixin \Eloquent
+ * @property int|null $offer_pokemon
+ * @property int|null $request_pokemon
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Offer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Offer whereOfferPokemon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Offer whereRequestPokemon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Offer whereUpdatedAt($value)
  */
 class Offer extends Model
 {

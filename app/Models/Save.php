@@ -44,15 +44,19 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property int $user_id
  * @method static \Illuminate\Database\Eloquent\Builder|Save whereUserId($value)
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Poke[] $pokes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Pokemon[] $pokes
  * @property-read int|null $pokes_count
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Save whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Save whereUpdatedAt($value)
  */
 class Save extends Model {
     /**
      * Get the ptd1 pokes for the save.
      */
     public function pokes() {
-        return $this->hasMany(Poke::class);
+        return $this->hasMany(Pokemon::class);
     }
 
     ////public int $num;

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Poke;
+use App\Models\Pokemon;
 use App\Models\Save;
 use App\Models\User;
 use DB;

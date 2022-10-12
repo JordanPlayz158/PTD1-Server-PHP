@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Poke;
+use App\Models\Pokemon;
 use App\Models\Save;
 use App\Models\User;
 use DB;
@@ -57,7 +57,7 @@ class DeleteUserLegacy extends Command
 
             foreach ($saves as $save) {
                 $saveIds[] = $save->id;
-                $pokes = Poke::whereSaveId($save->id);
+                $pokes = Pokemon::whereSaveId($save->id);
 
                 if ($pokes !== null && $pokes->count() > 0) {
                     $this->info("{$pokes->count()} Pokes found for save id {$save->id}");
@@ -68,7 +68,7 @@ class DeleteUserLegacy extends Command
             $this->info('You do not have the checkUserExists flag enabled so the saves for the user can not be retrieved.');
         }
 
-        $pokes = Poke::whereEmail($email);
+        $pokes = Pokemon::whereEmail($email);
 
         if ($pokes !== null || $pokes->count() > 0) {
             $this->info("{$pokes->count()} Pokes found by email");
