@@ -17,16 +17,15 @@ class LoadBuilder extends SWFBuilder
     protected string $dex1Shiny;
     protected string $dex1Shadow;
 
-    protected SaveBuilder $save1;
-    protected SaveBuilder $save2;
-    protected SaveBuilder $save3;
+    protected array $saves = [];
 
     public static function new(): self
     {
         $new = new self();
-        $new->save1 = SaveBuilder::new(1);
-        $new->save2 = SaveBuilder::new(2);
-        $new->save3 = SaveBuilder::new(3);
+
+        $new->saves[] = SaveBuilder::new(1);
+        $new->saves[] = SaveBuilder::new(2);
+        $new->saves[] = SaveBuilder::new(3);
 
         return $new;
     }
@@ -120,27 +119,22 @@ class LoadBuilder extends SWFBuilder
     }
 
     /**
-     * @return SaveBuilder
+     * There are 3 save slots
+     * num can only be 0, 1, and 2
+     * the SWF starts at 1 rather than 0
+     * but that is not a problem as the save number
+     * is stored inside the object at initialization
+     *
+     * NOTE: This object is passed by reference so modify it directly
      */
-    public function getSave1(): SaveBuilder
+    public function &getSave(int $num): SaveBuilder|bool
     {
-        return $this->save1;
-    }
+        if($num < 0 || $num > 2) {
+            $false = false;
+            return $false;
+        }
 
-    /**
-     * @return SaveBuilder
-     */
-    public function getSave2(): SaveBuilder
-    {
-        return $this->save2;
-    }
-
-    /**
-     * @return SaveBuilder
-     */
-    public function getSave3(): SaveBuilder
-    {
-        return $this->save3;
+        return $this->saves[$num];
     }
 
     public function create(): Response
@@ -150,10 +144,16 @@ class LoadBuilder extends SWFBuilder
         $this->dex1Shiny = $this->fillDex($this->dex1Shiny);
         $this->dex1Shadow = $this->fillDex($this->dex1Shadow);
 
-        $vars = get_object_vars($this);
+        $saves = [];
 
-        $vars = array_merge($vars, $this->save1->create(), $this->save2->create(), $this->save3->create());
+        foreach ($this->saves as $save) {
+            $saves = array_merge($saves, $save->create());
+        }
 
-        return response()->flash();
+        unset($this->saves);
+
+        $vars = array_merge(get_object_vars($this), $saves);
+
+        return response()->flash($vars);
     }
 }
