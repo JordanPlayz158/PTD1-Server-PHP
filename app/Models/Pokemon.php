@@ -52,9 +52,13 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Pokemon whereTag($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Pokemon whereTargetType($value)
  * @mixin \Eloquent
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Pokemon whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pokemon whereUpdatedAt($value)
  */
 class Pokemon extends Model {
-    public string $id;
+    /*public string $id;
     public string $reason;
     public int $num;
     public string $nickname;
@@ -94,5 +98,5 @@ class Pokemon extends Model {
         $this->myID = $poke['id'];
         $this->pos = $poke['pos'];
         $this->shiny = $poke['shiny'];
-    }
+    }*/
 }

@@ -59,7 +59,7 @@ class Save extends Model {
         return $this->hasMany(Pokemon::class);
     }
 
-    ////public int $num;
+    /*////public int $num;
     // called levelUnlocked (in SWF)
     public int $advanced = 0;
     public int $advanced_a = 0;
@@ -102,5 +102,5 @@ class Save extends Model {
         $this->version = $save['version'];
 
         $this->items = unserialize($save['items']);
-    }
+    }*/
 }
