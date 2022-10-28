@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * App\Models\Save
@@ -57,6 +58,10 @@ class Save extends Model {
      */
     public function pokes() {
         return $this->hasMany(Pokemon::class);
+    }
+
+    public function items() {
+        return DB::table('save_items')->where('save_id', '=', $this->id);
     }
 
     /*////public int $num;
