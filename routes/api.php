@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\SavesController;
 use App\Http\Controllers\Api\TokenController;
 use App\Http\Controllers\Api\TokensController;
@@ -33,5 +34,8 @@ Route::middleware('auth:sanctum')->get('/saves', [SavesController::class, 'get']
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware('auth:sanctum')->get('/account', [AccountController::class, 'get']);
+Route::middleware('auth:sanctum')->post('/account', [AccountController::class, 'post']);
 
 require __DIR__.'/auth.php';
