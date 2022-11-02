@@ -3,6 +3,10 @@
 <script src="/_static/js/js.cookie.js"></script>
 <script>
     function initProfile(avatar, name, badges, money, num) {
+        if(name === null) {
+            name = 'Satoshi';
+        }
+
         document.getElementById('saveAvatar').setAttribute('src', '/_static/images/avatars/' + avatar + '.png');
         document.getElementById('saveName').innerText = name;
         document.getElementById('badges').innerText = badges;
@@ -31,7 +35,7 @@
         if(remainingSaves != null) {
             remainingSaves.forEach(remainingSave => {
                 $.ajax({
-                    url: '/api/getSaves/?exclude=pokes&save=' + remainingSave,
+                    url: '/api/saves/?exclude=id,user_id,num,advanced,advanced_a,challenge,classic,classic_a,npcTrade,shinyHunt,version,created_at,updated_at,pokemon&save=' + remainingSave,
                     type: "GET",
                     success: function (saves) {
                         let save = saves[0];
