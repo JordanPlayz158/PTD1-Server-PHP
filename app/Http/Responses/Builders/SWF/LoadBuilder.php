@@ -79,7 +79,7 @@ class LoadBuilder extends SWFBuilder
         return 'ikkg';
     }
 
-    private function fillDex($dex): string
+    private function fillDex(string|null $dex): string
     {
         if($dex === null) {
             $dex = '0';
@@ -92,29 +92,32 @@ class LoadBuilder extends SWFBuilder
     }
 
     /**
-     * @param string $dex
+     * @param string|null $dex
+     * @return LoadBuilder
      */
-    public function setDex(string $dex): self
+    public function setDex(string|null $dex): self
     {
-        $this->dex1 = $dex;
+        $this->dex1 = $dex ?? '0';
         return $this;
     }
 
     /**
-     * @param string $shinyDex
+     * @param string|null $shinyDex
+     * @return LoadBuilder
      */
-    public function setShinyDex(string $shinyDex): self
+    public function setShinyDex(string|null $shinyDex): self
     {
-        $this->dex1Shiny = $shinyDex;
+        $this->dex1Shiny = $shinyDex ?? '0';
         return $this;
     }
 
     /**
-     * @param string $shadowDex
+     * @param string|null $shadowDex
+     * @return LoadBuilder
      */
-    public function setShadowDex(string $shadowDex): self
+    public function setShadowDex(string|null $shadowDex): self
     {
-        $this->dex1Shadow = $shadowDex;
+        $this->dex1Shadow = $shadowDex ?? '0';
         return $this;
     }
 

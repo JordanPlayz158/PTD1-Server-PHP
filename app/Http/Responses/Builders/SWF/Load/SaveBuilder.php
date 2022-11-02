@@ -43,18 +43,18 @@ class SaveBuilder
     /**
      * @param int $advanced
      */
-    public function setAdvanced(int $advanced): self
+    public function setAdvanced(int|null $advanced): self
     {
-        $this->Advanced = $advanced;
+        $this->Advanced = $advanced ?? 0;
         return $this;
     }
 
     /**
-     * @param int $AdvancedA
+     * @param int $advancedA
      */
-    public function setAdvancedA(int $AdvancedA): self
+    public function setAdvancedA(int|null $advancedA): self
     {
-        $this->Advanced_a = $AdvancedA;
+        $this->Advanced_a = $advancedA ?? 0;
         return $this;
     }
 
@@ -63,97 +63,97 @@ class SaveBuilder
      */
     public function setNickname(string|null $nickname): self
     {
-        $this->Nickname = $nickname ?: 'Satoshi';
+        $this->Nickname = $nickname ?? 'Satoshi';
         return $this;
     }
 
     /**
      * @param int $badges
      */
-    public function setBadges(int $badges): self
+    public function setBadges(int|null $badges): self
     {
-        $this->Badges = $badges;
+        $this->Badges = $badges ?? 0;
         return $this;
     }
 
     /**
      * @param string $avatar
      */
-    public function setAvatar(string $avatar): self
+    public function setAvatar(string|null $avatar): self
     {
-        $this->avatar = $avatar;
+        $this->avatar = $avatar ?? '';
         return $this;
     }
 
     /**
      * @param int $classic
      */
-    public function setClassic(int $classic): self
+    public function setClassic(int|null $classic): self
     {
-        $this->Classic = $classic;
+        $this->Classic = $classic ?? 0;
         return $this;
     }
 
     /**
      * @param string $classicA
      */
-    public function setClassicA(string $classicA): self
+    public function setClassicA(string|null $classicA): self
     {
-        $this->Classic_a = $classicA;
+        $this->Classic_a = $classicA ?? '';
         return $this;
     }
 
     /**
      * @param int $challenge
      */
-    public function setChallenge(int $challenge): self
+    public function setChallenge(int|null $challenge): self
     {
-        $this->Challenge = $challenge;
+        $this->Challenge = $challenge ?? 0;
         return $this;
     }
 
     /**
      * @param int $money
      */
-    public function setMoney(int $money): self
+    public function setMoney(int|null $money): self
     {
-        $this->Money = $money;
+        $this->Money = $money ?? 0;
         return $this;
     }
 
     /**
      * @param int $npcTrade
      */
-    public function setNPCTrade(int $npcTrade): self
+    public function setNPCTrade(int|null $npcTrade): self
     {
-        $this->NPCTrade = $npcTrade;
+        $this->NPCTrade = $npcTrade ?? 0;
         return $this;
     }
 
     /**
      * @param int $shinyHunt
      */
-    public function setShinyHunt(int $shinyHunt): self
+    public function setShinyHunt(int|null $shinyHunt): self
     {
-        $this->shinyHunt = $shinyHunt;
+        $this->shinyHunt = $shinyHunt ?? 0;
         return $this;
     }
 
     /**
      * @param int $pNumItem
      */
-    public function setPNumItem(int $pNumItem): self
+    public function setPNumItem(int|null $pNumItem): self
     {
-        $this->p_numItem = $pNumItem;
+        $this->p_numItem = $pNumItem ?? 0;
         return $this;
     }
 
     /**
      * @param int $version
      */
-    public function setVersion(int $version): self
+    public function setVersion(int|null $version): self
     {
-        $this->Version = $version;
+        $this->Version = $version ?? 1;
         return $this;
     }
 
