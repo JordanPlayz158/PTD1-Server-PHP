@@ -37,6 +37,10 @@ Route::get('/games/ptd/account.html', function() {
     return view('account');
 })->middleware('auth');
 
+Route::get('/games/ptd/changeNickname.html', function() {
+    return view('changeNickname');
+})->middleware('auth');
+
 /*Route::post('/register', [RegisteredUserController::class, 'store'])
     ->name('register');*/
 
