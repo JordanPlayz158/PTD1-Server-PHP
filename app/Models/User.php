@@ -75,6 +75,10 @@ class User extends Authenticatable {
         'remember_token',
     ];
 
+    public function getNameAttribute(): string {
+        return $this->name ?? $this->email;
+    }
+
     /**
      * Get the ptd1 saves for the user.
      */
@@ -83,6 +87,6 @@ class User extends Authenticatable {
     }
 
     public function achievement() {
-        return $this->hasOne(Achievement::class, 'email', 'email');
+        return $this->hasOne(Achievement::class);
     }
 }

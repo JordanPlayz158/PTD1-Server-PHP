@@ -51,17 +51,29 @@ use Illuminate\Support\Facades\DB;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Save whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Save whereUpdatedAt($value)
+ * @property-read int|null $items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Pokemon[] $pokemon
+ * @property-read int|null $pokemon_count
  */
 class Save extends Model {
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'num'
+    ];
+
+    /**
      * Get the ptd1 pokes for the save.
      */
-    public function pokes() {
+    public function pokemon() {
         return $this->hasMany(Pokemon::class);
     }
 
     public function items() {
-        return DB::table('save_items')->where('save_id', '=', $this->id);
+        return $this->hasMany(Item::class);
     }
 
     /*////public int $num;
@@ -90,22 +102,5 @@ class Save extends Model {
     public int $version = 2;
     public array $pokes = array();
     public array $items = array();
-
-    public function parse(array $save) {
-        $this->num = $save['num'];
-        $this->advanced = $save['advanced'];
-        $this->advanced_a = $save['advanced_a'];
-        $this->nickname = $save['nickname'];
-        $this->badges = $save['badges'];
-        $this->avatar = $save['avatar'];
-        $this->classic = $save['classic'];
-        $this->classic_a = $save['classic_a'];
-        $this->challenge = $save['challenge'];
-        $this->money = $save['money'];
-        $this->npcTrade = $save['npcTrade'];
-        $this->shinyHunt = $save['shinyHunt'];
-        $this->version = $save['version'];
-
-        $this->items = unserialize($save['items']);
-    }*/
+    */
 }

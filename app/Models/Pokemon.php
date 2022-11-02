@@ -1,7 +1,9 @@
 <?php
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\Models\Poke
@@ -58,6 +60,28 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Pokemon whereUpdatedAt($value)
  */
 class Pokemon extends Model {
+    public function offers() {
+        return $this->hasManyThrough(
+            Offer::class,
+            OfferPokemon::class,
+            'pokemon_id', // Foreign key on the offer_pokemon table...
+            'offer_pokemon_id', // // Foreign key on the offers table...
+            'id', // Local key on the pokemon table...
+            'id' // Local key on the offer_pokemon table...
+            );
+    }
+
+    public function requests() {
+        return $this->hasManyThrough(
+            Offer::class,
+            OfferPokemon::class,
+            'pokemon_id', // Foreign key on the offer_pokemon table... <---------------|
+            'request_pokemon_id', // // Foreign key on the offers table... <---------|--------|
+            'id', // Local key on the pokemon table... <-------------------------------|        |
+            'id' // Local key on the offer_pokemon table... <------------------------------|
+        );
+    }
+
     /*public string $id;
     public string $reason;
     public int $num;

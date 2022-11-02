@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * App\Models\Achievement
  *
- * @property string $email
+ * @property int $id
+ * @property int $user_id
  * @property string|null $one
  * @property int|null $two
  * @property int|null $three
@@ -20,15 +23,18 @@ namespace App\Models;
  * @property int|null $twelve
  * @property int|null $thirteen
  * @property int|null $fourteen
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereEight($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereEleven($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereFive($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereFour($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereFourteen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereNine($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereOne($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereSeven($value)
@@ -38,17 +44,13 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereThree($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereTwelve($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereTwo($value)
- * @mixin \Eloquent
- * @property int $id
- * @property int $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereUserId($value)
+ * @mixin \Eloquent
  */
-class Achievement extends \Illuminate\Database\Eloquent\Model
+class Achievement extends Model
 {
-
+    public function user() {
+        $this->belongsTo(User::class);
+    }
 }

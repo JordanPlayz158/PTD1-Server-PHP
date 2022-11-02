@@ -29,18 +29,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Offer whereOfferPokemon($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Offer whereRequestPokemon($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Offer whereUpdatedAt($value)
- * @property int|null $offer_pokemon_id
- * @property int|null $request_pokemon_id
- * @method static \Illuminate\Database\Eloquent\Builder|Offer whereOfferPokemonId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Offer whereRequestPokemonId($value)
+ * @property int $pokemon_id
+ * @method static \Illuminate\Database\Eloquent\Builder|OfferPokemon wherePokemonId($value)
  */
-class Offer extends Model
+class OfferPokemon extends Model
 {
-    public function offerPokemonId() {
-        return $this->hasOne(OfferPokemon::class);
-    }
 
-    public function requestPokemonId() {
-        return $this->hasOne(OfferPokemon::class);
-    }
 }
