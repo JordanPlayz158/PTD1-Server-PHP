@@ -17,18 +17,6 @@
         window.onload = () => {
             //loadProfile(() => {
 
-            fetch('/api/user')
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success: ', data);
-                });
-
-            fetch('/session')
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success: ', data);
-                });
-
             let saveNumString = getCookie('save');
 
             if (saveNumString === null) {
@@ -110,9 +98,9 @@
                             </div>
                             <div class="profile_middle">
                                 <ul style="list-style-type: '- '; padding: 0 0 0 10px;">
-                                    <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/changeNickname.html">Change Account Nickname</a></li>
-                                    <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/changeAvatar.php">Change Account Avatar</a></li>
-                                    <li><a href="https://ptd1.jordanplayz158.xyz/games/ptd/reset_password_form.html">Change Account Password</a></li>
+                                    <li><a href="/games/ptd/changeNickname.html">Change Account Nickname</a></li>
+                                    <li><a href="/games/ptd/changeAvatar.php">Change Account Avatar</a></li>
+                                    <li><a href="/games/ptd/reset_password_form.html">Change Account Password</a></li>
                                 </ul>
                             </div>
                         </div>
