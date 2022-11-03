@@ -35,11 +35,9 @@
         if(remainingSaves != null) {
             remainingSaves.forEach(remainingSave => {
                 $.ajax({
-                    url: '/api/saves/?exclude=id,user_id,num,advanced,advanced_a,challenge,classic,classic_a,npcTrade,shinyHunt,version,created_at,updated_at,pokemon&save=' + remainingSave,
+                    url: '/api/saves/' + remainingSave + '?exclude=id,user_id,num,advanced,advanced_a,challenge,classic,classic_a,npcTrade,shinyHunt,version,created_at,updated_at,pokemon',
                     type: "GET",
-                    success: function (saves) {
-                        let save = saves[0];
-
+                    success: function (save) {
                         const blockDiv = document.createElement('div');
                         blockDiv.id = remainingSave;
                         blockDiv.className = 'block';

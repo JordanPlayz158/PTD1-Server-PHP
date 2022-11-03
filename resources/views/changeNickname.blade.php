@@ -25,7 +25,7 @@
                 }
 
                 $.ajax({
-                    url: '/api/account/?save=' + saveNum + '&exclude=achievement,saves.pokemon,saves.items,email_verified_at,dex,shinyDex,shadowDex,created_at,updated_at',
+                    url: '/api/account/?exclude=achievement,saves.pokemon,saves.items,email_verified_at,dex,shinyDex,shadowDex,created_at,updated_at&save=' + saveNum,
                     type: "GET",
                     success: function (account) {
                         if (!successCheck(account)) {
