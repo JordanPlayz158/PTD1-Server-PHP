@@ -13,6 +13,7 @@ use App\Http\Responses\Builders\SWF\SWFBuilder;
 use App\Models\Pokemon;
 use App\Models\Save;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -50,6 +51,8 @@ class SWFController extends Controller {
 
     private function createAccount(string $email, string $password): Response {
         $user = User::firstOrCreate(['email' => $email], ['password' => Hash::make($password)]);
+
+        event(new Registered($user));
 
         // Means it got the first user in db (which means the record exists) and didn't make a new one
         if(!$user->wasRecentlyCreated) {
