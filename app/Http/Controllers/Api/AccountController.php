@@ -3,31 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Web\ExcludeController;
 use App\Models\User;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
-class AccountController extends Controller {
+class AccountController extends ExcludeController {
     public function get(Request $request): array
     {
-        $relations = Collection::make(['saves', 'saves.pokemon', 'saves.pokemon.offers', 'saves.pokemon.requests', 'saves.items', 'achievement']);
-        $attributes = Collection::make(array_keys(Auth::user()->getAttributes()));
-
-        if(($exclude = $request->input('exclude')) !== null) {
-            $excludes = explode(',', $exclude);
-
-            foreach ($excludes as $item) {
-                $attributes = $attributes->reject(function ($value, $key) use ($item) {
-                    return $value == $item;
-                });
-
-                $relations = $relations->reject(function ($value, $key) use ($item) {
-                    return str_starts_with($value, $item);
-                });
-            }
-        }
+        $relations = $this->excludeRelations($request->input('exclude'), Collection::make(['saves', 'saves.pokemon', 'saves.pokemon.offers', 'saves.pokemon.requests', 'saves.items', 'achievement']));
+        $attributes = $this->excludeAttributes($request->input('exclude'), Collection::make(array_keys(Auth::user()->getAttributes())));
 
         $user = User::with($relations->undot()->toArray())
             ->find(Auth::id(), $attributes->toArray());
