@@ -65,32 +65,35 @@ function validationCheck(data, number = PROFILE) {
     return true;
 }
 
-function pokemonDiv(poke) {
+function pokemonDiv(pokemon) {
     const pokeDiv = document.createElement('div');
-    pokeDiv.id = 'trade_' + poke['myID'];
+    const pokemonId = pokemon['id'];
+    const pokemonNum = pokemon['pNum'];
+
+    pokeDiv.id = 'trade_' + pokemonId;
     pokeDiv.classList.add('block', 'pokemon_compact');
 
     const img = document.createElement('img');
     img.className = 'image';
 
-    const shiny = poke['shiny'];
-    img.src = '/_static/images/pokemon/' + poke['num'] + '_' + shiny + '.png';
+    const shiny = pokemon['shiny'];
+    img.src = '/_static/images/pokemon/' + pokemonNum + '_' + shiny + '.png';
 
     if (shiny === 1) {
         pokeDiv.classList.add('shiny');
     } else if (shiny === 2)  {
         pokeDiv.classList.add('shadow');
-        img.src = '/_static/images/pokemon/' + poke['num'] + '_0.png';
+        img.src = '/_static/images/pokemon/' + pokemonNum + '_0.png';
     }
     img.alt = '[Avatar]';
 
     const nickname = document.createElement('span');
     nickname.className = 'name';
-    nickname.innerText = poke['nickname'];
+    nickname.innerText = pokemon['nickname'];
 
     const level = document.createElement('span');
     level.className = 'level';
-    level.innerText = 'Lvl ' + poke['lvl'];
+    level.innerText = 'Lvl ' + pokemon['lvl'];
 
     const moves = document.createElement('div');
     moves.className = 'moves';
@@ -103,13 +106,13 @@ function pokemonDiv(poke) {
 
         let move = document.createElement('td');
         move.className = 'left';
-        move.innerText = get_move(poke['m' + i]);
+        move.innerText = get_move(pokemon['m' + i]);
 
         moves_tr.append(move);
 
         move = document.createElement('td');
         move.className = 'right';
-        move.innerText = get_move(poke['m' + (i + 1)]);
+        move.innerText = get_move(pokemon['m' + (i + 1)]);
 
         moves_tr.append(move);
 
@@ -121,21 +124,21 @@ function pokemonDiv(poke) {
 
     const actions = document.createElement('div');
     actions.className = 'actions';
-    actions.id = 'create_' + poke['myID'];
+    actions.id = 'create_' + pokemonId;
 
     // For right now it won't allow requests for pokemon with auto-trading just put them up on trading center
     // and let people make offers and let user accept or deny
     let trade = document.createElement('a');
     //trade.href = '/games/ptd/tradeMeSetup.php?save=' + saveNum + '&pokeId=' + poke['myID'];
-    trade.href = 'javascript:trade(' + poke['myID'] + ')';
+    trade.href = 'javascript:trade(' + pokemonId + ')';
     trade.text = 'Trade';
 
     let changeNickname = document.createElement('a');
-    changeNickname.href = '/games/ptd/changePokeNickname.php?pokeId=' + poke['myID'];
+    changeNickname.href = '/games/ptd/changePokeNickname.php?pokeId=' + pokemonId;
     changeNickname.text = 'Change Nickname'
 
     let abandon = document.createElement('a');
-    abandon.href = 'javascript:abandon(' + poke['myID'] + ')';
+    abandon.href = 'javascript:abandon(' + pokemonId + ')';
     abandon.text = 'Abandon';
 
     actions.append(trade, ' | ', changeNickname, ' | ', abandon);
@@ -165,25 +168,26 @@ function pokemonDiv(poke) {
 
 function trade(id) {
     const result = window.confirm("Trade the pokemon?");
+    let body = {'pokemon_id': id}
+    const headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+    };
 
     if(result) {
-        $.ajax({
-            url: '/api/createTrade/',
-            type: 'POST',
-            data: {
-                'save' : getCookie('save'),
-                'id' : id,
-            },
-            success: function (result) {
-                if(result['success'] === true) {
-                    document.getElementById('trade_' + id).remove()
-                }
+        fetch('/api/trade/', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(body)
+        }).then(result => result.json()).then(result => {
+            if(result['success'] === true) {
+                document.getElementById('trade_' + id).remove()
+            }
 
-                console.log(result);
-            },
-            error: function (error) {
-                console.log(error);
-            },
+            console.log(result);
+        }).catch(error => {
+            console.log(error);
         })
     }
 }
