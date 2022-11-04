@@ -142,6 +142,24 @@ function pokemonDiv(poke) {
 
     pokeDiv.append(img, nickname, level, moves, actions);
 
+    if(shiny === 1) {
+        const star = document.createElement('img');
+        star.classList.add('image', 'star');
+        star.src = '/_static/images/star_small.png';
+
+        pokeDiv.insertBefore(star, level);
+
+        // Add to #main .block.shiny
+        /*<img class="image" src="/_static/images/star_small.png" style="height: 18px;width: 18px;margin-bottom: 0px;margin-top: 3px;">
+            // You can redirect the image link to your own domain too
+
+            // Edit for #main .block.pokemon_compact .name
+            Remove 'width: 261px;'
+
+            // Edit for #main .block.pokemon_compact .level
+            Remove 'margin-top: -34px;'*/
+    }
+
     return pokeDiv;
 }
 

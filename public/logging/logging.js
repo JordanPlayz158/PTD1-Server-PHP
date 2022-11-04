@@ -1,4 +1,24 @@
+function addSearchParameter(name, value) {
+    const url = new URL(window.location.href);
+
+    if(url.searchParams.has(name)) {
+        url.searchParams.set(name, value);
+    } else {
+        url.searchParams.append(name, value);
+    }
+
+    window.location = url.toString();
+}
+
 window.onload = function() {
+    const filterBox = document.getElementById('filter');
+
+    filterBox.addEventListener('keypress', function(event) {
+        if (event.key === "Enter") {
+            addSearchParameter('filter', filterBox.value);
+        }
+    });
+
     document.querySelectorAll("td[id=ip]").forEach(function(ipTd) {
         let p = document.createElement('p');
         p.style.display = 'none';

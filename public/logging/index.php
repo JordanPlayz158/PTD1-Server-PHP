@@ -53,9 +53,36 @@ if(session_start()) {
                 $offset = $count - 100;
             }
 
-            $stmt = $mysql->conn->prepare('SELECT * FROM logs ORDER BY time DESC LIMIT ?,100');
-            $stmt->bind_param('i', $offset);
-            $stmt->execute();
+            if(isset($_GET['filter'])) {
+                $filter = explode(' ', $_GET['filter']);
+
+                $column = '';
+                $comparison = '';
+
+                switch ($filter[0]) {
+                    case 'ip':
+                        $column = 'ip';
+                        break;
+                    case 'post_data':
+                        $column = 'post_data';
+                }
+
+                switch ($filter[1]) {
+                    case '=':
+                        $comparison = '=';
+                        break;
+                    case 'LIKE':
+                        $comparison = 'LIKE';
+                }
+
+                $stmt = $mysql->conn->prepare('SELECT * FROM logs WHERE ' . $column . ' ' . $comparison . ' ? ORDER BY time DESC LIMIT ?,100');
+                $stmt->bind_param('si', $filter[2], $offset);
+                $stmt->execute();
+            } else {
+                $stmt = $mysql->conn->prepare('SELECT * FROM logs ORDER BY time DESC LIMIT ?,100');
+                $stmt->bind_param('i', $offset);
+                $stmt->execute();
+            }
 
             $meta = $stmt->result_metadata();
             while ($field = $meta->fetch_field()) {
@@ -84,6 +111,9 @@ if(session_start()) {
 
         echo "<h1>You are displaying $offset-$next/$count log entries!</h1>";
     ?>
+    <label for='filter'>Filter:</label>
+    <input type='text' id='filter' name='filter'>
+    <br><br>
     <input type='checkbox' id='privacy' name='privacy' value='on' checked>
     <label for='privacy'>Privacy Mode!</label>
     <table align='center' border=2>
@@ -147,9 +177,9 @@ if(session_start()) {
         $next = $count - 100;
     }
 
-    echo "<button onclick=\"location.href = '/logging/?offset=$previous';\">Previous</button>";
+    echo "<button onclick=\"addSearchParameter('offset', $previous)\">Previous</button>";
 
-    echo "<button onclick=\"location.href = '/logging/?offset=$next';\">Next</button>";
+    echo "<button onclick=\"addSearchParameter('offset', $next)\">Next</button>";
     ?>
  </body>
  </html>

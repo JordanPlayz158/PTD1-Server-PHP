@@ -1,5 +1,4 @@
 config.php
-accounts.beforeTesting.json
 
 # Eclipse PDT Files
 .buildpath
@@ -14,23 +13,3 @@ accounts.beforeTesting.json
 
 # Composer files
 vendor
-
-# Personal Files that I use for various purposes such as getting the items and saves table and
-# merging them in php and pushing them to new table in mysql as I can't be asked to learn mysql
-# syntax that's that advanced lol
-public/php/admin.php
-
-# Used for IntelliJ to properly check the validity of the crossdomain.xml file
-cross-domain-policy.dtd
-
-# New Laravel Branch
-LaravelMigration
-
-# NFS files
-.cshrc
-.login
-.login_conf
-.mail_aliases
-.mailrc
-.profile
-.shrc

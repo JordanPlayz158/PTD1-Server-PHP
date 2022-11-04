@@ -74,7 +74,6 @@ function saveAccount(Account $account, MySQL $mysql, array $saveData) {
 
     $pokes = $save->pokes;
 
-    // TODO: Check if the id matches the corresponding expected name before saving, if not hacking (You can't change pokemon's name in swf so the id will always have the default nickname)
     for ($i = 1; $i <= intval($saveData['HMP']); $i++) {
         $pokeNum = 'poke' . $i . '_';
         // This is not finding a Pokémon, so it is returning a new one

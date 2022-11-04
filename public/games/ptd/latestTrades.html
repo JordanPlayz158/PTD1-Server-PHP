@@ -51,9 +51,6 @@
                                 return;
                             }
 
-                            const requestTable = document.createElement('div');
-                            requestTable.classList.add('block', 'request_table');
-
                             // let counter = 1;
                             // let partyDiv = document.createElement('div');
                             // partyDiv.classList.add('block', 'party');
@@ -64,8 +61,6 @@
                                 //     partyDiv = document.createElement('div');
                                 //     partyDiv.classList.add('block', 'party');
                                 // }
-
-                                const tradeDiv = document.createElement('td');
 
                                 // switch (counter) {
                                 //     case 1:
@@ -83,8 +78,14 @@
                                 makeAnOffer.href = '/games/ptd/makeAnOffer.html?id=' + poke['id'];
                                 makeAnOffer.style.textAlign = 'center';
 
+                                let childNodeNum = 4;
+
+                                if(poke['shiny'] === 1) {
+                                    childNodeNum = 5;
+                                }
+
                                 const pokemon = pokemonDiv(poke);
-                                const actionDiv = pokemon.childNodes[4];
+                                let actionDiv = pokemon.childNodes[childNodeNum];
 
                                 for (let i = 0; i < actionDiv.childNodes.length;) {
                                     actionDiv.removeChild(actionDiv.childNodes[i]);
@@ -92,15 +93,16 @@
 
                                 actionDiv.appendChild(makeAnOffer);
 
-                                pokemon.replaceChild(actionDiv, pokemon.childNodes[4]);
+                                pokemon.replaceChild(actionDiv, pokemon.childNodes[childNodeNum]);
 
                                 
 
-                                pokemon.insertBefore(document.createElement('hr'), actionDiv);
+                                // Thought it made it look better but it doesn't
+                                //pokemon.insertBefore(document.createElement('hr'), actionDiv);
+
                                 //console.log(pokemon.childNodes);
 
-                                tradeDiv.append(pokemon);
-                                requestTable.append(tradeDiv);
+                                document.getElementById('main').append(pokemon);
 
                                 // partyDiv.append(tradeDiv);
                                 //
@@ -112,7 +114,7 @@
                                 // }
                             })
 
-                            document.getElementById('main').append(requestTable);
+
 
                             console.log(pokes);
                         },

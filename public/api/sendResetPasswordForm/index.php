@@ -57,13 +57,13 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             if(isset($_POST['debug'])) {
                 echo 'Mailer Error: ' . $mailer->ErrorInfo . "\n$e";
             }
-        } catch (Exception $e) {
+        }/* catch (Exception $e) {
             echo json_encode([
                 'success' => false,
                 'error' => 'Generating the token failed',
                 'errorCode' => 5
             ]);
-        }
+        }*/
     } else {
         echo json_encode([
             'success' => false,
@@ -86,7 +86,7 @@ function validEmail(string $email, array $config) : bool|int {
         return 2;
     }
 
-    if(strtolower($email) == strtolower($config['mail']['username'])) {
+    if(strtolower($email) == strtolower($config['mail']['email'])) {
         return 8;
     }
 

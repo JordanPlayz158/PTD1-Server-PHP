@@ -14,35 +14,37 @@
     <script src="/_static/js/moves.js"></script>
     <script src="/_static/js/utils.js"></script>
     <script>
-        $(function () {
-            let saveNum = getCookie('save');
+        window.onload = () => {
+            loadProfile(() => {
+                let saveNum = getCookie('save');
 
-            if(saveNum === null || saveNum.length < 1 || saveNum < 0) {
-                saveNum = 0;
-            } else if(saveNum > 2) {
-                saveNum = 2;
-            }
+                if (saveNum === null || saveNum.length < 1 || saveNum < 0) {
+                    saveNum = 0;
+                } else if (saveNum > 2) {
+                    saveNum = 2;
+                }
 
-            $.ajax({
-                url: '/api/getAccount/?save=' + saveNum,
-                type: "GET",
-                success: function (account) {
-                    if(!successCheck(account)) {
-                        return;
-                    }
+                $.ajax({
+                    url: '/api/getAccount/?save=' + saveNum,
+                    type: "GET",
+                    success: function (account) {
+                        if (!successCheck(account)) {
+                            return;
+                        }
 
-                    let save = account['saves'][0];
-                    initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
+                        let save = account['saves'][0];
+                        initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
 
-                    document.getElementById('accNickname').innerText = account['accNickname'];
+                        document.getElementById('accNickname').innerText = account['accNickname'];
 
-                    console.log(account);
-                },
-                error: function (error) {
-                    console.log(error);
-                },
-            });
-        });
+                        console.log(account);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                });
+            })
+        };
 
         function changeAccountNickname(event) {
             event.preventDefault();

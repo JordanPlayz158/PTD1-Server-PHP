@@ -15,12 +15,19 @@
     <script src="/_static/js/js.cookie.js"></script>
     <style>
         /**** POKEMON COMPACT ****/
-        .block.shadow {
+        #main .block.shadow {
             background-color: #B72DEA;
         }
-        .block.shiny {
+        #sidebar .block.shadow {
+            background-color: #B72DEA;
+        }
+        #main .block.shiny {
             background-color: #DCF0FF;
         }
+        #sidebar .block.shiny {
+            background-color: #DCF0FF;
+        }
+
         .block.gold {
             background-color: #DFB846;
         }
@@ -53,6 +60,13 @@
             width: 32px;
         }
 
+            .block.pokemon_compact .image.star {
+                height: 18px;
+                width: 18px;
+                margin-bottom: 0;
+                margin-top: 3px;
+            }
+
         .block.pokemon_compact .name {
             float: left;
             line-height: 30px;
@@ -61,12 +75,21 @@
             font-weight: bold;
         }
 
+            .block.pokemon_compact.shiny .name {
+                width: auto;
+            }
+
         .block.pokemon_compact .level {
             float: right;
             margin-top: -34px;
             text-align: right;
             width: 45px;
         }
+
+            .block.pokemon_compact.shiny .level {
+                margin-top: 0;
+            }
+
         .block.pokemon_compact .level2 {
             float: right;
             margin-top: 0;

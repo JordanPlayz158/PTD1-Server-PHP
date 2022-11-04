@@ -62,7 +62,14 @@
                                 recall.style.textAlign = 'center';
 
                                 var pokemon = pokemonDiv(poke);
-                                var actionDiv = pokemon.childNodes[4];
+
+                                let childNodeNum = 4;
+
+                                if(poke['shiny'] === 1) {
+                                    childNodeNum = 5;
+                                }
+
+                                var actionDiv = pokemon.childNodes[childNodeNum];
 
                                 for (let i = 0; i < actionDiv.childNodes.length;) {
                                     actionDiv.removeChild(actionDiv.childNodes[i]);
@@ -70,7 +77,7 @@
 
                                 actionDiv.appendChild(recall);
 
-                                pokemon.replaceChild(actionDiv, pokemon.childNodes[4]);
+                                pokemon.replaceChild(actionDiv, pokemon.childNodes[childNodeNum]);
 
                                 document.getElementById('main').append(pokemon);
                             })
