@@ -22,3 +22,15 @@ public/php/admin.php
 
 # Used for IntelliJ to properly check the validity of the crossdomain.xml file
 cross-domain-policy.dtd
+
+# New Laravel Branch
+LaravelMigration
+
+# NFS files
+.cshrc
+.login
+.login_conf
+.mail_aliases
+.mailrc
+.profile
+.shrc
