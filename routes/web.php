@@ -21,9 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 // Reset Password
 
-Route::get('/forgot-password', function() {
-    return view('resetPasswordForm');
-})->middleware('guest')->name('password.request');
+Route::get('/forgot-password', function() {return view('resetPasswordForm');})->middleware('guest')->name('password.request');
 
 Route::post('/forgot-password', function (\Illuminate\Http\Request $request) {
     $request->validate(['email' => 'required|email']);
@@ -37,9 +35,7 @@ Route::post('/forgot-password', function (\Illuminate\Http\Request $request) {
         : back()->withErrors(['email' => __($status)]);
 })->middleware('guest')->name('password.email');
 
-Route::get('/reset-password/{token}', function () {
-    return view('resetPassword');
-})->middleware('guest')->name('password.reset');
+Route::get('/reset-password/{token}', function () {return view('resetPassword');})->middleware('guest')->name('password.reset');
 
 Route::post('/reset-password', function (\Illuminate\Http\Request $request) {
     $request->validate([
@@ -66,20 +62,16 @@ Route::post('/reset-password', function (\Illuminate\Http\Request $request) {
         : back()->withErrors(['email' => [__($status)]]);
 })->middleware('guest')->name('password.update');
 
-Route::get('/games/ptd/reset_password_form.html', function () {
-    return redirect('/forgot-password');
-})->middleware('guest');
+Route::get('/games/ptd/reset_password_form.html', function () {return redirect('/forgot-password');})->middleware('guest');
+
+Route::get('/games/ptd/password.php', function () {return redirect('/forgot-password');})->middleware('guest');
 
 
 // Verify Email
 
-Route::get('/email/verify', function () {
-    return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
+Route::get('/email/verify', function () {return view('auth.verify-email');})->middleware('auth')->name('verification.notice');
 
-Route::get('/games/ptd/resendVerificationEmail.php', function () {
-    return view('resendVerificationEmail');
-})->middleware('auth');
+Route::get('/games/ptd/resendVerificationEmail.php', function () {return view('resendVerificationEmail');})->middleware('auth');
 
 Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
     $request->user()->sendEmailVerificationNotification();
@@ -96,9 +88,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 
 // Root
 
-Route::get('/', function () {
-    return view('index');
-});
+Route::get('/', function () {return view('index');});
 
 
 // Login
@@ -111,75 +101,57 @@ Route::get('/login', function () {
     return view('login');
 })->name('login');
 
-Route::get('/games/ptd/login.html', function () {
-    return redirect('/login');
-});
+Route::get('/games/ptd/login.html', function () {return redirect('/login');});
 
-/*Route::post('/register', [RegisteredUserController::class, 'store'])
-    ->name('register');*/
+/*Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');*/
 
-Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-    ->name('loginPost');
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('loginPost');
 
 
 // Logout
 
-Route::get('/logout', function () {
-    return view('logout');
-})->name('logout')->middleware('auth');
+Route::get('/logout', function () {return view('logout');})->name('logout')->middleware('auth');
 
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->name('logoutPost')->middleware('auth');
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logoutPost')->middleware('auth');
 
 
 // API Keys
 
-Route::get('/apiKeys', function () {
-    return view('tokens');
-})->middleware('auth');
+Route::get('/apiKeys', function () {return view('tokens');})->middleware('auth');
 
-Route::get('/apiKeys/{apiKeyId}', function () {
-    return view('tokensDelete');
-})->middleware('auth');
+Route::get('/apiKeys/{apiKeyId}', function () {return view('tokensDelete');})->middleware('auth');
 
 
 // PokeCenter Pages
 
-Route::get('/games/ptd/account.html', function() {
-    return view('account');
-})->middleware('auth');
+Route::get('/games/ptd/account.html', function() {return view('account');})->middleware('auth');
 
-Route::get('/games/ptd/changeNickname.html', function() {
-    return view('changeNickname');
-})->middleware('auth');
+Route::get('/games/ptd/changeNickname.html', function() {return view('changeNickname');})->middleware('auth');
 
-Route::get('/games/ptd/changeAvatar.html', function() {
-    return view('changeAvatar');
-})->middleware('auth');
+Route::get('/games/ptd/changeAvatar.html', function() {return view('changeAvatar');})->middleware('auth');
 
-Route::get('/games/ptd/createTrade.html', function() {
-    return view('createTrade');
-})->middleware('auth');
+Route::get('/games/ptd/createTrade.html', function() {return view('createTrade');})->middleware('auth');
 
-Route::get('/games/ptd/myTrades.html', function() {
-    return view('myTrades');
-})->middleware('auth');
+Route::get('/games/ptd/myTrades.html', function() {return view('myTrades');})->middleware('auth');
 
-Route::get('/games/ptd/latestTrades.html', function() {
-    return view('latestTrades');
-})->middleware('auth');
+Route::get('/games/ptd/latestTrades.html', function() {return view('latestTrades');})->middleware('auth');
+
+Route::get('/games/ptd/makeAnOffer.html', function() {return view('makeAnOffer');})->middleware('auth');
+
+Route::get('/games/ptd/myOffers.html', function () {return view('myOffers');});
+
+Route::get('/games/ptd/tradeSetup.html', function () {return view('tradeSetup');});
+
+Route::get('/games/ptd/trading.html', function () {return view('trading');});
+
+Route::get('/games/ptd/trading.php', function () {return redirect('/games/ptd/trading.html');});
+
 
 // Mystery Gift
-Route::get('/p/mystery-gift.html', function () {
-    return view('mysteryGift');
-});
+Route::get('/p/mystery-gift.html', function () {return view('mysteryGift');});
+Route::get('/games/ptd/dailyCode.html', function () {return view('mysteryGift');});
+Route::get('/games/ptd/dailyCode.php', function () {return redirect('/games/ptd/dailyCode.html');});
 
-Route::get('/games/ptd/dailyCode.html', function () {
-    return view('mysteryGift');
-});
-Route::get('/games/ptd/dailyCode.php', function () {
-    return redirect('/games/ptd/dailyCode.html');
-});
 
 
 
