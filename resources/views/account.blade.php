@@ -99,8 +99,9 @@
                             <div class="profile_middle">
                                 <ul style="list-style-type: '- '; padding: 0 0 0 10px;">
                                     <li><a href="/games/ptd/changeNickname.html">Change Account Nickname</a></li>
-                                    <li><a href="/games/ptd/changeAvatar.php">Change Account Avatar</a></li>
+                                    <li><a href="/games/ptd/changeAvatar.html">Change Account Avatar</a></li>
                                     <li><a href="/games/ptd/reset_password_form.html">Change Account Password</a></li>
+                                    <li><a href="/games/ptd/resendVerificationEmail.php">Resend Verification Email</a></li>
                                 </ul>
                             </div>
                         </div>
