@@ -14,22 +14,23 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 
 class TradeController extends ExcludeController {
-    public function get(Request $request) {
+    public function get(Request $request)
+    {
         $upForTradePokemon = Collection::empty();
 
-        if(($save = $request->input('save')) !== null) {
-            $upForTradePokemon = Auth::user()->saves()->where('num', '=', $save)->first()->allPokemon()->get()->reject(function (Pokemon $pokemon) {
+        Auth::user()->saves()->each(function (Save $save) use ($upForTradePokemon) {
+            $upForTradePokemon->push($save->allPokemon()->get()->reject(function (Pokemon $pokemon) {
                 return !$pokemon->isUpForTrade();
-            })->values();
-        } else {
-            Auth::user()->saves()->each(function (Save $save) use ($upForTradePokemon) {
-                $upForTradePokemon->push($save->allPokemon()->get()->reject(function (Pokemon $pokemon) {
-                    return !$pokemon->isUpForTrade();
-                })->values());
-            });
-        }
+            })->values());
+        });
 
         return $upForTradePokemon;
+    }
+
+    public function getSaveTrades($num) {
+        return Auth::user()->saves()->where('num', '=', $num)->first()->allPokemon()->get()->reject(function (Pokemon $pokemon) {
+            return !$pokemon->isUpForTrade();
+        })->values();
     }
 
     public function all() {

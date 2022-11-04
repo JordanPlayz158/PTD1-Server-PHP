@@ -40,16 +40,20 @@ Route::middleware('auth:sanctum')->post('/account', [AccountController::class, '
 // Saves
 
 Route::middleware('auth:sanctum')->get('/saves', [SavesController::class, 'getSaves']);
+Route::middleware('auth:sanctum')->get('/saves/trades', [TradeController::class, 'get']);
+
 // This seems unnecessary and more complex than the post/update with the num included
 //Route::middleware('auth:sanctum')->post('/saves', [SavesController::class, 'post']);
 
 Route::middleware('auth:sanctum')->get('/saves/{num}', [SavesController::class, 'getSave']);
+Route::middleware('auth:sanctum')->get('/saves/{num}/trades', [TradeController::class, 'getSaveTrades']);
+
+
 Route::middleware('auth:sanctum')->post('/saves/{num}', [SavesController::class, 'updateSave']);
 
 
 // Trade
 
-Route::middleware('auth:sanctum')->get('/trades', [TradeController::class, 'get']);
-Route::middleware('auth:sanctum')->get('/trades/all', [TradeController::class, 'all']);
+Route::middleware('auth:sanctum')->get('/trades', [TradeController::class, 'all']);
 Route::middleware('auth:sanctum')->post('/trade', [TradeController::class, 'create']);
 Route::middleware('auth:sanctum')->delete('/trade', [TradeController::class, 'remove']);

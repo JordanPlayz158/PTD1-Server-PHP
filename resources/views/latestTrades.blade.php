@@ -43,7 +43,7 @@
                     })
 
                     $.ajax({
-                        url: '/api/trades/all',
+                        url: '/api/trades',
                         type: "GET",
                         success: function (pokes) {
                             if (!successCheck(pokes, POKEMON)) {

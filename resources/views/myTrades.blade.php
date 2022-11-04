@@ -45,7 +45,7 @@
                     })
 
                     $.ajax({
-                        url: '/api/trades/?save=' + saveNum,
+                        url: '/api/saves/' + saveNum + '/trades',
                         type: "GET",
                         success: function (pokes) {
                             if (!successCheck(pokes, POKEMON)) {
