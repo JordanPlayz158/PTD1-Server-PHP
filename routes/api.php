@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AccountController;
+use App\Http\Controllers\Api\OfferController;
+use App\Http\Controllers\Api\PokemonController;
 use App\Http\Controllers\Api\SavesController;
 use App\Http\Controllers\Api\TokenController;
 use App\Http\Controllers\Api\TokensController;
@@ -23,11 +25,8 @@ use Illuminate\Support\Facades\Route;
 // API Keys
 
 Route::middleware('auth:sanctum')->get('/tokens', [TokensController::class, 'get']);
-
 Route::middleware('auth:sanctum')->post('/tokens', [TokensController::class, 'create']);
-
 Route::middleware('auth:sanctum')->get('/tokens/{token}', [TokenController::class, 'get']);
-
 Route::middleware('auth:sanctum')->delete('/tokens/{token}', [TokenController::class, 'remove']);
 
 
@@ -52,8 +51,23 @@ Route::middleware('auth:sanctum')->get('/saves/{num}/trades', [TradeController::
 Route::middleware('auth:sanctum')->post('/saves/{num}', [SavesController::class, 'updateSave']);
 
 
+// Pokemon
+
+Route::middleware('auth:sanctum')->get('/saves/{num}/pokemon', [PokemonController::class, 'get']);
+Route::middleware('auth:sanctum')->get('/saves/{num}/pokemon/all', [PokemonController::class, 'all']);
+Route::middleware('auth:sanctum')->get('/saves/{num}/pokemon/{id}', [PokemonController::class, 'getPokemon']);
+Route::middleware('auth:sanctum')->get('/pokemon/{id}', [PokemonController::class, 'anyPokemon']);
+
+
 // Trade
 
 Route::middleware('auth:sanctum')->get('/trades', [TradeController::class, 'all']);
 Route::middleware('auth:sanctum')->post('/trade', [TradeController::class, 'create']);
 Route::middleware('auth:sanctum')->delete('/trade', [TradeController::class, 'remove']);
+
+
+// Offers
+
+
+Route::middleware('auth:sanctum')->delete('/offers/{id}', [OfferController::class, 'remove']);
+Route::middleware('auth:sanctum')->post('/pokemon/{id}/offer', [OfferController::class, 'create']);
