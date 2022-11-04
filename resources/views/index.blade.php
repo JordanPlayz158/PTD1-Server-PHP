@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <style>
-        body {
+        #mainPage {
             width: 35em;
             margin: 0 auto;
             font-family: Tahoma, Verdana, Arial, sans-serif;
@@ -44,6 +44,14 @@
     </style>
 </head>
 <body>
+<div style="float: right">
+    <a href="/games/ptd/login.html">PokeCenter:
+        <br>
+        <img src="/_static/images/logo.png" alt="Logo">
+    </a>
+</div>
+
+<div id="mainPage">
 <h1>Welcome to my PTD1 Server!</h1>
 
 <p>In order to connect, you have 2 choices:</p>
@@ -113,5 +121,6 @@
     <embed src="PTD1.swf" type="application/x-shockwave-flash" width="100%" height="100%" scale="default"/>
 </object>
 <p>If you are using puffin browser, using this direct link gives better results, <a href="PTD1-RF.swf">Play PTD1 Regional Forms!</a></p>
+</div>
 </body>
 </html>
