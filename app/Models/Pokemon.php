@@ -3,6 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -93,6 +94,11 @@ class Pokemon extends Model {
     public function isUpForTrade(): bool
     {
         return $this->trade()->exists();
+    }
+
+    public function ownerSave(): BelongsTo
+    {
+        return $this->belongsTo(Save::class, 'save_id', 'id');
     }
 
     /*public string $id;
