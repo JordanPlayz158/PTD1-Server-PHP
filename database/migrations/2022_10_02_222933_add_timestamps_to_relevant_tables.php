@@ -14,32 +14,27 @@ return new class extends Migration
     public function up()
     {
         Schema::table('achievements', function (Blueprint $table) {
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->nullable(true)->useCurrentOnUpdate();
+            $table->timestamps();
         });
 
         Schema::table('offers', function (Blueprint $table) {
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->nullable(true)->useCurrentOnUpdate();
+            $table->timestamps();
         });
 
         Schema::table('pokes', function (Blueprint $table) {
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->nullable(true)->useCurrentOnUpdate();
+            $table->timestamps();
         });
 
         Schema::table('saves', function (Blueprint $table) {
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->nullable(true)->useCurrentOnUpdate();
+            $table->timestamps();
         });
 
         Schema::table('trades', function (Blueprint $table) {
-            $table->dateTime('created_at')->useCurrent();
+            $table->timestamps();
         });
 
         Schema::table('users', function (Blueprint $table) {
-            $table->dateTime('created_at')->nullable(false)->useCurrent()->change();
-            $table->dateTime('updated_at')->useCurrentOnUpdate()->change();
+            $table->timestamps();
         });
     }
 
@@ -54,10 +49,10 @@ return new class extends Migration
         Schema::dropColumns('offers', ['created_at', 'updated_at']);
         Schema::dropColumns('pokes', ['created_at', 'updated_at']);
         Schema::dropColumns('saves', ['created_at', 'updated_at']);
-        Schema::dropColumns('trades', 'created_at');
+        Schema::dropColumns('trades', ['created_at', 'updated_at']);
 
         Schema::table('users', function (Blueprint $table) {
-            $table->dateTime('created_at')->nullable(true)->default(null)->change();
+            $table->timestamp('created_at')->nullable(true)->default(null)->change();
         });
     }
 };

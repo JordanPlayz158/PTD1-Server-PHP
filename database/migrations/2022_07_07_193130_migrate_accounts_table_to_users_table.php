@@ -34,9 +34,6 @@ return new class extends Migration
             $table->string('dex', 151)->nullable(true)->after('password');
             $table->string('shinyDex', 151)->nullable(true)->after('dex');
             $table->string('shadowDex', 151)->nullable(true)->after('shinyDex');
-            $table->dateTime('email_verified_at')->change();
-            $table->dateTime('created_at')->change();
-            $table->dateTime('updated_at')->change();
         });
 
         $rowNum = DB::table('accounts')->count('email');
@@ -80,10 +77,6 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('email_verified_at')->change();
-            $table->timestamp('created_at')->change();
-            $table->timestamp('updated_at')->change();
-
             Schema::create('accounts', function (Blueprint $table) {
                 $table->string('email', 50)->nullable(false)->primary();
                 $table->string('pass', 255)->nullable(false);
