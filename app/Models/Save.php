@@ -2,7 +2,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 
 /**
  * App\Models\Save
@@ -45,14 +47,12 @@ use Illuminate\Support\Facades\DB;
  * @mixin \Eloquent
  * @property int $user_id
  * @method static \Illuminate\Database\Eloquent\Builder|Save whereUserId($value)
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Pokemon[] $pokes
- * @property-read int|null $pokes_count
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Save whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Save whereUpdatedAt($value)
  * @property-read int|null $items_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Pokemon[] $pokemon
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Pokemon[] $pokemon
  * @property-read int|null $pokemon_count
  */
 class Save extends Model {
@@ -67,12 +67,24 @@ class Save extends Model {
 
     /**
      * Get the ptd1 pokes for the save.
+     *
+     * NOTE: This method returns all pokemon EXCEPT pokemon that are up for trade, if you need ALL pokemon
+     * then use allPokemon() method
      */
-    public function pokemon() {
+    public function pokemon(): HasMany
+    {
+        return $this->hasMany(Pokemon::class)->whereNotExists(function (Builder $query) {
+            $query->from('trades')->whereColumn('poke_id', '=', 'pokemon.id');
+        });
+    }
+
+    public function allPokemon() : HasMany
+    {
         return $this->hasMany(Pokemon::class);
     }
 
-    public function items() {
+    public function items(): HasMany
+    {
         return $this->hasMany(Item::class);
     }
 

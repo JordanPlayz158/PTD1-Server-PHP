@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * App\Models\Offer
@@ -36,11 +37,13 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Offer extends Model
 {
-    public function offerPokemonId() {
+    public function offerPokemonId(): HasOne
+    {
         return $this->hasOne(OfferPokemon::class);
     }
 
-    public function requestPokemonId() {
+    public function requestPokemonId(): HasOne
+    {
         return $this->hasOne(OfferPokemon::class);
     }
 }

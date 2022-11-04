@@ -4,6 +4,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * App\Models\Poke
@@ -60,7 +62,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Pokemon whereUpdatedAt($value)
  */
 class Pokemon extends Model {
-    public function offers() {
+    public function offers(): HasManyThrough
+    {
         return $this->hasManyThrough(
             Offer::class,
             OfferPokemon::class,
@@ -71,7 +74,8 @@ class Pokemon extends Model {
             );
     }
 
-    public function requests() {
+    public function requests(): HasManyThrough
+    {
         return $this->hasManyThrough(
             Offer::class,
             OfferPokemon::class,
@@ -80,6 +84,15 @@ class Pokemon extends Model {
             'id', // Local key on the pokemon table... <-------------------------------|        |
             'id' // Local key on the offer_pokemon table... <------------------------------|
         );
+    }
+
+    public function trade() : HasOne {
+        return $this->hasOne(Trade::class, 'poke_id');
+    }
+
+    public function isUpForTrade(): bool
+    {
+        return $this->trade()->exists();
     }
 
     /*public string $id;

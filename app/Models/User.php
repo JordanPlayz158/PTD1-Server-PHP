@@ -1,6 +1,8 @@
 <?php
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,7 +46,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @mixin \Eloquent
  * @property-read \App\Models\Achievement|null $achievement
  */
-class User extends Authenticatable {
+class User extends Authenticatable implements MustVerifyEmail {
     use HasApiTokens, HasFactory, Notifiable;
 
      /**
@@ -82,11 +84,13 @@ class User extends Authenticatable {
     /**
      * Get the ptd1 saves for the user.
      */
-    public function saves() {
+    public function saves(): HasMany
+    {
         return $this->hasMany(Save::class);
     }
 
-    public function achievement() {
+    public function achievement(): HasOne
+    {
         return $this->hasOne(Achievement::class);
     }
 }
