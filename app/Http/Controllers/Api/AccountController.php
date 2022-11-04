@@ -34,7 +34,7 @@ class AccountController extends ExcludeController {
         return $user->toArray();
     }
 
-    public function post(Request $request): array
+    public function update(Request $request): array
     {
         $prohibited = ['id', 'email_verified_at', 'remember_token', 'created_at', 'updated_at'];
 
