@@ -59,7 +59,7 @@
                                 </label>
                                 <br><br><br><br>
                                 <div class="login_actions">
-                                    <a href="reset_password_form.html">Lost Password?</a>
+                                    <a href="forgot-password">Lost Password?</a>
 
                                     <input value="Login" type="submit" class="login_btn">
                                 </div>

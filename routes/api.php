@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\SavesController;
 use App\Http\Controllers\Api\TokenController;
 use App\Http\Controllers\Api\TokensController;
+use App\Http\Controllers\Api\TradeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+// API Keys
+
 Route::middleware('auth:sanctum')->get('/tokens', [TokensController::class, 'get']);
 
 Route::middleware('auth:sanctum')->post('/tokens', [TokensController::class, 'create']);
@@ -26,18 +30,26 @@ Route::middleware('auth:sanctum')->get('/tokens/{token}', [TokenController::clas
 
 Route::middleware('auth:sanctum')->delete('/tokens/{token}', [TokenController::class, 'remove']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
+// Account
 
 Route::middleware('auth:sanctum')->get('/account', [AccountController::class, 'get']);
-Route::middleware('auth:sanctum')->post('/account', [AccountController::class, 'post']);
+Route::middleware('auth:sanctum')->post('/account', [AccountController::class, 'update']);
 
-Route::middleware('auth:sanctum')->get('/saves', [SavesController::class, 'get']);
+
+// Saves
+
+Route::middleware('auth:sanctum')->get('/saves', [SavesController::class, 'getSaves']);
 // This seems unnecessary and more complex than the post/update with the num included
 //Route::middleware('auth:sanctum')->post('/saves', [SavesController::class, 'post']);
 
-Route::middleware('auth:sanctum')->get('/saves/{num}', [SavesController::class, 'getSpecificSave']);
-Route::middleware('auth:sanctum')->post('/saves/{num}', [SavesController::class, 'postSpecificSave']);
+Route::middleware('auth:sanctum')->get('/saves/{num}', [SavesController::class, 'getSave']);
+Route::middleware('auth:sanctum')->post('/saves/{num}', [SavesController::class, 'updateSave']);
 
-require __DIR__.'/auth.php';
+
+// Trade
+
+Route::middleware('auth:sanctum')->get('/trades', [TradeController::class, 'get']);
+Route::middleware('auth:sanctum')->get('/trades/all', [TradeController::class, 'all']);
+Route::middleware('auth:sanctum')->post('/trade', [TradeController::class, 'create']);
+Route::middleware('auth:sanctum')->delete('/trade', [TradeController::class, 'remove']);
