@@ -12,6 +12,7 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        '/php/newPoke8.php'
+        '/php/newPoke8.php',
+        '/php/newAchieve.php'
     ];
 }

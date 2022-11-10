@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Web\AchievementController;
 use App\Http\Controllers\Web\SWFController;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -153,8 +154,7 @@ Route::get('/games/ptd/dailyCode.html', function () {return view('mysteryGift');
 Route::get('/games/ptd/dailyCode.php', function () {return redirect('/games/ptd/dailyCode.html');});
 
 
-
-
 // SWF Routes
 
 Route::post('/php/newPoke8.php', [SWFController::class, 'post']);
+Route::post('/php/newAchieve.php', [AchievementController::class, 'post']);

@@ -29,7 +29,7 @@ class SWFRequest extends FormRequest
             //'email' => ['required', 'string', 'email'],
             'Email' => ['required', 'string'],
             'Pass' => ['required', 'string'],
-            'ver' => ['required', 'integer', 'numeric'],
+            'ver' => ['integer', 'numeric'],
             'Action' => ['required', 'string']
         ];
     }

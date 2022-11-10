@@ -11,6 +11,8 @@ use BenSampo\Enum\Enum;
  * @method static static TAKEN()
  * @method static static MAINTENANCE()
  * @method static static LOGGED_IN()
+ * @method static static GET_ACHIEVE()
+ * @method static static NO_REWARD()
  * @method static static INVALID_ACTION()
  * @method static static Success()
  * @method static static Failure()
@@ -26,8 +28,11 @@ final class Reason extends Enum
     private const MAINTENANCE = 'maintenance';
 
     // Result = Success
-    // Valid Reason Response (Yes, Singular)
+    // Valid Reason Responses
     private const LOGGED_IN = 'LoggedIn';
+    // Achievement Reason Responses
+    private const GET_ACHIEVE = 'GetAchive';
+    private const NO_REWARD = 'NoReward';
 
 
     // Custom defined ones not recognized by SWF

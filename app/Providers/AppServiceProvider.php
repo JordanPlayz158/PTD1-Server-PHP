@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
             Response::macro('flash', function (array $array) {
                 $content = '';
 
-                Log::info(print_r($array, true));
+                //Log::info(print_r($array, true));
 
                 $i = 0;
                 while(isset($array[$i])) {
