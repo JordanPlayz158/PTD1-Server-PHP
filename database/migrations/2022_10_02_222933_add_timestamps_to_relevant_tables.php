@@ -32,10 +32,6 @@ return new class extends Migration
         Schema::table('trades', function (Blueprint $table) {
             $table->timestamps();
         });
-
-        Schema::table('users', function (Blueprint $table) {
-            $table->timestamps();
-        });
     }
 
     /**
