@@ -13,11 +13,13 @@ use App\Http\Responses\Builders\SWF\SWFBuilder;
 use App\Models\Pokemon;
 use App\Models\Save;
 use App\Models\User;
+use DB;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Log;
 
 class SWFController extends Controller {
     public function post(SWFRequest $request): Response {
@@ -165,11 +167,7 @@ class SWFController extends Controller {
 
         $saveNum = (intval($save['whichProfile']) - 1);
 
-        $userSave = $user->saves()->where('num', '=', $saveNum)->first();
-
-        if($userSave === null) {
-            $userSave = new Save();
-        }
+        $userSave = $user->saves()->where('num', '=', $saveNum)->firstOrNew();
 
         if(!($userSave instanceof Save)) {
             return SWFBuilder::new()->setResult(Result::FAILURE())->create();
@@ -179,7 +177,9 @@ class SWFController extends Controller {
             // Ensure to account for all non-foreign key-able tables
             // such as offers
 
-            $userSave->delete();
+            if(!$userSave->wasRecentlyCreated) {
+                $userSave->delete();
+            }
             $userSave = new Save();
             $userSave->user_id = $user->id;
             $userSave->num = $saveNum;
@@ -205,14 +205,17 @@ class SWFController extends Controller {
 
         for ($i = 1; $i <= intval($save['HMP']); $i++) {
             $pokeNum = 'poke' . $i . '_';
-            // This is not finding a Pokémon, so it is returning a new one
-            $poke = $userSave->pokemon()->where('pId', '=', $save[$pokeNum . 'myID'])->firstOrNew();
+            $pokeId = $pokeNum . 'myID';
 
-            if(!($poke instanceof Pokemon)) {
-                return SaveBuilder::new()->setResult(Result::FAILURE())->create();
+            // This is not finding a Pokémon, so it is returning a new one
+            $poke = $userSave->pokemon()->where('pId', '=', $save[$pokeId])->first();
+
+            if($poke === null) {
+                $poke = new Pokemon();
+                $poke->wasRecentlyCreated = true;
             }
 
-            if (isset($releasePokes) && in_array($save[$pokeNum . 'myID'], $releasePokes)) {
+            if (isset($releasePokes) && in_array($save[$pokeId], $releasePokes)) {
                 /*
                 if ($poke -> shiny == 1)
                     $save -> p_hs--;
@@ -249,7 +252,7 @@ class SWFController extends Controller {
                     }
                 }
 
-                $poke->pId = $tmp;
+                $poke = $poke->create(['save_id' => $userSave->id, 'pId' => $tmp]);
             }
 
             // TODO: Don't save Pokémon if on trade list
@@ -318,61 +321,34 @@ class SWFController extends Controller {
                         $poke->item = $save[$pokeNum . 'item'];
                         $poke->owner = $save[$pokeNum . 'owner'];
                         $poke->pos = $save[$pokeNum . 'pos'];
-
-//                        $columnsToModify[0] .= 'isiiiiiiiiisssi';
-//                        array_push($columnsToModify);
                         break;
                     case 'evolve':
                         $poke->pNum = $save[$pokeNum . 'num'];
                         $poke->nickname = $save[$pokeNum . 'nickname'];
-
-//                        $columnsToModify[0] .= 'is';
-//                        array_push($columnsToModify);
                         break;
                     case 'exp':
                         $poke->exp = $save[$pokeNum . 'exp'];
-
-//                        $columnsToModify[0] .= 'i';
-//                        $columnsToModify[] = 'exp';
                         break;
                     case 'pos':
                         $poke->pos = $save[$pokeNum . 'pos'];
-
-//                        $columnsToModify[0] .= 'i';
-//                        $columnsToModify[] = 'pos';
                         break;
                     case 'lvl':
                         $poke->lvl = $save[$pokeNum . 'lvl'];
-
-//                        $columnsToModify[0] .= 'i';
-//                        $columnsToModify[] = 'lvl';
                         break;
                     case 'moves':
                         $poke->m1 = $save[$pokeNum . 'm1'];
                         $poke->m2 = $save[$pokeNum . 'm2'];
                         $poke->m3 = $save[$pokeNum . 'm3'];
                         $poke->m4 = $save[$pokeNum . 'm4'];
-
-//                        $columnsToModify[0] .= 'iiii';
-//                        array_push($columnsToModify, 'm1', 'm2', 'm3', 'm4');
                         break;
                     case 'tag':
                         $poke->tag = $save[$pokeNum . 'tag'];
-
-//                        $columnsToModify[0] .= 's';
-//                        $columnsToModify[] = 'tag';
                         break;
                     case 'target':
                         $poke->targetType = $save[$pokeNum . 'targetType'];
-
-//                        $columnsToModify[0] .= 'i';
-//                        $columnsToModify[] = 'targetType';
                         break;
                     case 'mSel':
                         $poke->mSel = $save[$pokeNum . 'mSel'];
-
-//                        $columnsToModify[0] .= 'i';
-//                        $columnsToModify[] = 'mSel';
                 }
             }
 
@@ -386,7 +362,10 @@ class SWFController extends Controller {
 
             $saveResponse->addNewPokePosition($poke->pos, $poke->pId);
 
-            $poke->save();
+
+            if(!$poke->save()) {
+                Log::info('The pokemon failed to save', [$poke]);
+            }
         }
 
         /*

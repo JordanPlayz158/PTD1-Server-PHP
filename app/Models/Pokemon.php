@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * App\Models\Poke
+ * App\Models\Pokemon
  *
  * @property int $id
  * @property int $save_id
@@ -63,6 +63,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|Pokemon whereUpdatedAt($value)
  */
 class Pokemon extends Model {
+    protected $fillable = [
+        'save_id',
+        'pId'
+    ];
+
     public function offers(): HasManyThrough
     {
         return $this->hasManyThrough(
