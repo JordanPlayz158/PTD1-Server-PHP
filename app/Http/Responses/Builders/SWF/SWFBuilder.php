@@ -9,7 +9,7 @@ use Illuminate\Http\Response;
 class SWFBuilder
 {
     protected Result $Result;
-    protected Reason $Reason;
+    protected Reason|string $Reason;
 
     public static function new(): self
     {
