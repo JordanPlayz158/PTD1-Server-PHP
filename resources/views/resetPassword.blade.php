@@ -61,7 +61,7 @@
         <noscript>
             <div id="suckerfish">
                 <ul class="menu">
-                    <li><a href="/">Blog</a></li>
+                    <li><a href="/public">Blog</a></li>
                     <li><a href="/games/ptd/checkPokemon.php?live=true">Home</a></li>
                     <li class="expanded"><a href="/games/ptd/createTrade.php">Account</a>
                         <ul class="menu">

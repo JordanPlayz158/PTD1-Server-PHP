@@ -46,7 +46,6 @@
                     </div>
                     <div class="content">
                         <p>Please enter your email below to get an email to reset your password!</p>
-                        <!-- Implement CSRF Protection -->
                         <form id="forgotPassword" action="/forgot-password" method="POST" onsubmit="sendPasswordResetForm(event)">
                             <label><b>Email:</b>
                                 <input id="email" class="text" name="email" type="text">

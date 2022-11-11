@@ -63,7 +63,7 @@ Route::post('/reset-password', function (\Illuminate\Http\Request $request) {
         : back()->withErrors(['email' => [__($status)]]);
 })->middleware('guest')->name('password.update');
 
-Route::get('/games/ptd/reset_password_form.html', function () {return redirect('/forgot-password');})->middleware('guest');
+Route::get('/games/ptd/reset_password_form.php', function () {return redirect('/forgot-password');})->middleware('guest');
 
 Route::get('/games/ptd/password.php', function () {return redirect('/forgot-password');})->middleware('guest');
 
@@ -90,6 +90,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 // Root
 
 Route::get('/', function () {return view('index');});
+Route::get('/home', function () {return redirect('/');});
 
 
 // Login
@@ -101,8 +102,6 @@ Route::get('/login', function () {
 
     return view('login');
 })->name('login');
-
-Route::get('/games/ptd/login.html', function () {return redirect('/login');});
 
 /*Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');*/
 
@@ -125,33 +124,11 @@ Route::get('/apiKeys/{apiKeyId}', function () {return view('tokensDelete');})->m
 
 // PokeCenter Pages
 
-Route::get('/games/ptd/account.html', function() {return view('account');})->middleware('auth');
-
-Route::get('/games/ptd/changeNickname.html', function() {return view('changeNickname');})->middleware('auth');
-
-Route::get('/games/ptd/changeAvatar.html', function() {return view('changeAvatar');})->middleware('auth');
-
-Route::get('/games/ptd/createTrade.html', function() {return view('createTrade');})->middleware('auth');
-
-Route::get('/games/ptd/myTrades.html', function() {return view('myTrades');})->middleware('auth');
-
-Route::get('/games/ptd/latestTrades.html', function() {return view('latestTrades');})->middleware('auth');
-
-Route::get('/games/ptd/makeAnOffer.html', function() {return view('makeAnOffer');})->middleware('auth');
-
-Route::get('/games/ptd/myOffers.html', function () {return view('myOffers');});
-
-Route::get('/games/ptd/tradeSetup.html', function () {return view('tradeSetup');});
-
-Route::get('/games/ptd/trading.html', function () {return view('trading');});
-
 Route::get('/games/ptd/trading.php', function () {return redirect('/games/ptd/trading.html');});
 
 
 // Mystery Gift
-Route::get('/p/mystery-gift.html', function () {return view('mysteryGift');});
-Route::get('/games/ptd/dailyCode.html', function () {return view('mysteryGift');});
-Route::get('/games/ptd/dailyCode.php', function () {return redirect('/games/ptd/dailyCode.html');});
+Route::get('/games/ptd/dailyCode.php', function () {return redirect('/p/mystery-gift.html');});
 
 
 // SWF Routes
