@@ -103,6 +103,25 @@ class TradeController extends ExcludeController {
             return ['success' => false, 'error' => 'An unknown error occurred while trying to delete the trade'];
         }
 
+        $evolve = match ($pokemon->pNum) {
+            // Kadabra => Alakazam
+            64 => [65, 'Alakazam'],
+            // Machoke => Machamp
+            67 => [68, 'Machamp'],
+            // Graveler => Golem
+            75 => [76, 'Golem'],
+            // Haunter => Gengar
+            93 => [94, 'Gengar'],
+
+            default => [-1],
+        };
+
+        if($evolve[0] !== -1) {
+            $pokemon->pNum = $evolve[0];
+            $pokemon->nickname = $evolve[1];
+            $pokemon->save();
+        }
+
         return ['success' => true];
     }
 }
