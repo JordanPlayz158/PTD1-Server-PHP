@@ -36,7 +36,7 @@
                 saveNum = 2;
             }
 
-            fetch('/api/saves/?exclude=pokes')
+            fetch('/api/saves/?exclude=pokemon')
                 .then(response => response.json())
                 .then(saves => {
                     if (!successCheck(saves)) {
