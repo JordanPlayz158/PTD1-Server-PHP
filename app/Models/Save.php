@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -57,6 +58,8 @@ use Illuminate\Support\Collection;
  * @property-read int|null $pokemon_count
  */
 class Save extends Model {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -95,9 +98,6 @@ class Save extends Model {
     }
 
     /*////public int $num;
-    // called levelUnlocked (in SWF)
-    public int $advanced = 0;
-    public int $advanced_a = 0;
     // called HMP (in saveAccount Action)
     public int $p_numPoke = 0;
     // called HMI (in saveAccount Action)
@@ -105,19 +105,6 @@ class Save extends Model {
     public int $p_numItem = 0;
     // used for hacker check, number of shiny Pokémon you have (NOT SHADOW)
     public int $p_hs = 0;
-    public ?string $nickname = null;
-    public int $badges = 0;
-    public string $avatar = 'none';
-    // called haveFlash (in SWF), assuming it's talking about the Flash TM
-    public int $classic = 0;
-    // split by '|' and called extraInfo
-    public string $classic_a = '';
-    // called clevelCompleted (in SWF)
-    public int $challenge = 0;
-    public int $money = 50;
-    public int $npcTrade = 0;
-    public int $shinyHunt = 0;
-    public int $version = 2;
     public array $pokes = array();
     public array $items = array();
     */
