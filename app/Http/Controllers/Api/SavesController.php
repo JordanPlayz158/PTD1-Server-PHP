@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\Web\ExcludeController;
-use App\Models\Pokemon;
 use App\Models\Save;
-use App\Models\Trade;
-use App\Models\User;
 use Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -27,7 +23,11 @@ class SavesController extends ExcludeController {
 
         $saves = $saves->with($relations->undot()->toArray())->select($attributes->toArray())->get();
 
-        $saves->each(function (Save $save) {
+        while (sizeof($saves) < 3) {
+            $saves->add((object) Save::factory()->make()->only($attributes->toArray()));
+        }
+
+        $saves->each(function ($save) {
             $save->nickname = $save->nickname ?? 'Satoshi';
         });
 
@@ -39,7 +39,14 @@ class SavesController extends ExcludeController {
         $save = Auth::user()->saves()->where('num', '=', $num);
 
         $relations = $this->excludeRelations($request->input('exclude'), Collection::make(['pokemon', 'pokemon.offers', 'pokemon.requests']));
-        $attributes = $this->excludeAttributes($request->input('exclude'), Collection::make(array_keys($save->first()->getAttributes())));
+
+        if($save->first() !== null){
+            $attributes = $this->excludeAttributes($request->input('exclude'), Collection::make(array_keys($save->first()->getAttributes())));
+        } else {
+            $attributes = $this->excludeAttributes($request->input('exclude'), Collection::make(array_keys(Save::factory()->definition())));
+
+            return Save::factory()->make()->only($attributes->toArray());
+        }
 
         // This line is required as Laravel appears to lazy load the HasMany relationship models
         // In order to load them and have the with and select work properly, we need to iterate
