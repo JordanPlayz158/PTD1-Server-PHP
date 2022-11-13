@@ -20,7 +20,7 @@ class SaveFactory extends Factory
             // called levelUnlocked (in SWF)
             'advanced' => 0,
             'advanced_a' => 0,
-            'nickname' => null,
+            'nickname' => 'Satoshi',
             'badges' => 0,
             'avatar' => 'none',
             // called haveFlash (in SWF), assuming it's talking about the Flash TM
