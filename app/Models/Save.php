@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Collection;
 
 /**
  * App\Models\Save
@@ -70,7 +69,7 @@ class Save extends Model {
     ];
 
     /**
-     * Get the ptd1 pokes for the save.
+     * Get the ptd1 pokemon for the save.
      *
      * NOTE: This method returns all pokemon EXCEPT pokemon that are up for trade, if you need ALL pokemon
      * then use allPokemon() method
