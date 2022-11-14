@@ -31,8 +31,6 @@ class AppServiceProvider extends ServiceProvider
             Response::macro('flash', function (array $array) {
                 $content = '';
 
-                //Log::info(print_r($array, true));
-
                 $i = 0;
                 while(isset($array[$i])) {
                     $enum = $array[$i];
@@ -47,7 +45,12 @@ class AppServiceProvider extends ServiceProvider
                     $content .= trim(chr(38 * (strlen($content) != 0))) . urlencode($key) . '=' . urlencode($value);
                 }
 
-                return Response::make($content)->header('Content-Type', 'x-www-form-urlencoded');
+                $response = Response::make($content)->header('Content-Type', 'x-www-form-urlencoded');
+
+                Log::info('Request:', [request()->all()]);
+                Log::info("Response:", [$response->content()]);
+
+                return $response;
             });
         }
     }
