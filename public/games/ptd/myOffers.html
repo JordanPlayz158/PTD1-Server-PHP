@@ -107,6 +107,10 @@
                             console.log(save);
                         },
                         error: function (error) {
+                            if (error.status === 401) {
+                                window.location.href = '/login';
+                            }
+
                             console.log(error);
                         },
                     })
@@ -125,6 +129,10 @@
                             offersDiv(pokes, 0);
                         },
                         error: function (error) {
+                            if (error.status === 401) {
+                                window.location.href = '/login';
+                            }
+
                             console.log(error);
                         },
                     });
@@ -246,6 +254,7 @@
 
         function acceptRequest(id) {
             if(window.confirm('Do you wish to accept the offer?\nOnce this is done, this action CANNOT be undone.\nYour pokemon will be swapped, please be sure before performing this action.')) {
+                alert('Trading is not implemented yet. please be patient while it is being worked on!')
                 console.log('accepted');
             }
         }
@@ -263,6 +272,10 @@
                         }
                     },
                     error: function (error) {
+                        if (error.status === 401) {
+                            window.location.href = '/login';
+                        }
+
                         console.log(error);
                     },
                 });

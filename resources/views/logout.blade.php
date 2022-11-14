@@ -3,9 +3,9 @@
 <head>
     <title>Login</title>
     <meta charset="UTF-8">
-    <link rel='stylesheet' type='text/css' href='../../_static/css/base.css'>
-    <link rel='stylesheet' type='text/css' href='../../_static/css/suckerfish.css'>
-    <link rel='stylesheet' type='text/css' href="../../_static/css/style.css">
+    <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
+    <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
+    <link rel='stylesheet' type='text/css' href="/_static/css/style.css">
     <!--<script type='text/javascript' src='logging.js'></script>-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -25,7 +25,7 @@
                     return;
                 }
 
-                location.href = '/games/ptd/account.html';
+                location.href = '/login';
             });
         }
     </script>

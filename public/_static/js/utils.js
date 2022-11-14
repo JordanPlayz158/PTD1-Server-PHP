@@ -12,7 +12,7 @@ function successCheck(data, number = PROFILE) {
 
     if(data['success'] === false) {
         if(data['errorCode'] !== null && data['errorCode'] === -1) {
-            window.location.href = "/games/ptd/login.html";
+            window.location.href = "/login";
             return false;
         }
 
@@ -180,7 +180,22 @@ function trade(id) {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(body)
-        }).then(result => result.json()).then(result => {
+
+        })
+            .then(response => {
+                if(response.redirected) {
+                    window.location.href = response.url;
+                    throw new Error('Not logged in');
+                }
+
+                if(response.status === 401) {
+                    window.location.href = '/login';
+                    throw new Error('Not logged in');
+                }
+
+                return response;
+            })
+            .then(result => result.json()).then(result => {
             if(result['success'] === true) {
                 document.getElementById('trade_' + id).remove()
             }
@@ -211,6 +226,10 @@ function abandon(id) {
                 console.log(result);
             },
             error: function (error) {
+                if (error.status === 401) {
+                    window.location.href = '/login';
+                }
+
                 console.log(error);
             },
         })

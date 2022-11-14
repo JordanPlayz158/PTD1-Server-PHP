@@ -40,6 +40,10 @@
                             console.log(save);
                         },
                         error: function (error) {
+                            if (error.status === 401) {
+                                window.location.href = '/login';
+                            }
+
                             console.log(error);
                         },
                     })
@@ -84,6 +88,10 @@
                             console.log(pokes);
                         },
                         error: function (error) {
+                            if (error.status === 401) {
+                                window.location.href = '/login';
+                            }
+
                             console.log(error);
                         },
                     });
@@ -104,7 +112,21 @@
                     method: 'DELETE',
                     headers: headers,
                     body: JSON.stringify({'pokemon_id' : id})
-                }).then(result => result.json()).then(result => {
+                })
+                    .then(response => {
+                        if(response.redirected) {
+                            window.location.href = response.url;
+                            throw new Error('Not logged in');
+                        }
+
+                        if(response.status === 401) {
+                            window.location.href = '/login';
+                            throw new Error('Not logged in');
+                        }
+
+                        return response;
+                    })
+                    .then(result => result.json()).then(result => {
                     if(result['success'] === true) {
                         document.getElementById('trade_' + id).remove()
                     }

@@ -37,6 +37,14 @@
             }
 
             fetch('/api/saves/?exclude=pokemon')
+                .then(response => {
+                    if(response.redirected) {
+                        window.location.href = response.url;
+                        throw new Error('Not logged in');
+                    }
+
+                    return response;
+                })
                 .then(response => response.json())
                 .then(saves => {
                     if (!successCheck(saves)) {
@@ -72,6 +80,9 @@
 
                     console.log(saves);
                 })
+                .catch(error => {
+                    console.log(error);
+                });
             //})
         };
     </script>
