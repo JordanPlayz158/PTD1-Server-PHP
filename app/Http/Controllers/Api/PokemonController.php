@@ -15,7 +15,13 @@ use Illuminate\Http\Request;
 class PokemonController extends ExcludeController {
     public function get(Request $request, int $num)
     {
-        $pokemon = Auth::user()->saves()->where('num', '=', $num)->first()->pokemon();
+        $save = Auth::user()->saves()->where('num', '=', $num)->first();
+
+        if($save === null) {
+            return [];
+        }
+
+        $pokemon = $save->pokemon();
 
         $relations = $this->excludeRelations($request->input('exclude'), Collection::make(['offers', 'requests', 'offers.offerPokemon', 'offers.requestPokemon', 'requests.offerPokemon', 'requests.requestPokemon', 'offers.offerPokemon.pokemon', 'offers.requestPokemon.pokemon', 'requests.offerPokemon.pokemon', 'requests.requestPokemon.pokemon']));
         $attributes = $this->excludeAttributes($request->input('exclude'), Collection::make(array_keys($pokemon->first()->getAttributes())));
@@ -28,7 +34,13 @@ class PokemonController extends ExcludeController {
 
     public function getPokemon(Request $request, int $num, int $id)
     {
-        $pokemon = Auth::user()->saves()->where('num', '=', $num)->first()->pokemon();
+        $save = Auth::user()->saves()->where('num', '=', $num)->first();
+
+        if($save === null) {
+            return [];
+        }
+
+        $pokemon = $save->pokemon();
 
         $relations = $this->excludeRelations($request->input('exclude'), Collection::make(['offers', 'requests', 'offers.offerPokemon', 'offers.requestPokemon', 'requests.offerPokemon', 'requests.requestPokemon', 'offers.offerPokemon.pokemon', 'offers.requestPokemon.pokemon', 'requests.offerPokemon.pokemon', 'requests.requestPokemon.pokemon']));
         $attributes = $this->excludeAttributes($request->input('exclude'), Collection::make(array_keys($pokemon->first()->getAttributes())));
@@ -40,7 +52,13 @@ class PokemonController extends ExcludeController {
     }
 
     public function all(Request $request, int $num) {
-        $pokemon = Auth::user()->saves()->where('num', '=', $num)->first()->allPokemon();
+        $save = Auth::user()->saves()->where('num', '=', $num)->first();
+
+        if($save === null) {
+            return [];
+        }
+
+        $pokemon = $save->allPokemon();
 
         $relations = $this->excludeRelations($request->input('exclude'), Collection::make(['offers', 'requests', 'offers.offerPokemon', 'offers.requestPokemon', 'requests.offerPokemon', 'requests.requestPokemon', 'offers.offerPokemon.pokemon', 'offers.requestPokemon.pokemon', 'requests.offerPokemon.pokemon', 'requests.requestPokemon.pokemon']));
         $attributes = $this->excludeAttributes($request->input('exclude'), Collection::make(array_keys($pokemon->first()->getAttributes())));
