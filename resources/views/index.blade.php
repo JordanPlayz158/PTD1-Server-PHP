@@ -45,7 +45,7 @@
 </head>
 <body>
 <div style="float: right">
-    <a href="/games/ptd/login.html">PokeCenter:
+    <a href="/login">PokeCenter:
         <br>
         <img src="/_static/images/logo.png" alt="Logo">
     </a>
