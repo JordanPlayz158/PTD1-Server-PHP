@@ -184,6 +184,20 @@ class SWFController extends Controller {
             $userSave->user_id = $user->id;
             $userSave->num = $saveNum;
             $userSave->save();
+        } else {
+            if (isset($save['releasePoke'])) {
+                $releasePokes = explode('|', $save['releasePoke']);
+                $releasePokes = array_unique($releasePokes);
+                $releasePokes = array_values($releasePokes);
+
+                if (($key = array_search('0', $releasePokes)) !== false) {
+                    unset($releasePokes[$key]);
+                }
+
+                if(sizeof($releasePokes) === 0) {
+                    unset($releasePokes);
+                }
+            }
         }
 
         $userSave->advanced = $save['a_story'];
@@ -198,10 +212,6 @@ class SWFController extends Controller {
         $userSave->nickname = $save['Nickname'] == 'Satoshi' ? null : $save['Nickname'];
         $userSave->version = intval($save['Version']);
         $userSave->avatar = $save['Avatar'];
-
-        if (isset($save['releasePoke'])) {
-            $releasePokes = explode('|', $save['releasePoke']);
-        }
 
         for ($i = 1; $i <= intval($save['HMP']); $i++) {
             $pokeNum = 'poke' . $i . '_';
@@ -234,6 +244,7 @@ class SWFController extends Controller {
 
             $pokeExisted = isset($poke->pId);
 
+            $pokeNewId = false;
             if (!$pokeExisted || $poke->pId == 0) {
                 $valid = false;
                 $tmp = -1;
@@ -253,6 +264,7 @@ class SWFController extends Controller {
                 }
 
                 $poke = $poke->create(['save_id' => $userSave->id, 'pId' => $tmp]);
+                $pokeNewId = true;
             }
 
             // TODO: Don't save Pokémon if on trade list
@@ -360,8 +372,9 @@ class SWFController extends Controller {
                 //$save->p_hs += ($poke->shiny == 1);
             //}
 
-            $saveResponse->addNewPokePosition($poke->pos, $poke->pId);
-
+            if($pokeNewId) {
+                $saveResponse->addNewPokePosition($poke->pos, $poke->pId);
+            }
 
             if(!$poke->save()) {
                 Log::info('The pokemon failed to save', [$poke]);
