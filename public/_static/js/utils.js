@@ -176,33 +176,21 @@ function trade(id) {
     };
 
     if(result) {
-        fetch('/api/trade/', {
+        authenticatedFetch(fetch('/api/trade/', {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(body)
 
-        })
-            .then(response => {
-                if(response.redirected) {
-                    window.location.href = response.url;
-                    throw new Error('Not logged in');
+        }))
+            .then(result => result.json())
+            .then(result => {
+                if (result['success'] === true) {
+                    document.getElementById('trade_' + id).remove()
                 }
 
-                if(response.status === 401) {
-                    window.location.href = '/login';
-                    throw new Error('Not logged in');
-                }
-
-                return response;
-            })
-            .then(result => result.json()).then(result => {
-            if(result['success'] === true) {
-                document.getElementById('trade_' + id).remove()
-            }
-
-            console.log(result);
-        }).catch(error => {
-            console.log(error);
+                console.log(result);
+            }).catch(error => {
+                console.log(error);
         })
     }
 }
@@ -211,27 +199,31 @@ function abandon(id) {
     const result = window.confirm("Abandon the pokemon?");
 
     if(result) {
-        $.ajax({
-            url: '/api/abandonPoke/',
-            type: 'POST',
-            data: {
-                'save' : getCookie('save'),
-                'id' : id,
-            },
-            success: function (result) {
+        let body = {
+            'save' : getCookie('save'),
+            'id' : id
+        };
+
+        const headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        };
+
+        authenticatedFetch(fetch('/api/abandonPoke/', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(body)
+        }))
+            .then(result => result.json())
+            .then(result => {
                 if(result['success'] === true) {
                     document.getElementById('trade_' + id).remove();
                 }
 
                 console.log(result);
-            },
-            error: function (error) {
-                if (error.status === 401) {
-                    window.location.href = '/login';
-                }
-
-                console.log(error);
-            },
+            }).catch(error => {
+            console.log(error);
         })
     }
 }
@@ -300,6 +292,22 @@ function jsonFetch(event, apiKey = null) {
         //referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         body: JSON.stringify(formData) // body data type must match "Content-Type" header
     })
+}
+
+function authenticatedFetch(fetch) {
+    return fetch.then(response => {
+        if(response.redirected) {
+            window.location.href = response.url;
+            throw new Error('Not logged in');
+        }
+
+        if(response.status === 401) {
+            window.location.href = '/login';
+            throw new Error('Not logged in');
+        }
+
+        return response;
+    });
 }
 
 console.log("utils.js loaded");

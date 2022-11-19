@@ -34,10 +34,9 @@
 
         if(remainingSaves != null) {
             remainingSaves.forEach(remainingSave => {
-                $.ajax({
-                    url: '/api/saves/' + remainingSave + '?exclude=id,user_id,num,advanced,advanced_a,challenge,classic,classic_a,npcTrade,shinyHunt,version,created_at,updated_at,pokemon',
-                    type: "GET",
-                    success: function (save) {
+                authenticatedFetch(fetch('/api/saves/' + remainingSave + '?exclude=id,user_id,num,advanced,advanced_a,challenge,classic,classic_a,npcTrade,shinyHunt,version,created_at,updated_at,pokemon'))
+                    .then(result => result.json())
+                    .then(save => {
                         const blockDiv = document.createElement('div');
                         blockDiv.id = remainingSave;
                         blockDiv.className = 'block';
@@ -89,14 +88,8 @@
                         document.getElementById('saves').append(blockDiv);
 
                         console.log(saves);
-                    },
-                    error: function (error) {
-                        if(error.status === 401) {
-                            window.location.href = '/login';
-                        }
-
+                    }).catch(error => {
                         console.log(error);
-                    },
                 })
             })
         } else {

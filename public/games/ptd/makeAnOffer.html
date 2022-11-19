@@ -165,10 +165,9 @@
                 saveNum = 2;
             }
 
-            $.ajax({
-                url: '/api/saves/' + saveNum + '/pokemon',
-                type: "GET",
-                success: function (pokes) {
+            authenticatedFetch(fetch('/api/saves/' + saveNum + '/pokemon'))
+                .then(result => result.json())
+                .then(result => {
                     if(!successCheck(pokes, POKEMON)) {
                         return;
                     }
@@ -192,20 +191,13 @@
                     });
 
                     console.log(pokes);
-                },
-                error: function (error) {
-                    if (error.status === 401) {
-                        window.location.href = '/login';
-                    }
+                }).catch(error => {
+                console.log(error);
+            })
 
-                    console.log(error);
-                },
-            });
-
-            $.ajax({
-                url: '/api/pokemon/' + pokeId,
-                type: "GET",
-                success: function (poke) {
+            authenticatedFetch(fetch('/api/pokemon/' + pokeId))
+                .then(result => result.json())
+                .then(poke => {
                     if(!successCheck(poke, POKEMON)) {
                         return;
                     }
@@ -217,15 +209,9 @@
                     document.getElementById('tradePokemon').append(pokemon);
 
                     console.log(poke);
-                },
-                error: function (error) {
-                    if (error.status === 401) {
-                        window.location.href = '/login';
-                    }
-
-                    console.log(error);
-                },
-            });
+                }).catch(error => {
+                console.log(error);
+            })
         });
 
         let parentNode = null;
@@ -272,30 +258,18 @@
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             };
 
-            fetch('/api/pokemon/' + pokeId + '/offer', {
+            authenticatedFetch(fetch('/api/pokemon/' + pokeId + '/offer', {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(body)
-            })
-                .then(response => {
-                    if(response.redirected) {
-                        window.location.href = response.url;
-                        throw new Error('Not logged in');
+            }))
+                .then(result => result.json())
+                .then(result => {
+                    if (!successCheck(result, POKEMON)) {
+                        return;
                     }
 
-                    if(response.status === 401) {
-                        window.location.href = '/login';
-                        throw new Error('Not logged in');
-                    }
-
-                    return response;
-                })
-                .then(result => result.json()).then(result => {
-                if (!successCheck(result, POKEMON)) {
-                    return;
-                }
-
-                console.log(result);
+                    console.log(result);
             }).catch(error => {
                 console.log(error);
             })

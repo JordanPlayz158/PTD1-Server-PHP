@@ -94,10 +94,9 @@
 
                     console.log(saveNum);
 
-                    $.ajax({
-                        url: '/api/saves/' + saveNum + '?exclude=user_id,advanced,advanced_a,challenge,classic,classic_a,npcTrade,shinyHunt,version,created_at,updated_at,pokemon.offers,pokemon.requests',
-                        type: "GET",
-                        success: function (save) {
+                    authenticatedFetch(fetch('/api/saves/' + saveNum + '?exclude=user_id,advanced,advanced_a,challenge,classic,classic_a,npcTrade,shinyHunt,version,created_at,updated_at,pokemon.offers,pokemon.requests'))
+                        .then(result => result.json())
+                        .then(save => {
                             if (!successCheck(save)) {
                                 return;
                             }
@@ -105,20 +104,13 @@
                             initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
 
                             console.log(save);
-                        },
-                        error: function (error) {
-                            if (error.status === 401) {
-                                window.location.href = '/login';
-                            }
-
-                            console.log(error);
-                        },
+                    }).catch(error => {
+                        console.log(error);
                     })
 
-                    $.ajax({
-                        url: '/api/saves/' + saveNum + '/pokemon/all',
-                        type: "GET",
-                        success: function (pokes) {
+                    authenticatedFetch(fetch('/api/saves/' + saveNum + '/pokemon/all'))
+                        .then(result => result.json())
+                        .then(pokes => {
                             if (!successCheck(pokes, POKEMON)) {
                                 return;
                             }
@@ -127,15 +119,9 @@
 
                             offersDiv(pokes);
                             offersDiv(pokes, 0);
-                        },
-                        error: function (error) {
-                            if (error.status === 401) {
-                                window.location.href = '/login';
-                            }
-
-                            console.log(error);
-                        },
-                    });
+                    }).catch(error => {
+                        console.log(error);
+                    })
                 });
             });
         }
@@ -222,13 +208,15 @@
                     separator.text = ' | ';
 
                     const deny = document.createElement('a');
-                    deny.text = 'Deny';
-                    deny.href = 'javascript:denyOffer(' + offerId + ')';
+
 
                     if(offer === 0) {
+                        deny.text = 'Deny';
+                        deny.href = 'javascript:denyRequest(' + offerId + ')';
                         actions.append(accept, separator, deny);
                     } else {
                         deny.text = 'Revoke';
+                        deny.href = 'javascript:denyOffer(' + offerId + ')';
                         actions.append(deny);
                     }
 
@@ -261,24 +249,33 @@
 
         function denyOffer(id) {
             if(window.confirm('Do you wish to deny YOUR offer for this (these) pokemon?')) {
-                $.ajax({
-                    url: '/api/offers/' + id,
-                    type: "DELETE",
-                    success: function (result) {
+
+                const headers = {
+                    'Accept': 'application/json',
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                };
+
+                authenticatedFetch(fetch('/api/offers/' + id, {
+                    method: 'DELETE',
+                    headers: headers,
+                }))
+                    .then(result => result.json())
+                    .then(result => {
                         console.log(result);
 
                         if(result['success'] === true) {
                             document.getElementById('offer_' + id).remove();
                         }
-                    },
-                    error: function (error) {
-                        if (error.status === 401) {
-                            window.location.href = '/login';
-                        }
+                }).catch(error => {
+                    console.log(error);
+                })
+            }
+        }
 
-                        console.log(error);
-                    },
-                });
+        function denyRequest(id) {
+            if(window.confirm('Do you wish to deny a request for YOUR pokemon?')) {
+                // TODO: complete
+                authenticatedFetch(fetch('/api/offers/' + id))
             }
         }
     </script>

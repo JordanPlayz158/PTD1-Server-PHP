@@ -24,10 +24,9 @@
 
         window.onload = () => {
             loadProfile(() => {
-                $.ajax({
-                    url: '/api/saves/?exclude=pokemon,items,id,user_id,num,advanced,advanced_a,classic,classic_a,challenge,npcTrade,shinyHunt,version,created_at,updated_at&save=' + saveNum,
-                    type: "GET",
-                    success: function (saves) {
+                authenticatedFetch(fetch('/api/saves/?exclude=pokemon,items,id,user_id,num,advanced,advanced_a,classic,classic_a,challenge,npcTrade,shinyHunt,version,created_at,updated_at&save=' + saveNum))
+                    .then(result => result.json())
+                    .then(saves => {
                         if (!successCheck(saves)) {
                             return;
                         }
@@ -38,15 +37,9 @@
                         document.getElementById('avatar').innerText = save['avatar'];
 
                         console.log(saves);
-                    },
-                    error: function (error) {
-                        if (error.status === 401) {
-                            window.location.href = '/login';
-                        }
-
-                        console.log(error);
-                    },
-                });
+                    }).catch(error => {
+                    console.log(error);
+                })
             })
         };
 
@@ -55,13 +48,20 @@
             const select = document.getElementById('avatars');
             const avatar = select.options[select.selectedIndex].innerText;
 
-            $.ajax({
-                url: '/api/saves/' + saveNum,
-                type: "POST",
-                'data' : {
-                    'avatar' : avatar
-                },
-                success: function (data) {
+            let body = {'avatar' : avatar};
+            const headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            };
+
+            authenticatedFetch(fetch('/api/saves/' + saveNum, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(body)
+            }))
+                .then(result => result.json())
+                .then(data => {
                     if(!successCheck(data, POKEMON)) {
                         return;
                     }
@@ -69,10 +69,8 @@
                     document.getElementById('avatar').innerText = avatar;
 
                     console.log(data);
-                },
-                error: function (error) {
-                    console.log(error);
-                },
+                }).catch(error => {
+                console.log(error);
             })
         }
     </script>

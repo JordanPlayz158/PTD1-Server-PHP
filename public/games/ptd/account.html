@@ -36,15 +36,7 @@
                 saveNum = 2;
             }
 
-            fetch('/api/saves/?exclude=pokemon')
-                .then(response => {
-                    if(response.redirected) {
-                        window.location.href = response.url;
-                        throw new Error('Not logged in');
-                    }
-
-                    return response;
-                })
+            authenticatedFetch(fetch('/api/saves/?exclude=pokemon'))
                 .then(response => response.json())
                 .then(saves => {
                     if (!successCheck(saves)) {

@@ -25,10 +25,9 @@
                         saveNum = 2;
                     }
 
-                    $.ajax({
-                        url: '/api/saves/' + saveNum + '?exclude=user_id,advanced,advanced_a,challenge,classic,classic_a,npcTrade,shinyHunt,version,created_at,updated_at,pokemon.offers,pokemon.requests',
-                        type: "GET",
-                        success: function (save) {
+                    authenticatedFetch(fetch('/api/saves/' + saveNum + '?exclude=user_id,advanced,advanced_a,challenge,classic,classic_a,npcTrade,shinyHunt,version,created_at,updated_at,pokemon.offers,pokemon.requests'))
+                        .then(result => result.json())
+                        .then(save => {
                             if (!successCheck(save)) {
                                 return;
                             }
@@ -64,15 +63,9 @@
                             }
 
                             console.log(save);
-                        },
-                        error: function (error) {
-                            if (error.status === 401) {
-                                window.location.href = '/login';
-                            }
-
-                            console.log(error);
-                        },
-                    });
+                        }).catch(error => {
+                        console.log(error);
+                    })
                 });
             });
         }

@@ -27,10 +27,9 @@
 
                     console.log(saveNum);
 
-                    $.ajax({
-                        url: '/api/saves/' + saveNum + '?exclude=user_id,advanced,advanced_a,challenge,classic,classic_a,npcTrade,shinyHunt,version,created_at,updated_at,pokemon.offers,pokemon.requests',
-                        type: "GET",
-                        success: function (save) {
+                    authenticatedFetch(fetch('/api/saves/' + saveNum + '?exclude=user_id,advanced,advanced_a,challenge,classic,classic_a,npcTrade,shinyHunt,version,created_at,updated_at,pokemon.offers,pokemon.requests'))
+                        .then(result => result.json())
+                        .then(save => {
                             if (!successCheck(save)) {
                                 return;
                             }
@@ -38,20 +37,13 @@
                             initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
 
                             console.log(save);
-                        },
-                        error: function (error) {
-                            if (error.status === 401) {
-                                window.location.href = '/login';
-                            }
-
+                        }).catch(error => {
                             console.log(error);
-                        },
-                    })
+                        })
 
-                    $.ajax({
-                        url: '/api/saves/' + saveNum + '/trades',
-                        type: "GET",
-                        success: function (pokes) {
+                    authenticatedFetch(fetch('/api/saves/' + saveNum + '/trades'))
+                        .then(result => result.json())
+                        .then(pokes => {
                             if (!successCheck(pokes, POKEMON)) {
                                 return;
                             }
@@ -86,15 +78,9 @@
                             })
 
                             console.log(pokes);
-                        },
-                        error: function (error) {
-                            if (error.status === 401) {
-                                window.location.href = '/login';
-                            }
-
-                            console.log(error);
-                        },
-                    });
+                        }).catch(error => {
+                        console.log(error);
+                    })
                 });
             });
         }
@@ -108,32 +94,20 @@
                     'Content-Type': 'application/json',
                 };
 
-                fetch('/api/trade/', {
+                authenticatedFetch(fetch('/api/trade/', {
                     method: 'DELETE',
                     headers: headers,
                     body: JSON.stringify({'pokemon_id' : id})
-                })
-                    .then(response => {
-                        if(response.redirected) {
-                            window.location.href = response.url;
-                            throw new Error('Not logged in');
+                }))
+                    .then(result => result.json())
+                    .then(result => {
+                        if (result['success'] === true) {
+                            document.getElementById('trade_' + id).remove()
                         }
 
-                        if(response.status === 401) {
-                            window.location.href = '/login';
-                            throw new Error('Not logged in');
-                        }
-
-                        return response;
-                    })
-                    .then(result => result.json()).then(result => {
-                    if(result['success'] === true) {
-                        document.getElementById('trade_' + id).remove()
-                    }
-
-                    console.log(result);
-                }).catch(error => {
-                    console.log(error);
+                        console.log(result);
+                    }).catch(error => {
+                        console.log(error);
                 })
             }
         }
