@@ -217,6 +217,11 @@ class SWFController extends Controller {
             $pokeNum = 'poke' . $i . '_';
             $pokeId = $pokeNum . 'myID';
 
+            $tradePokemon = $userSave->allPokemon()->where('pId', '=', $save[$pokeId])->first();
+            if($tradePokemon !== null && $tradePokemon->isUpForTrade()) {
+                continue;
+            }
+
             // This is not finding a Pokémon, so it is returning a new one
             $poke = $userSave->pokemon()->where('pId', '=', $save[$pokeId])->first();
 
@@ -267,7 +272,6 @@ class SWFController extends Controller {
                 $pokeNewId = true;
             }
 
-            // TODO: Don't save Pokémon if on trade list
             if (isset($save[$pokeNum . 'extra'])) {
                 $poke->shiny = match ($save[$pokeNum . 'extra']) {
                     /* Shiny
