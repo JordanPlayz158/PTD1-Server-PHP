@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\Web\ExcludeController;
 use App\Models\User;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use RateLimiter;
 
 class AccountController extends ExcludeController {
     public function get(Request $request): array
@@ -48,6 +49,27 @@ class AccountController extends ExcludeController {
             if(User::whereEmail($email)->exists()) {
                 return ['success' => false, 'error' => 'You cannot change your account to this email as it is used by another account'];
             }
+
+            $user = $request->user();
+            $userId = $user->id;
+
+            $trimmedEmail = trim($email);
+            $emailUser = User::factory()->make(['id' => $userId, 'email' => $trimmedEmail]);
+
+            // Don't change email until after the verification link is clicked
+            RateLimiter::attempt(
+                'email-change-verification-email:' . $userId,
+                5,
+                function() use ($trimmedEmail, $emailUser, $userId) {
+                    if(Cache::set('email-change:' . $userId, $trimmedEmail, 60*60)) {
+                        $emailUser->sendEmailVerificationNotification();
+                    }
+                },
+                // 5 Attempts PER HOUR
+                60*60
+            );
+
+            $request->request->remove('email');
         }
 
         if(($password = $request->get('password')) !== null) {

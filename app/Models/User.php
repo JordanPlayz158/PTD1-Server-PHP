@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\HasApiTokens;
 /**
  * App\Models\User
@@ -79,6 +80,10 @@ class User extends Authenticatable implements MustVerifyEmail {
 
     public function getNameAttribute(): string {
         return $this->name ?? $this->email;
+    }
+
+    public function getEmailForVerification(): string {
+        return Cache::get('email-change:' . $this->id) ?? $this->email;
     }
 
     /**

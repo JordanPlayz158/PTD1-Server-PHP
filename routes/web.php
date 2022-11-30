@@ -3,7 +3,9 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Web\AchievementController;
 use App\Http\Controllers\Web\SWFController;
+use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
@@ -80,8 +82,24 @@ Route::post('/email/verification-notification', function (\Illuminate\Http\Reque
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
+// id is the primary key of the user in the table
+// hash is the sha1 hash of the email being verified
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request, int $id) {
+    $cacheString = 'email-change:' . $id;
+    if(($email = Cache::get($cacheString)) !== null) {
+        $user = User::whereId($id);
+
+        if(!User::whereEmail($email)->exists()) {
+            $user->update(['email' => $email]);
+            $user->markEmailAsVerified();
+            event(new Verified($user));
+        }
+
+        Cache::delete($cacheString);
+
+    } else {
+        $request->fulfill();
+    }
 
     return redirect('/games/ptd/account.html');
 })->middleware(['auth', 'signed'])->name('verification.verify');
@@ -125,6 +143,9 @@ Route::get('/apiKeys/{apiKeyId}', function () {return view('tokensDelete');})->m
 // PokeCenter Pages
 
 Route::get('/games/ptd/trading.php', function () {return redirect('/games/ptd/trading.html');});
+
+  // Non-original pages
+  Route::get('/games/ptd/changeEmail.php', function () {return view('changeEmail');});
 
 
 // Mystery Gift
