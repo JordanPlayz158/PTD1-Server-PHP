@@ -209,16 +209,19 @@
 
                     const deny = document.createElement('a');
 
+                    deny.href = 'javascript:deny(' + offerId;
 
-                    if(offer === 0) {
+                    // TODO: Might need to swap these around or change wording to make it more clear
+                    if(offer === 1) {
                         deny.text = 'Deny';
-                        deny.href = 'javascript:denyRequest(' + offerId + ')';
                         actions.append(accept, separator, deny);
                     } else {
                         deny.text = 'Revoke';
-                        deny.href = 'javascript:denyOffer(' + offerId + ')';
+                        deny.href += ', true';
                         actions.append(deny);
                     }
+
+                    deny.href += ')';
 
                     offerDiv.append(leftColumnTitle, rightColumnTitle, document.createElement('br') , leftColumn, vr, rightColumn, document.createElement('hr'), actions)
 
@@ -247,8 +250,14 @@
             }
         }
 
-        function denyOffer(id) {
-            if(window.confirm('Do you wish to deny YOUR offer for this (these) pokemon?')) {
+        function deny(id, REQUEST = false) {
+            let message = 'Do you wish to deny YOUR offer for this (these) pokemon?';
+
+            if(REQUEST) {
+                message = 'Do you wish to deny a request for YOUR pokemon?';
+            }
+
+            if(window.confirm(message)) {
 
                 const headers = {
                     'Accept': 'application/json',
@@ -269,13 +278,6 @@
                 }).catch(error => {
                     console.log(error);
                 })
-            }
-        }
-
-        function denyRequest(id) {
-            if(window.confirm('Do you wish to deny a request for YOUR pokemon?')) {
-                // TODO: complete
-                authenticatedFetch(fetch('/api/offers/' + id))
             }
         }
     </script>
