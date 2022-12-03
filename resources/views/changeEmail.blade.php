@@ -37,6 +37,9 @@
                     </div>
                     <div class="content">
                         <p>Enter the new email <b>THAT YOU OWN</b> that you wish to change your account to!</p>
+                        <br>
+                        <p>Current Email: "{{ $email }}"</p>
+                        <br>
                         <form id="changeEmail" action="/api/account" method="POST" onsubmit="changeEmail(event)">
                             <label><b>Email:</b>
                                 <input type="email" name="email" class="text">
@@ -56,6 +59,7 @@
                     </div>
                     <div class="content">
                         <p>It is not currently required but recommended to change your email to a real one (or one you own) as in the future it may be required to log in to PTD.</p>
+                        <p>NOTE: <b>You get 5 REQUESTS per HOUR</b></p>
                     </div>
                 </div>
             </td>
