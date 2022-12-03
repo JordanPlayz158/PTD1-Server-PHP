@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Web\AchievementController;
+use App\Http\Controllers\Web\AdminController;
 use App\Http\Controllers\Web\SWFController;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
@@ -148,6 +149,11 @@ Route::get('/games/ptd/trading.php', function () {return redirect('/games/ptd/tr
   // Non-original pages
   Route::get('/games/ptd/changeEmail.php', function () {return view('changeEmail');});
 
+Route::get('/games/ptd/admin.php', function (Request $request) {
+    return view('admin', ['user' => $request->user()]);
+})->middleware('auth', 'admin');
+
+Route::post('/games/ptd/admin.php', [AdminController::class, 'post'])->middleware('auth', 'admin');
 
 // Mystery Gift
 Route::get('/games/ptd/dailyCode.php', function () {return redirect('/p/mystery-gift.html');});
