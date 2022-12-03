@@ -56,6 +56,7 @@ Route::middleware('auth:sanctum')->post('/saves/{num}', [SavesController::class,
 Route::middleware('auth:sanctum')->get('/saves/{num}/pokemon', [PokemonController::class, 'get']);
 Route::middleware('auth:sanctum')->get('/saves/{num}/pokemon/all', [PokemonController::class, 'all']);
 Route::middleware('auth:sanctum')->get('/saves/{num}/pokemon/{id}', [PokemonController::class, 'getPokemon']);
+Route::middleware('auth:sanctum')->delete('/saves/{num}/pokemon/{id}', [PokemonController::class, 'remove']);
 Route::middleware('auth:sanctum')->get('/pokemon/{id}', [PokemonController::class, 'anyPokemon']);
 
 

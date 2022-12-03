@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/forgot-password', function() {return view('resetPasswordForm');})->middleware('guest')->name('password.request');
 
-Route::post('/forgot-password', function (\Illuminate\Http\Request $request) {
+Route::post('/forgot-password', function (Request $request) {
     $request->validate(['email' => 'required|email']);
 
     $status = Password::sendResetLink(
@@ -40,7 +41,7 @@ Route::post('/forgot-password', function (\Illuminate\Http\Request $request) {
 
 Route::get('/reset-password/{token}', function () {return view('resetPassword');})->middleware('guest')->name('password.reset');
 
-Route::post('/reset-password', function (\Illuminate\Http\Request $request) {
+Route::post('/reset-password', function (Request $request) {
     $request->validate([
         'token' => 'required',
         'email' => 'required',
@@ -76,7 +77,7 @@ Route::get('/email/verify', function () {return view('auth.verify-email');})->mi
 
 Route::get('/games/ptd/resendVerificationEmail.php', function () {return view('resendVerificationEmail');})->middleware('auth');
 
-Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
+Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
 
     return back()->with('message', 'Verification link sent!');

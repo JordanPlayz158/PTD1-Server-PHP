@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class PokemonController extends ExcludeController {
-    public function get(Request $request, int $num)
+    public function get(Request $request, int $num): array
     {
         $save = Auth::user()->saves()->where('num', '=', $num)->first();
 
@@ -32,7 +32,7 @@ class PokemonController extends ExcludeController {
             ->select($attributes->toArray())->get()->toArray();
     }
 
-    public function getPokemon(Request $request, int $num, int $id)
+    public function getPokemon(Request $request, int $num, int $id): array
     {
         $save = Auth::user()->saves()->where('num', '=', $num)->first();
 
@@ -51,7 +51,8 @@ class PokemonController extends ExcludeController {
         return $pokemon->toArray();
     }
 
-    public function all(Request $request, int $num) {
+    public function all(Request $request, int $num): array
+    {
         $save = Auth::user()->saves()->where('num', '=', $num)->first();
 
         if($save === null) {
@@ -71,7 +72,7 @@ class PokemonController extends ExcludeController {
         return $pokemon->toArray();
     }
 
-    public function anyPokemon(Request $request, int $id)
+    public function anyPokemon(Request $request, int $id): array
     {
         $relations = $this->excludeRelations($request->input('exclude'), Collection::make(['offers', 'requests', 'offers.offerPokemon', 'offers.requestPokemon', 'requests.offerPokemon', 'requests.requestPokemon', 'offers.offerPokemon.pokemon', 'offers.requestPokemon.pokemon', 'requests.offerPokemon.pokemon', 'requests.requestPokemon.pokemon']));
         $attributes = $this->excludeAttributes($request->input('exclude'), Collection::make(array_keys(Auth::user()->saves()->first()->pokemon()->first()->getAttributes())));
@@ -80,5 +81,22 @@ class PokemonController extends ExcludeController {
             ->select($attributes->toArray())->where('id', '=', $id)->get()->first();
 
         return $pokemon->toArray();
+    }
+
+    public function remove(Request $request, int $num, int $id): array
+    {
+        $user = $request->user();
+
+        if(!($user instanceof User)) return ['success' => false];
+
+        $save = $user->saves()->where('num', '=', $num)->first();
+
+        if(!($save instanceof Save)) return ['success' => false];
+
+        if($save->pokemon()->where('id', '=', $id)->first()->delete()) {
+            return ['success' => true];
+        }
+
+        return ['success' => false];
     }
 }

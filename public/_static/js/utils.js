@@ -199,21 +199,17 @@ function abandon(id) {
     const result = window.confirm("Abandon the pokemon?");
 
     if(result) {
-        let body = {
-            'save' : getCookie('save'),
-            'id' : id
-        };
-
         const headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             // 'Content-Type': 'application/x-www-form-urlencoded',
         };
 
-        authenticatedFetch(fetch('/api/abandonPoke/', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(body)
+        const save = getCookie('save');
+
+        authenticatedFetch(fetch(`/api/saves/${save}/pokemon/${id}`, {
+            method: 'DELETE',
+            headers: headers
         }))
             .then(result => result.json())
             .then(result => {
