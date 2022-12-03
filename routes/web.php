@@ -146,6 +146,14 @@ Route::get('/apiKeys/{apiKeyId}', function () {return view('tokensDelete');})->m
 
 Route::get('/games/ptd/trading.php', function () {return redirect('/games/ptd/trading.html');});
 
+// Non-original pages
+Route::get('/games/ptd/changeEmail.php', function (Request $request) {
+    return view('changeEmail', ['email' => $request->user()->email]);
+})->middleware('auth');
+
+Route::get('/games/ptd/debug.php', function (Request $request) {
+    return view('debug', ['user' => $request->user()]);
+})->middleware('auth');
   // Non-original pages
   Route::get('/games/ptd/changeEmail.php', function () {return view('changeEmail');});
 
