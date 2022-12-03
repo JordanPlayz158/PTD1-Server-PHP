@@ -37,7 +37,7 @@ class AccountController extends ExcludeController {
 
     public function update(Request $request): array
     {
-        $prohibited = ['id', 'email_verified_at', 'remember_token', 'created_at', 'updated_at'];
+        $prohibited = ['id', 'email_verified_at', 'remember_token', 'role_id', 'created_at', 'updated_at'];
 
         foreach ($prohibited as $prohibit) {
             if($request->has($prohibit)) {

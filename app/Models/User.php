@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Enums\Role;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -97,5 +98,10 @@ class User extends Authenticatable implements MustVerifyEmail {
     public function achievement(): HasOne
     {
         return $this->hasOne(Achievement::class);
+    }
+
+    public function role(): Role
+    {
+        return $this->role_id === null ? Role::USER() : Role::fromValue($this->role_id);
     }
 }
