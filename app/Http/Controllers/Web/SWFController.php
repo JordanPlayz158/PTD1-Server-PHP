@@ -13,10 +13,7 @@ use App\Http\Responses\Builders\SWF\SWFBuilder;
 use App\Models\Pokemon;
 use App\Models\Save;
 use App\Models\User;
-use DB;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Log;
@@ -194,8 +191,8 @@ class SWFController extends Controller {
                     unset($releasePokes[$key]);
                 }
 
-                if(sizeof($releasePokes) === 0) {
-                    unset($releasePokes);
+                foreach($releasePokes as $releasePoke) {
+                    $userSave->pokemon()->where('pId', '=', $releasePoke)->delete();
                 }
             }
         }
@@ -231,19 +228,6 @@ class SWFController extends Controller {
             }
 
             if (isset($releasePokes) && in_array($save[$pokeId], $releasePokes)) {
-                /*
-                if ($poke -> shiny == 1)
-                    $save -> p_hs--;
-                */
-                //$save->p_hs -= ($poke->shiny == 1);
-
-                // drop offers containing poke id
-
-                // If it is new and not in db, `wasRecentlyCreated` would be true
-                if(!$poke->wasRecentlyCreated) {
-                    $poke->delete();
-                }
-
                 continue;
             }
 
