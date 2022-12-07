@@ -167,7 +167,7 @@
 
             authenticatedFetch(fetch('/api/saves/' + saveNum + '/pokemon'))
                 .then(result => result.json())
-                .then(result => {
+                .then(pokes => {
                     if(!successCheck(pokes, POKEMON)) {
                         return;
                     }
@@ -268,6 +268,8 @@
                     if (!successCheck(result, POKEMON)) {
                         return;
                     }
+
+                    location.href = '/games/ptd/myOffers.html';
 
                     console.log(result);
             }).catch(error => {
