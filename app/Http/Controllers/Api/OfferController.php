@@ -26,6 +26,10 @@ class OfferController extends ExcludeController {
 
         $offerIds = $request->get('offerIds');
 
+        if(empty($offerIds)) {
+            return ['success' => false, 'error' => 'You can\'t make an offer for pokemon while offering no pokemon'];
+        }
+
         $lastSaveId = -1;
         foreach ($offerIds as $offerId) {
             if(filter_var($offerId, FILTER_VALIDATE_INT) === false) {
