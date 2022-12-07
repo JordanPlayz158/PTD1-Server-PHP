@@ -8,6 +8,7 @@ use App\Models\OfferPokemon;
 use App\Models\Pokemon;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class OfferController extends ExcludeController {
     public function create(Request $request, int $id)
@@ -63,7 +64,14 @@ class OfferController extends ExcludeController {
 
         $createdOfferPokemon = [];
 
-        $offerPokemonId = OfferPokemon::query()->latest()->first()->id + 1;
+        $lastId = Cache::get('lastOfferPokemonId');
+
+        if($lastId === null) {
+            $lastId = OfferPokemon::query()->latest()->first()->id;
+        }
+
+        $lastId++;
+        $offerPokemonId = $lastId;
 
         foreach ($offerIds as $offerId) {
             $offerPoke = new OfferPokemon();
@@ -83,7 +91,10 @@ class OfferController extends ExcludeController {
             $createdOfferPokemon = $offerPoke;
         }
 
-        $requestPokemonId = (OfferPokemon::query()->latest()->first()->id + 1);
+        $lastId++;
+        $requestPokemonId = $lastId;
+
+        Cache::set('lastOfferPokemonId', $lastId);
 
         $requestPokemon = new OfferPokemon();
         $requestPokemon->id = $requestPokemonId;
