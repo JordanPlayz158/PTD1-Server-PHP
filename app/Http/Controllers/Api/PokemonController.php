@@ -80,6 +80,10 @@ class PokemonController extends ExcludeController {
         $pokemon = Pokemon::with($relations->undot()->toArray())
             ->select($attributes->toArray())->where('id', '=', $id)->get()->first();
 
+        if($pokemon === null) {
+            return ['success' => false, 'error' => 'The requested pokemon does not exist'];
+        }
+
         return $pokemon->toArray();
     }
 
