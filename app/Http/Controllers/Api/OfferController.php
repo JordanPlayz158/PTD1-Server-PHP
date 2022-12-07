@@ -119,11 +119,40 @@ class OfferController extends ExcludeController {
     {
         $offer = Offer::where('id', '=', $id)->first();
 
-        OfferPokemon::where('id', '=', $offer->offer_pokemon_id)->delete();
-        OfferPokemon::where('id', '=', $offer->request_pokemon_id)->delete();
+        $userId = $request->user()->id;
+        $userOwnsPokemonInOffer = false;
 
-        $offer->delete();
+        $offerPokemon = $offer->offerPokemon();
+        $requestPokemon = $offer->requestPokemon();
 
-        return ['success' => true];
+        foreach ($offerPokemon->lazy() as $pokemon) {
+            if($pokemon->pokemon()->first()->ownerSave()->first()->user()->first()->id === $userId) {
+                $userOwnsPokemonInOffer = true;
+                break;
+            }
+        }
+
+        // Is a bit wasteful but don't want to duplicate code
+        // It is wasteful as lazyById needs to fetch, potentially, 1000 entries from the db
+        // just to start the loop, and it may return instantly if the user owned the offer pokemon
+        foreach ($requestPokemon->lazyById() as $pokemon) {
+            if($userOwnsPokemonInOffer) break;
+
+            if($pokemon->pokemon()->first()->ownerSave()->first()->user()->first()->id === $userId) {
+                $userOwnsPokemonInOffer = true;
+                break;
+            }
+        }
+
+        if($userOwnsPokemonInOffer) {
+            $offerPokemon->delete();
+            $requestPokemon->delete();
+
+            $offer->delete();
+
+            return ['success' => true];
+        }
+
+        return ['success' => false];
     }
 }
