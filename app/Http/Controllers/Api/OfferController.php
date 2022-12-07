@@ -6,7 +6,9 @@ use App\Http\Controllers\Web\ExcludeController;
 use App\Models\Offer;
 use App\Models\OfferPokemon;
 use App\Models\Pokemon;
+use App\Models\Save;
 use Auth;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -124,6 +126,85 @@ class OfferController extends ExcludeController {
         }
 
         return ['success' => true];
+    }
+
+    public function accept(Request $request, int $id) {
+        $offer = Offer::whereId($id)->first();
+
+        $requestUserId = $request->user()->id;
+
+        // ID to transfer offer pokemon to
+        $requestSaveId = -1;
+        $userOwnsPokemonBeingRequested = false;
+
+        $offerPokemon = $offer->offerPokemon();
+        $requestPokemon = $offer->requestPokemon();
+
+        foreach($requestPokemon->lazy() as $pokemon) {
+            // Only need to check the first request pokemon
+            // due to the checks that need to be passed in order for the offer to be made in the first place
+
+            $requestSave = $pokemon->pokemon()->first()->ownerSave()->first();
+
+            // Also I wish it wasn't this messy
+            if($requestSave->user()->first()->id === $requestUserId) {
+                $userOwnsPokemonBeingRequested = true;
+                $requestSaveId = $requestSave->id;
+                break;
+            }
+        }
+
+        if($userOwnsPokemonBeingRequested && $requestSaveId !== -1) {
+            // ID to transfer request pokemon to
+            $offerSaveId = $offerPokemon->first()->pokemon()->first()->ownerSave()->first()->id;
+
+            $requestPokemon->each(function (OfferPokemon $pokemon) use ($offerSaveId) {
+                $this->cleanOffers($offerSaveId, $pokemon->pokemon()->first());
+            });
+
+            $offerPokemon->each(function (OfferPokemon $pokemon) use ($requestSaveId) {
+                $this->cleanOffers($requestSaveId, $pokemon->pokemon()->first());
+            });
+
+            return ['success' => true];
+        }
+
+        return ['success' => false];
+    }
+
+    private function getUniquePokemonId(HasMany $pokemon) {
+        $valid = false;
+        $tmp = -1;
+
+        while (!$valid) {
+            // Integer limit, would be great if swf used Number for 64 bit and not int but...
+            // Got to work with what you are given (otherwise I could just use auto_increment id)
+            $tmp = mt_rand(1, 2147483647);
+            $valid = true;
+
+            foreach ($pokemon->select('pId')->lazy() as $poke) {
+                if ($tmp == $poke->pId) {
+                    $valid = false;
+                    break;
+                }
+            }
+        }
+
+        return $tmp;
+    }
+
+    private function cleanOffers(int $save, $pokemon) {
+        $offerPokemonEntries = OfferPokemon::where('pokemon_id', '=', $pokemon->id);
+
+        $offerPokemonEntries->each(function (OfferPokemon $offerPokemonEntry) {
+            $id = $offerPokemonEntry->id;
+
+            Offer::where('offer_pokemon_id', '=', $id)
+                ->orWhere('request_pokemon_id', '=', $id)->delete();
+        });
+
+        $pokemon->update(['save_id' => $save, 'pId' => $this->getUniquePokemonId(Save::whereId($save)->first()->pokemon())]);
+        $pokemon->trade()->delete();
     }
 
     public function remove(Request $request, int $id)

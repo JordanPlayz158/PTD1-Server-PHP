@@ -118,7 +118,7 @@
                             console.log(pokes);
 
                             offersDiv(pokes);
-                            offersDiv(pokes, 0);
+                            offersDiv(pokes, false);
                     }).catch(error => {
                         console.log(error);
                     })
@@ -126,13 +126,13 @@
             });
         }
 
-        function offersDiv(pokes, offer = 1) {
+        function offersDiv(pokes, isOffer = true) {
             const offersIds = [];
 
             pokes.forEach(function (poke) {
                 console.log(poke);
 
-                const divName = offer === 1 ? 'offers' : 'requests';
+                const divName = isOffer ? 'offers' : 'requests';
                 const offers = poke[divName];
 
                 offers.forEach(function (offer) {
@@ -202,7 +202,7 @@
 
                     const accept = document.createElement('a');
                     accept.text = 'Accept';
-                    accept.href = 'javascript:acceptOffer(' + offerId + ')';
+                    accept.href = 'javascript:acceptRequest(' + offerId + ')';
 
                     const separator = document.createElement('a');
                     separator.text = ' | ';
@@ -211,14 +211,13 @@
 
                     deny.href = 'javascript:deny(' + offerId;
 
-                    // TODO: Might need to swap these around or change wording to make it more clear
-                    if(offer === 1) {
-                        deny.text = 'Deny';
-                        actions.append(accept, separator, deny);
-                    } else {
-                        deny.text = 'Revoke';
+                    if(isOffer) {
+                        deny.text = 'Retract';
                         deny.href += ', true';
                         actions.append(deny);
+                    } else {
+                        deny.text = 'Reject';
+                        actions.append(accept, separator, deny);
                     }
 
                     deny.href += ')';
@@ -245,16 +244,33 @@
 
         function acceptRequest(id) {
             if(window.confirm('Do you wish to accept the offer?\nOnce this is done, this action CANNOT be undone.\nYour pokemon will be swapped, please be sure before performing this action.')) {
-                alert('Trading is not implemented yet. please be patient while it is being worked on!')
-                console.log('accepted');
+                const headers = {
+                    'Accept': 'application/json',
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                };
+
+                authenticatedFetch(fetch('/api/offers/' + id + '/accept', {
+                    method: 'POST',
+                    headers: headers,
+                }))
+                    .then(result => result.json())
+                    .then(result => {
+                        console.log(result);
+
+                        if(result['success'] === true) {
+                            document.getElementById('offer_' + id).remove();
+                        }
+                    }).catch(error => {
+                    console.log(error);
+                })
             }
         }
 
         function deny(id, REQUEST = false) {
-            let message = 'Do you wish to deny YOUR offer for this (these) pokemon?';
+            let message = 'Do you wish to deny a request for YOUR pokemon?';
 
             if(REQUEST) {
-                message = 'Do you wish to deny a request for YOUR pokemon?';
+                message = 'Do you wish to deny YOUR offer for this (these) pokemon?';
             }
 
             if(window.confirm(message)) {
@@ -305,7 +321,7 @@
                         <div class="title"><p>Offers and Requests - <a
                                     href="https://ptd1.jordanplayz158.xyz/games/ptd/checkPokemon.php?save=0">Go Back</a></p></div>
                         <div class="content">
-                            <p>Here is a list of your Offers from this profile</p>
+                            <p>Here is a list of your Offers (to people) <b>FROM</b> this profile</p>
                         </div>
                     </div>
                 </div>
@@ -314,7 +330,7 @@
                         <div class="title"><p>Offers and Requests - <a
                                     href="https://ptd1.jordanplayz158.xyz/games/ptd/checkPokemon.php?save=0">Go Back</a></p></div>
                         <div class="content">
-                            <p>Here is a list of your Requests from this profile</p>
+                            <p>Here is a list of your Requests (from others) <b>TO</b> this profile</p>
                         </div>
                     </div>
                 </div>

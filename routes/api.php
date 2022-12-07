@@ -69,6 +69,6 @@ Route::middleware('auth:sanctum')->delete('/trade', [TradeController::class, 're
 
 // Offers
 
-
 Route::middleware('auth:sanctum')->delete('/offers/{id}', [OfferController::class, 'remove']);
 Route::middleware('auth:sanctum')->post('/pokemon/{id}/offer', [OfferController::class, 'create']);
+Route::middleware('auth:sanctum')->post('/offers/{id}/accept', [OfferController::class, 'accept']);
