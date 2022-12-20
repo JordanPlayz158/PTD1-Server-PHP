@@ -13,8 +13,14 @@ class SavesController extends ExcludeController {
     {
         $saves = Auth::user()->saves();
 
+        $firstSave = $saves->first();
+
+        if($firstSave === null) {
+            $firstSave = Save::factory()->make();
+        }
+
         $relations = $this->excludeRelations($request->input('exclude'), Collection::make(['pokemon', 'pokemon.offers', 'pokemon.requests']));
-        $attributes = $this->excludeAttributes($request->input('exclude'), Collection::make(array_keys($saves->first()->getAttributes())));
+        $attributes = $this->excludeAttributes($request->input('exclude'), Collection::make(array_keys($firstSave->getAttributes())));
 
         // This line is required as Laravel appears to lazy load the HasMany relationship models
         // In order to load them and have the with and select work properly, we need to iterate
