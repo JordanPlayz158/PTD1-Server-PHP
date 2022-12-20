@@ -29,7 +29,7 @@
                     <li><a href="/games/ptd/myTrades.html">Your Trades</a></li>
                     <li><a href="/games/ptd/myOffers.html">Your Offers/Requests</a></li>
                     <li><a href="/games/ptd/searchTrades.html">Search Trades</a></li>
-                    <li><a href="/games/ptd/latestTrades.html">Latest Trades</a></li>
+                    <li><a href="/games/ptd/latestTrades.php">Latest Trades</a></li>
                 </ul>
             </li>
             <li class="expanded"><a href="/games/ptd/createTrade.html">Utilities</a>

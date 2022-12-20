@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Web\AchievementController;
 use App\Http\Controllers\Web\AdminController;
 use App\Http\Controllers\Web\SWFController;
+use App\Models\Trade;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
@@ -145,6 +146,8 @@ Route::get('/apiKeys/{apiKeyId}', function () {return view('tokensDelete');})->m
 // PokeCenter Pages
 
 Route::get('/games/ptd/trading.php', function () {return redirect('/games/ptd/trading.html');});
+
+Route::get('/games/ptd/latestTrades.php', function () {return view('latestTrades', ['ids' => Trade::paginate(20, 'poke_id')]);});
 
 // Non-original pages
 Route::get('/games/ptd/changeEmail.php', function (Request $request) {
