@@ -14,29 +14,39 @@
     <script>
         Cookies.remove('apiToken');
 
-        $(function () {
-            $("#header").load("../../_static/html/header.html");
-            $("#nav").load("../../_static/html/nav.html");
-        });
-
         function login(event) {
             event.preventDefault();
 
             jsonFetch(event).then(response => {
-                if (response.status !== 204) {
-                    console.log(response);
-                    return;
+                switch (response.status) {
+                    case 204:
+                        location.href = '/games/ptd/account.html';
+                        break;
+                    case 422:
+                        response.json().then(data => {
+                            let result = document.createElement('div');
+                            result.id = 'result';
+                            result.className = 'error-msg msg';
+
+                            let message = document.createElement('a');
+                            message.innerText = data['message'];
+
+                            result.append(message);
+
+                            document.getElementById('main').append(result);
+                        })
+                        break;
                 }
 
-                location.href = '/games/ptd/account.html';
+                console.log(response);
             });
         }
     </script>
 </head>
 <body>
-<div id="header"></div>
+@include('components.header')
 <div id="content">
-    <div id="nav"></div>
+    @include('components.nav')
     <table id="content_table">
         <tbody>
             <tr>
