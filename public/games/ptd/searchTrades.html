@@ -43,15 +43,17 @@
         };
 
         function fetchPokemonById() {
-            authenticatedFetch(fetch('/api/pokemon/' + document.getElementById('tradeId').value))
+            const parent = document.getElementById('pokemonResult');
+
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+            }
+
+            parent.className = '';
+
+            authenticatedFetch(fetch('/api/trade/pokemon/' + document.getElementById('tradeId').value))
                 .then(result => result.json())
                 .then(poke => {
-                    const parent = document.getElementById('pokemonResult');
-
-                    while (parent.firstChild) {
-                        parent.removeChild(parent.firstChild);
-                    }
-
                     if(!successCheck(poke, POKEMON)) {
                         return;
                     }
