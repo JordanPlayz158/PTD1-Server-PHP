@@ -19,7 +19,7 @@
                 $(function () {
                     let saveNum = getCookie('save');
 
-                    if (saveNum === null || saveNum < 0) {
+                    if (saveNum === null || saveNum.length < 1 || saveNum < 0) {
                         saveNum = 0;
                     } else if (saveNum > 2) {
                         saveNum = 2;
