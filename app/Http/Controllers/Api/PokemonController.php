@@ -81,10 +81,19 @@ class PokemonController extends ExcludeController {
             ->select($attributes->toArray())->where('id', '=', $id)->get()->first();
 
         if($pokemon === null) {
-            return ['success' => false, 'error' => 'The requested pokemon does not exist'];
+            return ['success' => false, 'error' => 'Pokemon does not exist'];
         }
 
         return $pokemon->toArray();
+    }
+
+    public function tradePokemon(Request $request, int $id) {
+        $pokemon = Pokemon::whereId($id)->first();
+
+        if($pokemon === null) return ['success' => false, 'error' => 'Pokemon does not exist'];
+        if(!$pokemon->isUpForTrade()) return ['success' => false, 'error' => 'Pokemon is not up for trade'];
+
+        return $this->anyPokemon($request, $id);
     }
 
     public function remove(Request $request, int $num, int $id): array

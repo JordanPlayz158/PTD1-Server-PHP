@@ -65,6 +65,7 @@ Route::middleware('auth:sanctum')->get('/pokemon/{id}', [PokemonController::clas
 Route::middleware('auth:sanctum')->get('/trades', [TradeController::class, 'all']);
 Route::middleware('auth:sanctum')->post('/trade', [TradeController::class, 'create']);
 Route::middleware('auth:sanctum')->delete('/trade', [TradeController::class, 'remove']);
+Route::middleware('auth:sanctum')->get('/trade/pokemon/{id}', [PokemonController::class, 'tradePokemon']);
 
 
 // Offers
