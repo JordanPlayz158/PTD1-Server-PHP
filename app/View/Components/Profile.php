@@ -40,7 +40,7 @@ class Profile extends Component
             $save->nickname = $save->nickname ?? 'Satoshi';
         });
 
-        $saveNum = Cookie::get('save', 0);
+        $saveNum = Auth::getSession()->get('save', 0);
 
         $save = $saves->get($saveNum);
 
@@ -51,7 +51,7 @@ class Profile extends Component
         return view('components.profile', ['avatar' => $save->avatar, 'name' => $save->nickname, 'badges' => $save->badges, 'money' => $save->money, 'saves' => $saves]);
     }
 
-    private function nextAvailableSaveNumber($saves) {
+    public static function nextAvailableSaveNumber($saves) {
         $validNums = [0, 1, 2];
         $nums = [];
 

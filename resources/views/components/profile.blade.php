@@ -17,22 +17,28 @@
     </div>
     <div id="saves">
         @foreach($saves as $save)
-            <div id="{{ $save->num }}" class="block" style="cursor: pointer;">
-                <div>
-                    <div class="avatar">
-                        <img src="/_static/images/avatars/{{ $save->avatar }}.png" alt="[Avatar]">
-                        {{ $save->nickname }}
-                    </div>
-                    <hr>
-                    <div class="profile_middle">
-                        <span class="info-text">Badges:</span>
-                        <span>{{ $save->badges }}</span>
-                        <br>
-                        <span class="info_text">Money:</span>
-                        <span>{{ $save->money }}</span>
-                    </div>
+            <form action="/profile/" method="POST">
+                <input type="hidden" id="save" name="save" value="{{ $save->num }}">
+                <div id="{{ $save->num }}" class="block" style="cursor: pointer;">
+                    <button type="submit" style="width: 100%; background-color: #FFFFFF; border: none">
+                        <div>
+                            <div class="avatar">
+                                <img src="/_static/images/avatars/{{ $save->avatar }}.png" alt="[Avatar]">
+                                {{ $save->nickname }}
+                            </div>
+                            <hr>
+                            <div class="profile_middle">
+                                <span class="info-text">Badges:</span>
+                                <span>{{ $save->badges }}</span>
+                                <br>
+                                <span class="info_text">Money:</span>
+                                <span>{{ $save->money }}</span>
+                            </div>
+                        </div>
+                    </button>
                 </div>
-            </div>
+                @csrf
+            </form>
         @endforeach
     </div>
 </td>
