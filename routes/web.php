@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Web\AchievementController;
 use App\Http\Controllers\Web\AdminController;
 use App\Http\Controllers\Web\SWFController;
+use App\Models\Save;
 use App\Models\Trade;
 use App\Models\User;
+use App\View\Components\Profile;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -145,8 +148,63 @@ Route::get('/apiKeys/{apiKeyId}', function () {return view('tokensDelete');})->m
 
 // PokeCenter Pages
 
-Route::get('/games/ptd/trading.php', function () {return redirect('/games/ptd/trading.html');});
+Route::post('/profile/', function (Request $request) {
+    $request->validate(['save' => 'required|numeric|integer']);
 
+    $request->session()->put('save', $request->input('save'));
+
+    return redirect(url()->previous());
+})->middleware('auth');
+
+Route::get('/games/ptd/trading.php', function () {return redirect('/games/ptd/trading.html');})->middleware('auth');
+
+Route::get('/games/ptd/latestTrades.php', function () {return view('latestTrades', ['ids' => Trade::latest()->paginate(20, 'poke_id')]);})->middleware('auth');
+
+Route::get('/games/ptd/makeAnOffer.php', function (Request $request) {
+    $saves = Auth::user()->saves()->get()->collect();
+
+    while (sizeof($saves) < 3) {
+        $save = Save::factory()->make();
+
+        $save->num = Profile::nextAvailableSaveNumber($saves);
+
+        $saves->add((object) $save);
+    }
+
+    $saveNum = $request->session()->get('save', 0);
+
+    $pokemonIds = $saves->get($saveNum)->pokemon()->get('id')->all();
+
+    $ids = [];
+
+    foreach($pokemonIds as $pokemonId) {
+        $ids[] = $pokemonId->id;
+    }
+
+    return view('makeAnOffer', ['ids' => $ids]);
+})->middleware('auth');
+
+Route::post('/games/ptd/makeAnOffer.php', function (Request $request) {
+    $request->validate(['id' => 'required|numeric|integer']);
+
+    $offerIds = [];
+
+    foreach($request->all() as $key => $value) {
+        if(str_starts_with($key, 'pokemon')) {
+            $offerIds[] = $value;
+        }
+    }
+
+    $result = (new OfferController())->create($request->replace(['offerIds' => $offerIds]), $request->input('id'));
+
+    if($result['success'] === true) {
+        return redirect('/games/ptd/myOffers.html');
+    } else {
+        return redirect($request->fullUrlWithQuery(['error' => $result['error']]));
+    }
+})->middleware('auth');
+
+Route::get('/games/ptd/searchTrades.php', function () {return view('searchTrades');})->middleware('auth');
 Route::get('/games/ptd/latestTrades.php', function () {return view('latestTrades', ['ids' => Trade::paginate(20, 'poke_id')]);});
 
 // Non-original pages
