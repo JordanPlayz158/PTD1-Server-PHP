@@ -7,15 +7,22 @@ use Illuminate\View\Component;
 class Pokemon extends Component
 {
     public int $id;
+    public \App\Enums\Components\Actions $type;
 
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct(string $id)
+    public function __construct(string $id, string $type)
     {
         $this->id = intval($id);
+
+        if(empty($type)) {
+            $this->type = \App\Enums\Components\Actions::STANDARD();
+        } else {
+            $this->type = \App\Enums\Components\Actions::coerce($type);
+        }
     }
 
     /**
@@ -25,7 +32,7 @@ class Pokemon extends Component
      */
     public function render()
     {
-        return view('components.pokemon', ['pokemon' => \App\Models\Pokemon::whereId($this->id)->get()->first()]);
+        return view('components.pokemon', ['pokemon' => \App\Models\Pokemon::whereId($this->id)->get()->first(), 'type' => $this->type->value]);
     }
 
     // I'd presume making this variable static should reduce the load of creating each object.

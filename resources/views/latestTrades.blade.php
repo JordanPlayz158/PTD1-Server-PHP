@@ -31,7 +31,7 @@
                 </div>
                 <div id="pokemonResult"></div>
                 @foreach($ids as $id)
-                    <x-pokemon :id="$id->poke_id"/>
+                    <x-pokemon :id="$id->poke_id" type="TRADE"/>
                 @endforeach
             </td>
         </tr>
