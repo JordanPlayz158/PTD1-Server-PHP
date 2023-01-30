@@ -129,7 +129,7 @@ Route::get('/login', function () {
 
 /*Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');*/
 
-Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('loginPost');
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('loginPost')->middleware('throttle:60,1');
 
 
 // Logout
