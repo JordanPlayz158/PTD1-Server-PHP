@@ -8,7 +8,7 @@ use App\Http\Controllers\Web\SWFController;
 use App\Models\Save;
 use App\Models\Trade;
 use App\Models\User;
-use App\View\Components\Profile;
+use App\View\Components\Profiles;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -166,7 +166,7 @@ Route::get('/games/ptd/makeAnOffer.php', function (Request $request) {
     while (sizeof($saves) < 3) {
         $save = Save::factory()->make();
 
-        $save->num = Profile::nextAvailableSaveNumber($saves);
+        $save->num = Profiles::nextAvailableSaveNumber($saves);
 
         $saves->add((object) $save);
     }
