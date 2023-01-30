@@ -67,7 +67,11 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequestsWithRedis::class,
+        // Uncomment below and comment above IF you DO NOT use Redis
+        //'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
 }
