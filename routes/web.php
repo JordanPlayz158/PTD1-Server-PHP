@@ -228,6 +228,10 @@ Route::get('/games/ptd/admin.php', function (Request $request) {
 
 Route::post('/games/ptd/admin.php', [AdminController::class, 'post'])->middleware('auth', 'admin');
 
+Route::get('/games/ptd/adminPhpInfo.php', function (Request $request) {
+    phpinfo();
+})->middleware('auth', 'admin');
+
 // Mystery Gift
 Route::get('/games/ptd/dailyCode.php', function () {return redirect('/p/mystery-gift.html');});
 
