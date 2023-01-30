@@ -13,7 +13,8 @@
 @endphp
 
 <div id="trade_{{ $pokemon->id }}"
-     class="block pokemon_compact{{ $pokemon->shiny === 1 ? ' shiny' : '' }}{{ $pokemon->shiny === 2 ? ' shadow' : '' }}" style="{{ $attributes['style'] }}">
+     class="block pokemon_compact{{ $pokemon->shiny === 1 ? ' shiny' : '' }}{{ $pokemon->shiny === 2 ? ' shadow' : '' }}"
+     style="{{ $attributes['style'] }}">
     <img class="image" src="/_static/images/pokemon/{{ $pokemon->pNum }}_{{ $pokemon->shiny === 1 ? 1 : 0 }}.png"
          alt="[Avatar]">
     <span class="name">{{ $pokemon->nickname }}{{ $nameSuffix }}</span>
@@ -41,9 +42,9 @@
         </table>
     </div>
     <div class="actions" id="create_{{ $pokemon->id }}">
-        @if($type == \App\Enums\Components\Actions::STANDARD())
+        @if($type == \App\Enums\Components\Pokemon\Actions::STANDARD())
             <x-pokemon.standard :id="$pokemon->id"/>
-        @elseif($type == \App\Enums\Components\Actions::TRADE())
+        @elseif($type == \App\Enums\Components\Pokemon\Actions::TRADE())
             <x-pokemon.trade :id="$pokemon->id"/>
         @endif
     </div>

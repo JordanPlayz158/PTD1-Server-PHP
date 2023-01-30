@@ -40,7 +40,7 @@
     <table id="content_table">
         <tbody>
         <tr>
-            <x-profile/>
+            <x-profiles/>
             <td id="main">
                 <div class="block">
                     <div class="title"><p>Latest Trades - <a
@@ -52,7 +52,7 @@
 
                 <div id="tradeUi" class="block">
                     <h2 style="text-align: center">Trade for</h2>
-                    <x-pokemon :id="app('request')->input('id')" type="" style="display: block; margin: auto;"/>
+                    <x-pokemon :id="app('request')->input('id')" type="NONE" style="display: block; margin: auto;"/>
                     <h2 style="text-align: center"><a style="border: 2px solid limegreen;">Select</a> Pokemon to offer (Selected Pokemon will have a green border around them)</h2>
                     <div style="text-align: center">
                         <form method="POST">

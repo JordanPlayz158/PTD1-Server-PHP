@@ -107,7 +107,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
         $request->fulfill();
     }
 
-    return redirect('/games/ptd/account.html');
+    return redirect('/games/ptd/account.php');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 
@@ -121,7 +121,7 @@ Route::get('/home', function () {return redirect('/');});
 
 Route::get('/login', function () {
     if(Auth::check()) {
-        return redirect('/games/ptd/account.html');
+        return redirect('/games/ptd/account.php');
     }
 
     return view('login');
@@ -202,6 +202,10 @@ Route::post('/games/ptd/makeAnOffer.php', function (Request $request) {
     } else {
         return redirect($request->fullUrlWithQuery(['error' => $result['error']]));
     }
+})->middleware('auth');
+
+Route::get('/games/ptd/account.php', function () {
+    return view('account');
 })->middleware('auth');
 
 Route::get('/games/ptd/searchTrades.php', function () {return view('searchTrades');})->middleware('auth');

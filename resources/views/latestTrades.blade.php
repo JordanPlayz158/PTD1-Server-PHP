@@ -20,7 +20,7 @@
     <table id="content_table">
         <tbody>
         <tr>
-            <x-profile/>
+            <x-profiles/>
             <td id="main">
                 <div class="block">
                     <div class="title"><p>Latest Trades - <a
@@ -41,14 +41,20 @@
                 @php
                     $page = app('request')->input('page');
 
+                    $lastPage = (int) ceil($ids->total() / $ids->perPage());
+
                     if($page === null) {
                         $previousPage = 1;
                         $nextPage = 2;
                     } else {
                         $previousPage = max(($page - 1), 1);
-                        $nextPage = max(($page + 1), 2);
+                        $nextPage = min(max(($page + 1), 2), $lastPage);
                     }
                 @endphp
+                <form class="pagination" action="?">
+                    <input type="hidden" name="page" value="1" />
+                    <button type="submit">First</button>
+                </form>
                 <form class="pagination" action="?">
                     <input type="hidden" name="page" value="{{ $previousPage }}" />
                     <button type="submit">Previous</button>
@@ -56,6 +62,10 @@
                 <form class="pagination" action="?">
                     <input type="hidden" name="page" value="{{ $nextPage }}" />
                     <button type="submit">Next</button>
+                </form>
+                <form class="pagination" action="?">
+                    <input type="hidden" name="page" value="{{ $lastPage }}" />
+                    <button type="submit">Last</button>
                 </form>
             </td>
         </tr>

@@ -5,7 +5,7 @@
             <li><a href="/">Blog</a></li>
             <!-- Change to proper check pokemon screen once done -->
             <li><a href="/games/ptd/createTrade.html">Home</a></li>
-            <li class="expanded"><a href="/games/ptd/account.html">Account</a>
+            <li class="expanded"><a href="/games/ptd/account.php">Account</a>
                 <ul class="menu">
                     <li><a href="/games/ptd/changeNickname.html">Change Nickname</a></li>
                     <li><a href="/games/ptd/changeAvatar.html">Change Avatar</a></li>

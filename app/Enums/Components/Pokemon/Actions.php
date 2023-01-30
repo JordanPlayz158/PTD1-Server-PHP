@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Enums\Components;
+namespace App\Enums\Components\Pokemon;
 
 use BenSampo\Enum\Enum;
 

@@ -20,7 +20,7 @@
             jsonFetch(event).then(response => {
                 switch (response.status) {
                     case 204:
-                        location.href = '/games/ptd/account.html';
+                        location.href = '/games/ptd/account.php';
                         break;
                     case 422:
                         response.json().then(data => {

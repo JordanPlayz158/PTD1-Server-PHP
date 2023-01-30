@@ -15,7 +15,7 @@
     <table id="content_table">
         <tbody>
         <tr>
-            <x-profile/>
+            <x-profiles/>
             <td id="main">
                 <div class="block">
                     <div class="title"><p>Search Trades - <a

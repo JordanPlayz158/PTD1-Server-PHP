@@ -9,14 +9,32 @@ use Illuminate\View\Component;
 
 class Profile extends Component
 {
+    public int $num;
+    public \App\Enums\Components\Profile $type;
+    public string $class;
+
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(?string $type = null, ?string $num = null, string $class = '')
     {
-        //
+        if($num === null) {
+            $this->num = Auth::getSession()->get('save', 0);
+        } else {
+            $this->num = intval($num);
+        }
+
+        if(empty($type)) {
+            $this->type = \App\Enums\Components\Profile::PRIMARY();
+        } else {
+            $this->type = \App\Enums\Components\Profile::coerce($type);
+        }
+
+        if(strlen($class) !== 0) $class = ' ' . $class;
+
+        $this->class = $class;
     }
 
     /**
@@ -26,39 +44,14 @@ class Profile extends Component
      */
     public function render()
     {
-        $saves = Auth::user()->saves()->lazy()->collect();
+        $save = Auth::user()->saves()->where('num', '=', $this->num)->get(['avatar', 'nickname', 'badges', 'money'])->first();
 
-        while (sizeof($saves) < 3) {
+        if(empty($save)) {
             $save = Save::factory()->make();
-
-            $save->num = $this->nextAvailableSaveNumber($saves);
-
-            $saves->add((object) $save);
         }
 
-        $saves->each(function (Save $save) {
-            $save->nickname = $save->nickname ?? 'Satoshi';
-        });
+        $save->nickname = $save->nickname ?? 'Satoshi';
 
-        $saveNum = Auth::getSession()->get('save', 0);
-
-        $save = $saves->get($saveNum);
-
-        $saves = $saves->reject(function ($value, $key) use ($saveNum) {
-            return $value->num == $saveNum;
-        });
-
-        return view('components.profile', ['avatar' => $save->avatar, 'name' => $save->nickname, 'badges' => $save->badges, 'money' => $save->money, 'saves' => $saves]);
-    }
-
-    public static function nextAvailableSaveNumber($saves) {
-        $validNums = [0, 1, 2];
-        $nums = [];
-
-        foreach($saves as $save) {
-            $nums[] = $save->num;
-        }
-
-        return array_values(array_diff($validNums, $nums))[0];
+        return view('components.profile', ['num' => $this->num, 'avatar' => $save->avatar, 'name' => $save->nickname, 'badges' => $save->badges, 'money' => $save->money, 'class' => $this->class]);
     }
 }

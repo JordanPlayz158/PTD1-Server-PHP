@@ -7,7 +7,7 @@ use Illuminate\View\Component;
 class Pokemon extends Component
 {
     public int $id;
-    public \App\Enums\Components\Actions $type;
+    public \App\Enums\Components\Pokemon\Actions $type;
 
     /**
      * Create a new component instance.
@@ -19,9 +19,9 @@ class Pokemon extends Component
         $this->id = intval($id);
 
         if(empty($type)) {
-            $this->type = \App\Enums\Components\Actions::STANDARD();
+            $this->type = \App\Enums\Components\Pokemon\Actions::STANDARD();
         } else {
-            $this->type = \App\Enums\Components\Actions::coerce($type);
+            $this->type = \App\Enums\Components\Pokemon\Actions::coerce($type);
         }
     }
 
