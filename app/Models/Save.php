@@ -55,6 +55,12 @@ use Illuminate\Database\Query\Builder;
  * @property-read int|null $items_count
  * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Pokemon[] $pokemon
  * @property-read int|null $pokemon_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Pokemon[] $allPokemon
+ * @property-read int|null $all_pokemon_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Pokemon[] $tradePokemon
+ * @property-read int|null $trade_pokemon_count
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\SaveFactory factory(...$parameters)
  */
 class Save extends Model {
     use HasFactory;

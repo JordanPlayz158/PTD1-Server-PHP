@@ -61,6 +61,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Pokemon whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Pokemon whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Offer[] $offers
+ * @property-read int|null $offers_count
+ * @property-read \App\Models\Save $ownerSave
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Offer[] $requests
+ * @property-read int|null $requests_count
+ * @property-read \App\Models\Trade|null $trade
  */
 class Pokemon extends Model {
     protected $fillable = [

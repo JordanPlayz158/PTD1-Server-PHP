@@ -13,6 +13,11 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Item query()
  * @method static \Illuminate\Database\Eloquent\Builder|Item wherePokemonId($value)
  * @mixin \Eloquent
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Trade whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Trade wherePokeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Trade whereUpdatedAt($value)
  */
 class Trade extends Model
 {

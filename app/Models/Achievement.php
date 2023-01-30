@@ -49,6 +49,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereUserId($value)
  * @mixin \Eloquent
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\AchievementFactory factory(...$parameters)
  */
 class Achievement extends Model
 {

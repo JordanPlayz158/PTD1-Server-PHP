@@ -35,6 +35,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int|null $request_pokemon_id
  * @method static \Illuminate\Database\Eloquent\Builder|Offer whereOfferPokemonId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Offer whereRequestPokemonId($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\OfferPokemon[] $offerPokemon
+ * @property-read int|null $offer_pokemon_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\OfferPokemon[] $requestPokemon
+ * @property-read int|null $request_pokemon_count
  */
 class Offer extends Model
 {
