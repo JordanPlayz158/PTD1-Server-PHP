@@ -19,3 +19,4 @@ yarn-error.log
 /.phpstorm.meta.php
 *.swf
 *.apk
+/public/_static/js/tracking.js

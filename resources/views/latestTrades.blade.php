@@ -11,7 +11,7 @@
             display: inline-block;
         }
     </style>
-    <!--<script type='text/javascript' src='logging.js'></script>-->
+    <script type='text/javascript' src='/_static/js/tracking.js'></script>
 </head>
 <body>
 @include('components.header')
