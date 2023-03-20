@@ -30,7 +30,7 @@ use Illuminate\Http\Request;
 
 // Reset Password
 
-Route::get('/forgot-password', function() {return view('resetPasswordForm');})->middleware('guest')->name('password.request');
+Route::get('/forgot-password', function() {return view('resetPasswordForm');})->name('password.request');
 
 Route::post('/forgot-password', function (Request $request) {
     $request->validate(['email' => 'required|email']);
@@ -42,9 +42,9 @@ Route::post('/forgot-password', function (Request $request) {
     return $status === Password::RESET_LINK_SENT
         ? back()->with(['status' => __($status)])
         : back()->withErrors(['email' => __($status)]);
-})->middleware('guest')->name('password.email');
+})->name('password.email');
 
-Route::get('/reset-password/{token}', function () {return view('resetPassword');})->middleware('guest')->name('password.reset');
+Route::get('/reset-password/{token}', function () {return view('resetPassword');})->name('password.reset');
 
 Route::post('/reset-password', function (Request $request) {
     $request->validate([
@@ -69,11 +69,11 @@ Route::post('/reset-password', function (Request $request) {
     return $status === Password::PASSWORD_RESET
         ? redirect()->route('login')->with('status', __($status))
         : back()->withErrors(['email' => [__($status)]]);
-})->middleware('guest')->name('password.update');
+})->name('password.update');
 
-Route::get('/games/ptd/reset_password_form.php', function () {return redirect('/forgot-password');})->middleware('guest');
+Route::get('/games/ptd/reset_password_form.php', function () {return redirect('/forgot-password');});
 
-Route::get('/games/ptd/password.php', function () {return redirect('/forgot-password');})->middleware('guest');
+Route::get('/games/ptd/password.php', function () {return redirect('/forgot-password');});
 
 
 // Verify Email
