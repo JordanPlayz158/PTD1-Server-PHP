@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\SavesController;
 use App\Http\Controllers\Api\TokenController;
 use App\Http\Controllers\Api\TokensController;
 use App\Http\Controllers\Api\TradeController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -73,3 +74,23 @@ Route::middleware('auth:sanctum')->get('/trade/pokemon/{id}', [PokemonController
 Route::middleware('auth:sanctum')->delete('/offers/{id}', [OfferController::class, 'remove']);
 Route::middleware('auth:sanctum')->post('/pokemon/{id}/offer', [OfferController::class, 'create']);
 Route::middleware('auth:sanctum')->post('/offers/{id}/accept', [OfferController::class, 'accept']);
+
+
+// Admin Routes
+Route::middleware(['auth:sanctum', 'admin'])->any('/admin/user/{userId}', function (Request $request, int $userId) {
+    $route = $request->input('route');
+
+    if(!$route) {
+        return response("The route parameter is required", 400);
+    }
+
+    $realUser = Auth::user();
+
+    Auth::setUser(User::find($userId));
+
+    $response = app()->handle(Request::create('/api' . $route, $request->method()));
+
+    Auth::setUser($realUser);
+
+    return $response;
+});
