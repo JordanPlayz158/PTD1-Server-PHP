@@ -61,7 +61,7 @@ class AccountController extends ExcludeController {
                 'email-change-verification-email:' . $userId,
                 5,
                 function() use ($trimmedEmail, $emailUser, $userId) {
-                    if(Cache::set('email-change:' . $userId, $trimmedEmail, 60*60)) {
+                    if(Cache::set('email-change-verification-email:' . $userId, $trimmedEmail, 60*60)) {
                         $emailUser->sendEmailVerificationNotification();
                     }
                 },

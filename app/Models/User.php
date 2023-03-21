@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\HasApiTokens;
 /**
@@ -86,7 +87,7 @@ class User extends Authenticatable implements MustVerifyEmail {
     }
 
     public function getEmailForVerification(): string {
-        return Cache::get('email-change:' . $this->id) ?? $this->email;
+        return Cache::get('email-change-verification-email:' . $this->id) ?? $this->email;
     }
 
     /**

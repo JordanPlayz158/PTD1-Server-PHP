@@ -91,7 +91,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 // id is the primary key of the user in the table
 // hash is the sha1 hash of the email being verified
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request, int $id) {
-    $cacheString = 'email-change:' . $id;
+    $cacheString = 'email-change-verification-email:' . $id;
     if(($email = Cache::get($cacheString)) !== null) {
         $user = User::whereId($id);
 
