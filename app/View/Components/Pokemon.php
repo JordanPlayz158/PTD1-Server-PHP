@@ -14,7 +14,7 @@ class Pokemon extends Component
      *
      * @return void
      */
-    public function __construct(string $id, string $type)
+    public function __construct(string $id, string $type = '')
     {
         $this->id = intval($id);
 

@@ -49,56 +49,9 @@
     </script>
 </head>
 <body>
-<div id="header">
-    <noscript>
-        <a href="/games/ptd/trading.html">
-            <img src="/_static/images/logo.png" alt="Logo">
-        </a>
-    </noscript>
-</div>
+@include('components.header')
 <div id="content">
-    <div id="nav">
-        <noscript>
-            <div id="suckerfish">
-                <ul class="menu">
-                    <li><a href="/public">Blog</a></li>
-                    <li><a href="/games/ptd/checkPokemon.php?live=true">Home</a></li>
-                    <li class="expanded"><a href="/games/ptd/createTrade.php">Account</a>
-                        <ul class="menu">
-                            <li><a href="/games/ptd/changeNickname.html">Change Nickname</a></li>
-                            <li><a href="/games/ptd/changeAvatar.php">Change Avatar</a></li>
-                            <li><a href="/games/ptd/reset_password_form.html">Change Password</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="/games/ptd/adoption.php">Pokemon Adoption</a></li>
-                    <li><a href="/games/ptd/avatarStore.php">Avatar Store</a></li>
-                    <li><a href="/games/ptd/dailyCode.php">Daily Gift</a></li>
-                    <li class="expanded"><a href="/games/ptd/inventory.php">Inventory</a>
-                        <ul class="menu">
-                            <li><a href="/games/ptd/inventory_items.php">Items</a></li>
-                            <li><a href="/games/ptd/inventory_avatar.php">Avatars</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="/games/ptd/gameCorner_test.php">Game Corner</a></li>
-                    <li class="expanded"><a href="/games/ptd/createTrade.html">Trading Center</a>
-                        <ul class="menu">
-                            <li><a href="/games/ptd/createTrade.html">Create Trade</a></li>
-                            <li><a href="/games/ptd/tradeRequests.html">Your Trade Request</a></li>
-                            <li><a href="/games/ptd/searchTrades.php">Search Trades</a></li>
-                            <li><a href="/games/ptd/latestTrades.html">Latest Trades</a></li>
-                        </ul>
-                    </li>
-                    <li class="expanded"><a href="/games/ptd/createTrade.php">Utilities</a>
-                        <ul class="menu">
-                            <li><a href="/games/ptd/transferTo2.php">Transfer to PTD 2</a></li>
-                            <li><a href="/games/ptd/removeHack.php">Remove Hacked Tag</a></li>
-                            <li><a href="/games/ptd/elite4fix.php">Elite 4 Black Screen Fix</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </noscript>
-    </div>
+    @include('components.nav')
     <table id="content_table">
         <tbody>
         <tr>

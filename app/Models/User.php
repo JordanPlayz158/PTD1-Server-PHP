@@ -97,6 +97,11 @@ class User extends Authenticatable implements MustVerifyEmail {
         return $this->hasMany(Save::class);
     }
 
+    public function selectedSave(): Save
+    {
+        return $this->saves()->where('num', '=', session('save', 0))->first() ?? Save::factory()->makeOne();
+    }
+
     public function achievement(): HasOne
     {
         return $this->hasOne(Achievement::class);
@@ -105,5 +110,43 @@ class User extends Authenticatable implements MustVerifyEmail {
     public function role(): Role
     {
         return $this->role_id === null ? Role::USER() : Role::fromValue($this->role_id);
+    }
+
+    public function ownsAchievement(int $achievementId): bool
+    {
+        return Achievement::whereId($achievementId)->get('user_id')->first()->user_id === $this->id;
+    }
+
+    public function ownsSave(int $saveId): bool
+    {
+        return $this->saves()->get('id')->contains($saveId);
+    }
+
+    public function ownsPokemon(int $pokemonId): bool
+    {
+        return $this->ownsSave(Pokemon::whereId($pokemonId)->get('save_id')->first()->save_id);
+    }
+
+    public function isParticipatingInOffer(int $offerId): bool
+    {
+        $offerBuilder = Offer::whereId($offerId);
+
+        if($offerBuilder->count() === 0) return false;
+
+        $offer = $offerBuilder->with(Collection::make(['offerPokemon', 'offerPokemon.pokemon', 'requestPokemon', 'requestPokemon.pokemon'])->undot()->toArray())->get()->first();
+
+        foreach ($offer->offerPokemon as $pokemon) {
+            if($this->ownsSave($pokemon->pokemon->save_id)) {
+                return true;
+            }
+        }
+
+        foreach ($offer->requestPokemon as $pokemon) {
+            if($this->ownsSave($pokemon->pokemon->save_id)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

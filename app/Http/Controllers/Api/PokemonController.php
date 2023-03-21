@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class PokemonController extends ExcludeController {
-    public function get(Request $request, int $num): array
+    public function get(Request $request, int $num)
     {
         $save = Auth::user()->saves()->where('num', '=', $num)->first();
 
@@ -29,7 +29,7 @@ class PokemonController extends ExcludeController {
         $pokemon->each(function (Pokemon $pokemon) {});
 
         return $pokemon->with($relations->undot()->toArray())
-            ->select($attributes->toArray())->get()->toArray();
+            ->select($attributes->toArray())->paginate(100);
     }
 
     public function getPokemon(Request $request, int $num, int $id): array

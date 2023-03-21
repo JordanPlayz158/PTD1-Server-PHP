@@ -52,12 +52,14 @@
 
                 <div id="tradeUi" class="block">
                     <h2 style="text-align: center">Trade for</h2>
-                    <x-pokemon :id="app('request')->input('id')" type="NONE" style="display: block; margin: auto;"/>
+                    <x-pokemon :id="$id" type="NONE" style="display: block; margin: auto;"/>
                     <h2 style="text-align: center"><a style="border: 2px solid limegreen;">Select</a> Pokemon to offer (Selected Pokemon will have a green border around them)</h2>
                     <div style="text-align: center">
+                        @php Log::debug(print_r($ids, true)) @endphp
+
                         <form method="POST">
-                            @for($i = 0; $i < sizeof($ids); $i++)
-                                @php $id = $ids[$i] @endphp
+                            @for($i = 0; $i < $ids->count(); $i++)
+                                @php $id = $ids->get($i)->id @endphp
 
                                 <label for="pokemon{{ $i }}" style="cursor: pointer">
                                     <input class="invisible_checkbox" type="checkbox" id="pokemon{{ $i }}" name="pokemon{{ $i }}" value="{{ $id }}">

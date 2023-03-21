@@ -87,6 +87,13 @@ class Save extends Model {
         });
     }
 
+    public function tradePokemon(): HasMany
+    {
+        return $this->hasMany(Pokemon::class)->whereExists(function (Builder $query) {
+            $query->from('trades')->whereColumn('poke_id', '=', 'pokemon.id');
+        });
+    }
+
     public function allPokemon() : HasMany
     {
         return $this->hasMany(Pokemon::class);
