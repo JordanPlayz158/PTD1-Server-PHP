@@ -332,3 +332,9 @@ Route::get('/games/ptd/dailyCode.php', function () {return redirect('/p/mystery-
 
 Route::post('/php/newPoke8.php', [SWFController::class, 'post']);
 Route::post('/php/newAchieve.php', [AchievementController::class, 'post']);
+
+Route::post('/php/newPoke6.php', [SWFController::class, 'post']);
+
+Route::get('/php/ptd1_version.php', function (Request $request) {
+    return $request->getSchemeAndHttpHost() . "/PTD1.swf";
+});
