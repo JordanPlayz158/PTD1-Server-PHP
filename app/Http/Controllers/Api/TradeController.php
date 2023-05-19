@@ -103,6 +103,8 @@ class TradeController extends ExcludeController {
             return ['success' => false, 'error' => 'An unknown error occurred while trying to delete the trade'];
         }
 
+        // TODO: If a user removes a pokemon from trade, ensure any offers for that pokemon get removed.
+
         $evolve = match ($pokemon->pNum) {
             // Kadabra => Alakazam
             64 => [65, 'Alakazam'],
