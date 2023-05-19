@@ -117,6 +117,19 @@ Route::get('/', function () {return view('index');});
 Route::get('/home', function () {return redirect('/');});
 
 
+// Ruffle Flash Games
+
+Route::get('/flash', function (Request $request) {
+    $game = $request->input('game', 'PTD1.swf');
+
+    if(str_contains($game, '/')) {
+        return response('SWF Path contains "/", illegal character');
+    }
+
+    return view('flash', ['game' => $game]);
+});
+
+
 // Login
 
 Route::get('/login', function () {

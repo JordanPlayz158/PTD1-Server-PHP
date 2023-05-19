@@ -10,7 +10,7 @@
     <script src="/_static/js/tracking.js"></script>
     <style>
         #mainPage {
-            width: 35em;
+            width: 40em;
             margin: 0 auto;
             font-family: Tahoma, Verdana, Arial, sans-serif;
         }
@@ -63,9 +63,10 @@
         <tr>
             <th>Modified SWF (Recommended)</th>
             <th>Vanilla SWF</th>
+            <th>Ruffle</th>
         </tr>
         <tr>
-            <th colspan="2">Instructions</th>
+            <th colspan="3">Instructions</th>
         </tr>
         </thead>
         <tbody>
@@ -100,33 +101,38 @@
                         href="https://web.archive.org/web/20210309125235/https://www.snd-storage.com/games/ptd/main.swf">archive.org</a>.
                 </p>
             </td>
+            <td>
+                Scroll down and click "Ruffle Link" for the PTD version you wish to play!
+            </td>
         </tr>
         </tbody>
     </table>
 
     <h1>Pokemon Tower Defense 1</h1>
+    <h2><a href="/flash?game=PTD1.swf">Ruffle Link</a></h2>
+
     <p>If by chance your browser still supports Flash or you are using a browser made for running flash after it's EOL
         (End-of-Life), you have the easiest time, just play the swf below:</p>
     <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
-            codebase="https://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%"
-            height="100%">
+            codebase="https://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0">
         <param name="movie" value="PTD1.swf"/>
         <param name="quality" value="high"/>
         <param name="scale" value="default">
-        <embed src="PTD1.swf" type="application/x-shockwave-flash" width="100%" height="100%" scale="default"/>
+        <embed src="PTD1.swf" type="application/x-shockwave-flash" scale="default"/>
     </object>
     <p>If you are using puffin browser, using this direct link gives better results, <a href="PTD1.swf">Play PTD1!</a></p>
     <br>
     <h1>Pokemon Tower Defense 1 Regional Forms</h1>
+    <h2><a href="/flash?game=PTD1-RF.swf">Ruffle Link</a></h2>
+
     <p>If by chance your browser still supports Flash or you are using a browser made for running flash after it's EOL
         (End-of-Life), you have the easiest time, just play the swf below:</p>
     <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
-            codebase="https://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%"
-            height="100%">
+            codebase="https://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0">
         <param name="movie" value="PTD1-RF.swf"/>
         <param name="quality" value="high"/>
         <param name="scale" value="default">
-        <embed src="PTD1.swf" type="application/x-shockwave-flash" width="100%" height="100%" scale="default"/>
+        <embed src="PTD1-RF.swf" type="application/x-shockwave-flash" scale="default"/>
     </object>
     <p>If you are using puffin browser, using this direct link gives better results, <a href="PTD1-RF.swf">Play PTD1 Regional Forms!</a></p>
 </div>
