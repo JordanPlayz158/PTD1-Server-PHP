@@ -1,6 +1,4 @@
 @php
-    Log::debug('', [$trading]);
-
     $requestId = $trading->id;
     $offerPokemon = $trading->offerPokemon;
     $requestPokemon = $trading->requestPokemon;

@@ -55,8 +55,6 @@
                     <x-pokemon :id="$id" type="NONE" style="display: block; margin: auto;"/>
                     <h2 style="text-align: center"><a style="border: 2px solid limegreen;">Select</a> Pokemon to offer (Selected Pokemon will have a green border around them)</h2>
                     <div style="text-align: center">
-                        @php Log::debug(print_r($ids, true)) @endphp
-
                         <form method="POST">
                             @for($i = 0; $i < $ids->count(); $i++)
                                 @php $id = $ids->get($i)->id @endphp
