@@ -95,16 +95,13 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
     if(($email = Cache::get($cacheString)) !== null) {
         $user = User::whereId($id);
 
-        if(!User::whereEmail($email)->exists()) {
+        if (!User::whereEmail($email)->exists()) {
             $user->update(['email' => $email]);
             $user->markEmailAsVerified();
             event(new Verified($user));
         }
 
         Cache::delete($cacheString);
-
-    } else {
-        $request->fulfill();
     }
 
     return redirect('/games/ptd/account.php');
