@@ -91,6 +91,8 @@ class SWFController extends Controller {
     }
 
     private function createAccount(string $email, string $password): Response {
+        // TODO: Users with invalid emails should not be created
+
         $user = User::firstOrCreate(['email' => $email], ['password' => Hash::make($password)]);
 
         event(new Registered($user));
