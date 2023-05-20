@@ -74,7 +74,6 @@ class AppServiceProvider extends ServiceProvider
 
                 $response = Response::make($content)->header('Content-Type', 'x-www-form-urlencoded');
 
-                Log::info('Request:', [request()->all()]);
                 Log::info("Response:", [$response->content()]);
 
                 return $response;

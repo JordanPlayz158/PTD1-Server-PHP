@@ -43,6 +43,9 @@ class SWFController extends Controller {
             return SWFBuilder::new()->setResult(Result::FAILURE())->setReason(Reason::MAINTENANCE())->create();
         }
 
+        Log::info('Request:', [request()->all()]);
+
+
         $email = $request->input('Email');
         $password = $request->input('Pass');
         $action = $request->input('Action');
