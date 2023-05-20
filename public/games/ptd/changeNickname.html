@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Pokémon Center - Change Account Nickname</title>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
+    <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
+    <link rel='stylesheet' type='text/css' href="/_static/css/style.css">
+    <!--<script type='text/javascript' src='logging.js'></script>-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
+    </script>
+    <script src="/_static/js/base.js"></script>
+    <script src="/_static/js/moves.js"></script>
+    <script src="/_static/js/utils.js"></script>
+    <script>
+        window.onload = () => {
+            loadProfile(() => {
+                let saveNum = getCookie('save');
+
+                if (saveNum === null || saveNum.length < 1 || saveNum < 0) {
+                    saveNum = 0;
+                } else if (saveNum > 2) {
+                    saveNum = 2;
+                }
+
+                authenticatedFetch(fetch('/api/account/?exclude=achievement,saves.pokemon,saves.items,email_verified_at,dex,shinyDex,shadowDex,created_at,updated_at&save=' + saveNum))
+                    .then(result => result.json())
+                    .then(account => {
+                        if (!successCheck(account)) {
+                            return;
+                        }
+
+                        let save = account['saves'][saveNum];
+                        initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
+
+                        document.getElementById('accNickname').innerText = account['name'];
+
+                        console.log(account);
+                    }
+                ).catch(error => {
+                    console.log(error);
+                });
+            })
+        };
+
+        function changeAccountNickname(event) {
+            event.preventDefault();
+            const nickname = $('#nickname').val();
+
+            let body = {'name': nickname};
+            const headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            };
+
+            authenticatedFetch(fetch('/api/account/', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(body)
+            }))
+                .then(result => result.json())
+                .then(result => {
+                    if (!successCheck(result, POKEMON)) {
+                        return;
+                    }
+
+                    document.getElementById('accNickname').innerText = nickname;
+
+                    console.log(result);
+            }).catch(error => {
+                console.log(error);
+            })
+        }
+    </script>
+</head>
+<body>
+<div id="header"></div>
+<div id="content">
+    <div id="nav"></div>
+    <table id="content_table">
+        <tbody>
+        <tr>
+            <td id="sidebar"></td>
+            <td id="main">
+                <div class="block">
+                    <div id="pokemonResult"></div>
+                    <div class="title"><p>Change Your Nickname - <a
+                                href="/games/ptd/checkPokemon.php?save=0">Go Back</a></p></div>
+                    <div class="content">
+                        <p>CURRENT NICKNAME: </p><b>"<span id="accNickname"></span>"</b>
+                        <div class="block">
+                            <form action="/api/changeAccountNickname/" method="POST" onsubmit="changeAccountNickname(event)">
+                                <label><b>New Account Nickname:</b>
+                                    <input id="nickname" class="text" name="nickname" type="text">
+                                </label>
+                                <div class="login_actions">
+                                    <input id="submitButton" value="Change" type="submit" class="login_btn">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

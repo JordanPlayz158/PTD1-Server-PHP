@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="/_static/js/js.cookie.js"></script>
+<script>
+    function initProfile(avatar, name, badges, money, num) {
+        if(name === null) {
+            name = 'Satoshi';
+        }
+
+        document.getElementById('saveAvatar').setAttribute('src', '/_static/images/avatars/' + avatar + '.png');
+        document.getElementById('saveName').innerText = name;
+        document.getElementById('badges').innerText = badges;
+        document.getElementById('money').innerText = money;
+
+        let remainingSaves = null;
+
+        num = parseInt(num)
+
+        if(isNaN(num)) {
+            console.log('Invalid number. 0 Substituted')
+            num = 0;
+        }
+
+        switch (num) {
+            case 0:
+                remainingSaves = [1,2];
+                break;
+            case 1:
+                remainingSaves = [0,2];
+                break;
+            case 2:
+                remainingSaves = [0,1];
+        }
+
+        if(remainingSaves != null) {
+            remainingSaves.forEach(remainingSave => {
+                authenticatedFetch(fetch('/api/saves/' + remainingSave + '?exclude=id,user_id,num,advanced,advanced_a,challenge,classic,classic_a,npcTrade,shinyHunt,version,created_at,updated_at,pokemon'))
+                    .then(result => result.json())
+                    .then(save => {
+                        const blockDiv = document.createElement('div');
+                        blockDiv.id = remainingSave;
+                        blockDiv.className = 'block';
+                        blockDiv.onclick = function () {
+                            Cookies.set('save', blockDiv.id, { expires: 365 });
+                            location.reload();
+                        };
+                        blockDiv.style.cursor = 'pointer';
+
+                        const saveDiv = document.createElement('div');
+
+                        const avatarDiv = document.createElement('div');
+                        avatarDiv.className = 'avatar';
+
+                        const avatarImage = document.createElement('img');
+                        avatarImage.src = '/_static/images/avatars/' + save['avatar'] + '.png';
+
+                        avatarDiv.append(avatarImage);
+
+                        const nameDiv = document.createElement('div');
+                        nameDiv.className = 'name';
+                        nameDiv.innerText = save['nickname'];
+
+                        const profileDiv = document.createElement('div');
+                        profileDiv.className = 'profile_middle';
+
+                        const badgesLabelSpan = document.createElement('span');
+                        badgesLabelSpan.className = 'info_text';
+                        badgesLabelSpan.innerText = 'Badges:';
+
+                        const badgesSpan = document.createElement('span');
+                        badgesSpan.innerText = save['badges'];
+
+                        profileDiv.append(badgesLabelSpan, badgesSpan);
+
+                        const moneyLabelSpan = document.createElement('span');
+                        moneyLabelSpan.className = 'info_text';
+                        moneyLabelSpan.innerText = 'Money:';
+
+                        const moneySpan = document.createElement('span');
+                        moneySpan.innerText = save['money'];
+
+                        profileDiv.append(moneyLabelSpan, moneySpan);
+
+                        saveDiv.append(avatarDiv, nameDiv, profileDiv);
+
+                        blockDiv.append(saveDiv)
+
+                        document.getElementById('saves').append(blockDiv);
+
+                        console.log(saves);
+                    }).catch(error => {
+                        console.log(error);
+                })
+            })
+        } else {
+            console.log("remainingSaves is null");
+        }
+    }
+
+    console.log("profile JS loaded")
+</script>
+<body>
+<!-- Profile -->
+<div class="block">
+    <div class="title"><p>Current Profile:</p></div>
+    <div class="content">
+        <div class="profile_top">
+            <div class="avatar">
+                <img id="saveAvatar" alt="" style="height:auto;width:auto;">
+            </div>
+            <div class="name" id="saveName"></div>
+        </div>
+        <div class="profile_middle">
+            <span class="info_text">Badges:</span><span id="badges"></span><br>
+            <span class="info_text">Money:</span><span id="money"></span>
+        </div>
+    </div>
+</div>
+<div id="saves"></div>
+<div id="profileResult"></div>
+</body>
+</html>

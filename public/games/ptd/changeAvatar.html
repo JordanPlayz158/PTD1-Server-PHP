@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Pokémon Center - Change Account Avatar</title>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
+    <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
+    <link rel='stylesheet' type='text/css' href="/_static/css/style.css">
+    <!--<script type='text/javascript' src='logging.js'></script>-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
+    </script>
+    <script src="/_static/js/base.js"></script>
+    <script src="/_static/js/moves.js"></script>
+    <script src="/_static/js/utils.js"></script>
+    <script>
+        let saveNum = getCookie('save');
+
+        if (saveNum === null || saveNum.length < 1 || saveNum < 0) {
+            saveNum = 0;
+        } else if (saveNum > 2) {
+            saveNum = 2;
+        }
+
+        window.onload = () => {
+            loadProfile(() => {
+                authenticatedFetch(fetch('/api/saves/?exclude=pokemon,items,id,user_id,num,advanced,advanced_a,classic,classic_a,challenge,npcTrade,shinyHunt,version,created_at,updated_at&save=' + saveNum))
+                    .then(result => result.json())
+                    .then(saves => {
+                        if (!successCheck(saves)) {
+                            return;
+                        }
+
+                        let save = saves[saveNum];
+                        initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
+
+                        document.getElementById('avatar').innerText = save['avatar'];
+
+                        console.log(saves);
+                    }).catch(error => {
+                    console.log(error);
+                })
+            })
+        };
+
+        function changeAccountAvatar(event) {
+            event.preventDefault();
+            const select = document.getElementById('avatars');
+            const avatar = select.options[select.selectedIndex].innerText;
+
+            let body = {'avatar' : avatar};
+            const headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            };
+
+            authenticatedFetch(fetch('/api/saves/' + saveNum, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(body)
+            }))
+                .then(result => result.json())
+                .then(data => {
+                    if(!successCheck(data, POKEMON)) {
+                        return;
+                    }
+
+                    document.getElementById('avatar').innerText = avatar;
+
+                    console.log(data);
+                }).catch(error => {
+                console.log(error);
+            })
+        }
+    </script>
+</head>
+<body>
+<div id="header"></div>
+<div id="content">
+    <div id="nav"></div>
+    <table id="content_table">
+        <tbody>
+        <tr>
+            <td id="sidebar"></td>
+            <td id="main">
+                <div class="block">
+                    <div id="pokemonResult"></div>
+                    <div class="title"><p>Change Your Avatar - <a
+                                href="/games/ptd/checkPokemon.php?save=0">Go Back</a></p></div>
+                    <div class="content">
+                        <p>CURRENT AVATAR: </p><b>"<span id="avatar"></span>"</b>
+                        <div class="block">
+                            <form action="/api/changeAccountNickname/" method="POST" onsubmit="changeAccountAvatar(event)">
+                                <label><b>New Account Avatar:</b>
+                                    <select name="avatars" id="avatars">
+                                        <!-- These are commented out as they do not exist in the SWF and thus lead to issues
+                                        <option value="b_-1">b_-1</option>
+                                        <option value="b_0">b_0</option>-->
+                                        <option value="b_1">b_1</option>
+                                        <option value="b_2">b_2</option>
+                                        <option value="b_3">b_3</option>
+                                        <option value="b_4">b_4</option>
+                                        <option value="b_5">b_5</option>
+                                        <option value="b_6">b_6</option>
+                                        <option value="b_7">b_7</option>
+                                        <option value="b_8">b_8</option>
+                                        <option value="b_9">b_9</option>
+                                        <option value="b_10">b_10</option>
+                                        <option value="b_11">b_11</option>
+                                        <option value="b_12">b_12</option>
+                                        <option value="b_13">b_13</option>
+                                        <option value="b_14">b_14</option>
+                                        <option value="b_15">b_15</option>
+                                        <option value="b_16">b_16</option>
+                                        <option value="b_17">b_17</option>
+                                        <option value="b_18">b_18</option>
+                                        <option value="b_19">b_19</option>
+
+                                        <option value="g_1">g_1</option>
+                                        <option value="g_2">g_2</option>
+                                        <option value="g_3">g_3</option>
+                                        <option value="g_4">g_4</option>
+                                        <option value="g_5">g_5</option>
+                                        <option value="g_6">g_6</option>
+                                        <option value="g_7">g_7</option>
+                                        <option value="g_8">g_8</option>
+                                        <option value="g_9">g_9</option>
+                                        <option value="g_10">g_10</option>
+                                        <option value="g_11">g_11</option>
+                                        <option value="g_12">g_12</option>
+                                        <option value="g_13">g_13</option>
+                                        <option value="g_14">g_14</option>
+                                        <option value="g_15">g_15</option>
+                                        <option value="g_16">g_16</option>
+                                        <option value="g_17">g_17</option>
+                                        <option value="g_18">g_18</option>
+                                        <option value="g_19">g_19</option>
+
+                                        <option value="none">none</option>
+                                    </select>
+                                </label>
+                                <div class="login_actions">
+                                    <input id="submitButton" value="Change" type="submit" class="login_btn">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

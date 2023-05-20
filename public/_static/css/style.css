@@ -1,0 +1,526 @@
+/************ MAIN ***********/
+a, a:visited, a:active {
+	/*color: #b10000;*/
+	text-decoration: none;
+}
+
+a:hover {
+	/*color: #610000;*/
+	text-decoration: underline;
+}
+
+/*********** HEADER **********/
+/**** AD ****/
+#header .block_ad {
+	margin: 30px 10px;
+	width: 728px;
+	height: 90px;
+	/*background: #000;*/
+	color: #fff;
+	float: right;
+}
+#newAd .block_ad {
+	margin-left: auto;
+  	margin-right: auto;
+	width: 728px;
+	height: 90px;
+	/*background: #000;*/
+	color: #fff;
+	float: center;
+}
+/********** SIDEBAR **********/
+/**** LOGIN ****/
+#sidebar .block .content .login_actions {
+	height: 25px;
+}
+
+#sidebar .block .content input.text{
+	width: 311px;
+}
+
+#sidebar .block .content .login_actions a {
+	float: left;
+}
+
+#sidebar .block .content .login_actions  input.login_btn{
+	float: right;
+}
+
+/**** PROFILES ****/
+#sidebar .block .content .profile_stack {
+	width:100%;
+	padding: 5px 0;
+	display: inline-block;
+	border-top: 1px solid #8C8C8C;
+}
+#sidebar .block.gold {
+	background-color: #DFB846;
+}	
+#sidebar .block.silver {
+	background-color: #C6BAAA;
+}
+
+#sidebar .block .content .profile_stack:first-child {
+	border-top: 0;
+}
+	#sidebar .block .content .profile_stack .avatar {
+		float: left;
+		margin-right: 5px;
+	}
+	
+	#sidebar .block .content .profile_stack .name {
+		float: left;
+		font-size: 19px;
+	}
+
+#sidebar .block .content .profile_stack.active {
+	background-color: #00A1FF;
+}
+
+#sidebar .block .content .profile_stack.active .name {
+	color: #0041FF;
+}
+
+/**** AD ****/
+#sidebar .block_ad {
+	/*background: #000;*/
+	height: 280px;
+	width: 336px;
+	color: #fff;
+	margin: 0 0 12px;
+}
+
+/************** MAIN *************/
+/**** AVATAR ****/
+#main .avatars {
+	clear: both;
+}
+
+#main .avatars a, #main .avatar a:hover {
+	display: inline-block;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+#main .avatars a:first-child  {
+	margin-left: 0;
+}
+
+#main  .avatars .block {
+	float:left;
+	color: #000;
+}
+
+#main .avatars a .block:hover {
+	background-color: #DCF0FF;
+}
+#main .centerMe {
+	text-align:center;
+}
+#main  .avatars .block.avatar {
+	float: left;
+	min-height: 32px;
+	margin: 0 5px 8px 0;
+	width: 200px;
+	clear: none;
+}
+	#main  .avatars .block.avatar .image_holder {
+		float: left;
+	}
+	
+	#main  .avatars .block.avatar .image_center {
+		height: 30px;
+		display: table-cell;
+		vertical-align: middle;
+	}
+
+	#main  .avatars .block.avatar .name {
+		float: left;
+		line-height: 36px;
+		margin-left: 7px;
+		padding-right: 4px;
+	}
+	
+	#main  .avatars .block.avatar .actions {
+		border-top: 1px solid #8C8C8C;
+		clear: both;
+		line-height: 17px;
+		padding-top: 4px;
+		width: 100%;
+		text-align: center;
+	}
+	
+/**** POKEMON COMPACT ****/
+#main .block.shadow {
+	background-color: #B72DEA;
+}	
+#main .block.shiny {
+	background-color: #DCF0FF;
+}
+#main .block.gold {
+	background-color: #DFB846;
+}	
+#main .block.silver {
+	background-color: #C6BAAA;
+}
+
+#main .block .title.middle img {
+	margin-top: -7px;
+}
+
+#main .block.pokemon_compact {
+	float: left;
+	width: 300px;
+	min-height: 32px;
+	margin: 0 10px 10px 0;
+	clear: none;
+}
+
+#main .block.pokemon_compact.wide {
+	width: 510px;
+}
+#main .block.pokemon_compact.wide2 {
+	width: 400px;
+}
+	#main .block.pokemon_compact .image {
+		float: left;
+		margin-bottom: 5px;
+		height: 32px;
+		width: 32px;
+	}
+
+	  #main .block.pokemon_compact .image.star {
+		  height: 18px;
+		  width: 18px;
+		  margin-bottom: 0;
+		  margin-top: 3px;
+	  }
+
+	#main .block.pokemon_compact .name {
+		float: left;
+		line-height: 30px;
+		margin-left: 7px;
+		width: auto;
+		font-weight: bold;
+	}
+
+	#main .block.pokemon_compact .level {
+		float: right;
+		margin-top: 0;
+		text-align: right;
+		width: 45px;
+	}
+
+	#main .block.pokemon_compact .level2 {
+		float: right;
+		margin-top: 0;
+		text-align: right;
+		width: 45px;
+	}
+	#main .block.pokemon_compact .moves {
+		clear: left;
+		width: 300px;
+	}
+
+		#main .block.pokemon_compact .moves table {
+			border-collapse: collapse;
+			width: 100%;
+			height: 54px;
+			border-top: 1px solid #8C8C8C;
+		}
+		
+		#main .block.pokemon_compact .moves .left {
+			border-bottom: 1px solid #8C8C8C;
+			border-right: 1px solid #8C8C8C;
+			text-align: right;
+			padding: 2px 5px 2px 2px;
+			width: 50%;
+		}
+
+		#main .block.pokemon_compact .moves .right {
+			border-bottom: 1px solid #8C8C8C;
+			padding: 2px 2px 2px 5px;
+			width: 50%;
+		}
+
+	#main .block.pokemon_compact .actions {
+		padding-top: 6px;
+		text-align: center;
+	}
+	
+	#main .block.pokemon_compact .menu_box {
+		float: right;
+		width: 190px;
+		height: 101px;
+		margin: 0 0 0 9px;
+		padding: 2px 5px 5px;
+		border-left: 1px solid #8C8C8C;
+		display: table;
+	}
+	
+		#main .block.pokemon_compact .menu_box .menu {
+			vertical-align: middle;
+			display: table-cell;
+		}
+		
+		#main .block.pokemon_compact .menu_box .menu p {
+			margin: 15px 0 0;
+		}
+
+		#main .block.pokemon_compact .menu_box .menu p:first-child {
+			margin: 0;
+		}
+
+/**** INFO ****/
+#main .block.block_info {
+	float: left;
+	height: 111px;
+	margin: 0 10px 10px 0;
+	clear: none;
+	display: table;
+}
+
+#main .block.block_info .content {
+	vertical-align: middle;
+	display: table-cell;
+}
+
+/**** ITEM ****/
+#main .block.item {
+	float: left;
+	width: 200px;
+	min-height: 32px;
+	margin: 0 10px 10px 0;
+	clear: none;
+}
+	#main .block.item .image_holder {
+		float: left;
+		margin-bottom: 5px;
+	}
+	
+	#main .block.item .image_center {
+		height: 30px;
+		display: table-cell;
+		vertical-align: middle;
+	}
+
+	#main .block.item .name {
+		float: left;
+		line-height: 32px;
+		margin-left: 7px;
+	}
+	
+	#main .block.item .total {
+		float: right;
+		margin-top: -6px;
+	}
+	
+	#main .block.item .description {
+		border-top: 1px solid #8C8C8C;
+		clear: both;
+		line-height: 17px;
+		padding-top: 4px;
+		padding-bottom: 8px;
+		width: 100%;
+	}
+	#main .block.item .cost {
+		border-top: 1px solid #8C8C8C;
+		clear: both;
+		line-height: 17px;
+		padding-top: 4px;
+		width: 100%;
+	}
+
+/**** REQUEST TABLE ****/
+#main .block .request_table {
+	border-collapse: collapse;
+}
+
+	#main .block .request_table td.request_left {
+		width: 256px;
+		vertical-align: top;
+	}
+
+	#main .block .request_table td.request_middle {
+		width: 18px;
+		padding-top: 65px;
+		vertical-align: top;
+	}
+
+	#main .block .request_table td.request_right {
+		width: auto;
+	}
+
+	#main .block .request_table .block.party {
+		float: left;
+		padding: 0;
+		margin: 5px 0 9px 5px;
+	}
+
+	#main .block .request_table .block.party .pokemon_compact {
+		margin: 5px !important;
+		box-shadow: none;
+	}
+	
+	#main .block .request_table .block.party .actions {
+		padding: 0 0 6px 3px;
+		text-align: center;
+	}
+	
+	#main .block .request_table .block.pokemon_compact {
+		margin: 5px 5px 10px;
+	}
+
+	#main .block .request_table td.request_right .block.pokemon_compact {
+		width: 223px;
+	}
+
+	#main .block .request_table td.request_right .block.pokemon_compact .name {
+		width: 184px;
+	}
+	
+	#main .block .request_table td.request_left .block.pokemon_compact .actions, #main .block .request_table td.request_right .block.pokemon_compact .actions {
+		padding: 12px 0 6px;
+	}
+	
+	#main .tradeRequest {
+		float: left;
+	}
+	
+		#main .tradeRequest .block {
+			height: 111px;
+			display: table;
+		}
+		
+		#main .tradeRequest .block .content {
+			display: table-cell;
+			vertical-align: middle;
+		}
+		
+		#main .tradeRequest .block .content p {
+			margin: 8px 0 0;
+		}
+		
+		#main .tradeRequest .block .content p:first-child {
+			margin: 0;
+		}
+
+/**** AD ****/
+#main .block_ad {
+	margin-bottom: 10px;
+	width: 100%;
+}
+	
+	#main .block_ad .position {
+		width: 728px;
+		height: 90px;
+		margin: 0 auto;
+		background: #000;
+		color: #fff;
+	}
+	
+/**************** GLOBAL *****************/
+/**** PROFILE DETAILED ****/
+#main .profile a, #main .profile a:hover {
+	display: inline-block;
+    margin-left: 11px;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+#main .profile a:first-child  {
+	margin-left: 0;
+}
+
+#main  .profile a .block {
+	width: 250px;
+	float:left;
+	color: #000;
+}
+
+#main .profile a .block:hover {
+	background-color: #DCF0FF;
+}
+	
+.block .content .profile_top {
+	display: inline-block;
+}
+	.block .content .profile_top .avatar {
+		float: left;
+		margin-right: 5px;
+	}
+	
+	.block .content .profile_top .name {
+		float: left;
+		font-size: 19px;
+		padding-top: 2px;
+	}
+
+.block .content .profile_middle {
+	clear: both;
+	border-top: 1px solid #8C8C8C;
+	margin-top: 5px;
+	padding-top: 5px;
+	font-size: 14px;
+}
+
+	.block .content .profile_middle .pkmn_red {
+		color: #FF0000;
+	}
+	
+	.block .content .profile_middle .pkmn_blue {
+		color: #0041FF;
+	}
+
+	.block .content .profile_middle .info_text {
+		width: 97px;
+		display: inline-block;
+	}
+
+.block .content .profile_bottom {
+	border-top: 1px solid #8C8C8C;
+	margin-top: 5px;
+	padding-top: 6px;
+	text-align: center;
+}
+
+/***************** OTHER ********************/
+.middle img {
+	vertical-align: middle;
+}
+	
+.formLabel {
+    display: inline-block;
+    height: 20px;
+    width: 120px;
+}
+.formLabel.small {
+    width: 60px;
+}
+
+.save {
+	padding-bottom: 20px;
+}
+
+.msg {
+	margin: 10px 0;
+	padding: 10px;
+	border-radius: 3px 3px 3px 3px;
+}
+
+.info-msg {
+	color: #059;
+	background-color: #BEF;
+}
+.success-msg {
+	color: #270;
+	background-color: #DFF2BF;
+}
+.warning-msg {
+	color: #9F6000;
+	background-color: #FEEFB3;
+}
+.error-msg {
+	color: #D8000C;
+	background-color: #FFBABA;
+}

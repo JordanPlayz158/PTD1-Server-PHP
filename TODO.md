@@ -1,0 +1,1 @@
+- Make it clear the community made servers/pokecenter is not affliated with Sam to reduce people sending complaints his way. [Example](https://twitter.com/JordanPlayz158/status/1581150226009665538)
