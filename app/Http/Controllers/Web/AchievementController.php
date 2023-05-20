@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Hash;
 
 class AchievementController extends Controller {
     public function post(SWFRequest $request): Response {
+        if(app()->isDownForMaintenance()) {
+            return SWFBuilder::new()->setResult(Result::FAILURE())->setReason(Reason::MAINTENANCE())->create();
+        }
+
         $email = $request->input('Email');
         $password = $request->input('Pass');
         $action = $request->input('Action');
