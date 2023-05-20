@@ -303,7 +303,7 @@ class SWFController extends Controller {
                     }
                 }
 
-                $poke = $poke->create(['save_id' => $userSave->id, 'pId' => $tmp]);
+                $poke = $poke->make(['save_id' => $userSave->id, 'pId' => $tmp]);
                 $pokeNewId = true;
             }
 

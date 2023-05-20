@@ -14,12 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::table('pokemon', function (Blueprint $table) {
-            $table->mediumInteger('pNum')->unsigned()->nullable(false)->change();
+            $table->integer('pNum')->unsigned()->nullable(false)->change();
             $table->string('nickname')->nullable(false)->change();
-            $table->mediumInteger('exp')->unsigned()->nullable(false)->change();
-            $table->unsignedTinyInteger('lvl')->nullable(false)->change();
-            $table->unsignedTinyInteger('mSel')->nullable(false)->change();
-            $table->mediumInteger('pos')->unsigned()->nullable(false)->change();
+            $table->integer('exp')->unsigned()->nullable(false)->change();
+            $table->unsignedSmallInteger('lvl')->nullable(false)->change();
+            $table->unsignedSmallInteger('mSel')->nullable(false)->change();
+            $table->integer('pos')->unsigned()->nullable(false)->change();
         });
     }
 
@@ -31,12 +31,12 @@ return new class extends Migration
     public function down()
     {
         Schema::table('pokemon', function (Blueprint $table) {
-            $table->mediumInteger('pNum')->unsigned()->nullable(true)->change();
+            $table->integer('pNum')->unsigned()->nullable(true)->change();
             $table->string('nickname')->nullable(true)->change();
-            $table->mediumInteger('exp')->unsigned()->nullable(true)->change();
-            $table->unsignedTinyInteger('lvl')->nullable(true)->change();
-            $table->unsignedTinyInteger('mSel')->nullable(true)->change();
-            $table->mediumInteger('pos')->unsigned()->nullable(true)->change();
+            $table->integer('exp')->unsigned()->nullable(true)->change();
+            $table->unsignedSmallInteger('lvl')->nullable(true)->change();
+            $table->unsignedSmallInteger('mSel')->nullable(true)->change();
+            $table->integer('pos')->unsigned()->nullable(true)->change();
         });
     }
 };
