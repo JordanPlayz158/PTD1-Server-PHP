@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Http\Controllers\Api\GiveawayController;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,6 +15,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('auth:clear-resets')->everyFifteenMinutes();
         $schedule->command('cache:prune-stale-tags')->hourly();
+        $schedule->call(GiveawayController::completeGiveaways())->everyFifteenMinutes();
     }
 
     /**

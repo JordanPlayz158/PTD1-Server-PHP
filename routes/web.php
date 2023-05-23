@@ -1,16 +1,20 @@
 <?php
 
+use App\Http\Controllers\Api\GiveawayController;
 use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Web\AchievementController;
 use App\Http\Controllers\Web\AdminController;
 use App\Http\Controllers\Web\SWFController;
+use App\Models\Giveaway;
 use App\Models\Pokemon;
 use App\Models\Trade;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -227,7 +231,7 @@ Route::get('/offers/{id}/confirm', function(int $id) {
     if(Auth::user()->isParticipatingInOffer($id)) return response('The offer does not exist or you do not have permission to view the offer.');
 
     return view('offers.confirm', ['id' => $id]);
-});
+})->middleware('auth');
 
 
 Route::get('/games/ptd/offers.php', function () {
@@ -320,6 +324,40 @@ Route::post('/games/ptd/admin.php', [AdminController::class, 'post'])->middlewar
 Route::get('/games/ptd/adminPhpInfo.php', function () {
     phpinfo();
 })->middleware('auth', 'admin');
+
+Route::get('/games/ptd/adminXdebugInfo.php', function () {
+    xdebug_info();
+})->middleware('auth', 'admin');
+
+Route::get('/games/ptd/giveaways.php', function () {
+    return view('giveaways', ['giveaways' => Giveaway::where('complete_at', '>', Carbon::now())->orderBy('complete_at')->paginate(20, 'id')]);
+})->middleware('auth');
+
+Route::get('/games/ptd/myGiveaways.php', function () {
+    return view('myGiveaways', ['giveaways' => Giveaway::whereOwnerSaveId(Auth::user()->selectedSave()->id)->orderBy('created_at')->paginate(20, 'id')]);
+})->middleware('auth');
+
+Route::get('/games/ptd/completedGiveaways.php', function () {
+    return view('giveaways', ['giveaways' => Giveaway::where('complete_at', '<', Carbon::now())->orderBy('complete_at')->paginate(20, 'id')]);
+})->middleware('auth');
+
+Route::get('/giveaways/{id}/join', [GiveawayController::class, 'join'])->middleware('auth');
+Route::get('/giveaways/{id}/leave', [GiveawayController::class, 'leave'])->middleware('auth');
+Route::get('/giveaways/{id}/cancel', [GiveawayController::class, 'cancel'])->middleware('auth');
+Route::get('/giveaways/{id}/participants', function(int $id) {
+    $relations = Collection::make(['participants', 'participants.entrySave']);
+
+    $giveaway = Giveaway::whereId($id)->with($relations->undot()->toArray())->get()->first();
+
+    return view('giveawayParticipants', ['id' => $id, 'participants' => $giveaway->participants]);}
+)->middleware('auth');
+
+
+Route::get('/games/ptd/createGiveaway.php', function (Request $request) {
+    return view('createGiveaway', ['ids' => Auth::user()->selectedSave()->pokemon()->get('id')]);
+})->middleware('auth');
+
+Route::post('/games/ptd/createGiveaway.php', [GiveawayController::class, 'create'])->middleware('auth');
 
 // Mystery Gift
 Route::get('/games/ptd/dailyCode.php', function () {return redirect('/p/mystery-gift.html');});

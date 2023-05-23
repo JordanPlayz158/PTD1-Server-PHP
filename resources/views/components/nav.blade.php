@@ -23,6 +23,13 @@
                 </ul>
             </li>
             <li><a href="/games/ptd/gameCorner_test.php">Game Corner</a></li>
+            <li class="expanded"><a href="/games/ptd/giveaways.php">Giveaway Center</a>
+                <ul class="menu">
+                    <li><a href="/games/ptd/createGiveaway.php">Create Giveaway</a></li>
+                    <li><a href="/games/ptd/myGiveaways.php">Your Giveaways</a></li>
+                    <li><a href="/games/ptd/giveaways.php">Latest Giveaways</a></li>
+                </ul>
+            </li>
             <li class="expanded"><a href="/games/ptd/createTrade.php">Trading Center</a>
                 <ul class="menu">
                     <li><a href="/games/ptd/createTrade.php">Create Trade</a></li>
