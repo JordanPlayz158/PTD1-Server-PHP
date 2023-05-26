@@ -321,14 +321,6 @@ Route::get('/games/ptd/admin.php', function (Request $request) {
 
 Route::post('/games/ptd/admin.php', [AdminController::class, 'post'])->middleware('auth', 'admin');
 
-Route::get('/games/ptd/adminPhpInfo.php', function () {
-    phpinfo();
-})->middleware('auth', 'admin');
-
-Route::get('/games/ptd/adminXdebugInfo.php', function () {
-    xdebug_info();
-})->middleware('auth', 'admin');
-
 Route::get('/games/ptd/giveaways.php', function () {
     return view('giveaways', ['giveaways' => Giveaway::where('complete_at', '>', Carbon::now())->orderBy('complete_at')->paginate(20, 'id')]);
 })->middleware('auth');
