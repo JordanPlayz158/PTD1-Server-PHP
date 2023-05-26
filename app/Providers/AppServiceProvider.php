@@ -45,7 +45,10 @@ class AppServiceProvider extends ServiceProvider
                 $tracker = $sdk->createTracker();
                 $tracker->setSiteId($OWA_SITE_ID);
                 //$tracker->setPageTitle('Standalone PHP Test Page3');
-                $tracker->trackPageView();
+
+                if (!str_starts_with($_SERVER['REQUEST_URI'], '/api')) {
+                    $tracker->trackPageView();
+                }
 
                 if(Auth::check()) {
                     $tracker->setUserName(Auth::user()->name);
