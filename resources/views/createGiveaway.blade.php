@@ -63,6 +63,10 @@
                     <h2 style="text-align: center">Make Giveaway with selected pokemon below (selected pokemon will have a <a style="border: 2px solid limegreen;">green border</a> around them)</h2>
                     <div style="text-align: center">
                         <form method="POST">
+                            <label for="title">Title for Giveaway:
+                                <input type="text" id="title" name="title">
+                            </label>
+                            <br>
                             @for($i = 0; $i < $ids->count(); $i++)
                                 @php $id = $ids->get($i)->id @endphp
 
@@ -76,6 +80,15 @@
                             <br>
                             <input type="datetime-local" id="complete_at" name="endDate">
                             <input type="hidden" id="timezone-js" name="timezone">
+                            <br>
+                            <label>
+                                <input type="radio" name="type" value="0">
+                                1 Winner
+                            </label>
+                            <label>
+                                <input type="radio" name="type" value="1">
+                                1 Winner <b>per Pokemon</b> (ex. 7 Pokemon = 7 Winners)
+                            </label>
                             <br>
                             @csrf
                             <button type="submit">Make giveaway</button>

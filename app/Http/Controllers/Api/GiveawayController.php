@@ -6,24 +6,28 @@ use App\Http\Controllers\Controller;
 use App\Models\Giveaway;
 use App\Models\GiveawayEntry;
 use App\Models\GiveawayPokemon;
-use App\Models\OfferPokemon;
-use App\Models\Save;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 
 class GiveawayController extends Controller {
     public function create(Request $request)
     {
+        $type = \App\Enums\Giveaway::coerce($request->input('type', 0));
+
         $user = $request->user();
 
         if(!$user instanceof User) return ['success' => false, 'error' => 'user was not instance of User'];
 
+        $endDateString = $request->input('endDate');
+
+        if(strlen($endDateString) === 0) return ['success' => false, 'error' => 'Invalid end date'];
+
         $timezone = $request->input('timezone', 'UTC');
-        $endDate = Carbon::parse($request->input('endDate') . ' ' . $timezone);
+        $endDate = Carbon::parse($endDateString . ' ' . $timezone);
 
         if($endDate->isBefore(Carbon::now()->addHour()) || $endDate->isAfter(Carbon::now()->addMonth()))
             return ['success' => false, 'error' => 'The date needs to be at least 1 hour after current time and no greater than 1 month past current date!'];
@@ -44,28 +48,12 @@ class GiveawayController extends Controller {
             return ['success' => false, 'error' => 'No pokemon put up for giveaway'];
         }
 
+        $giveaway = Giveaway::create(['type' => $type, 'title' => $request->input('title'), 'owner_save_id' => $user->selectedSave()->id, 'complete_at' => $endDate]);
+
         // Make giveaway_pokemon entries first
-        $lastId = Cache::get('lastGiveawayPokemonId');
-
-        if($lastId === null) {
-            $lastId = GiveawayPokemon::query()->latest()->first();
-
-            if($lastId === null) {
-                $lastId = 0;
-            } else {
-                $lastId = $lastId->id;
-            }
-        }
-
-        $lastId++;
-
         foreach($giveawayPokemon as $pokemon) {
-            GiveawayPokemon::create(['id' => $lastId, 'pokemon_id' => $pokemon]);
+            GiveawayPokemon::create(['id' => $giveaway->id, 'pokemon_id' => $pokemon]);
         }
-
-        Cache::set('lastGiveawayPokemonId', $lastId);
-
-        Giveaway::create(['owner_save_id' => $user->selectedSave()->id, 'giveaway_pokemon_id' => $lastId, 'complete_at' => $endDate]);
 
         return redirect('/games/ptd/giveaways.php');
     }
@@ -115,7 +103,7 @@ class GiveawayController extends Controller {
         if(Carbon::parse($giveaway->created_at)->addDay()->isBefore(Carbon::now())) return ['success' => false, 'error' => 'You may only cancel a giveaway within 24 hours of creating it'];
         if(!$request->user()->ownsSave($giveaway->owner_save_id)) return ['success' => false, 'error' => 'You can\'t cancel a giveaway you did not mske!'];
 
-        GiveawayPokemon::where('id', '=', $giveaway->giveaway_pokemon_id)->delete();
+        GiveawayPokemon::where('id', '=', $giveaway->id)->delete();
 
         $giveaway->delete();
 
@@ -124,35 +112,55 @@ class GiveawayController extends Controller {
 
     public static function completeGiveaways(): void
     {
-        $completedGiveaways = Giveaway::where('complete_at', '<', Carbon::now())->whereNull('winner_save_id');
+        $completedGiveaways = Giveaway::where('complete_at', '<', Carbon::now())
+            ->whereNotExists(function (Builder $query) {
+                $query->from('giveaway_entries')
+                    ->whereColumn('giveaways.id', '=', 'giveaway_entries.giveaway_id')
+                    ->where('giveaway_entries.winner', '=', true);
+            });
 
         foreach ($completedGiveaways->lazy() as $giveaway) {
             if(!$giveaway instanceof Giveaway) continue;
 
             // If there is no one to giveaway to, it is almost as if
             // the giveaway never exists, so delete it
-            if($giveaway->participants()->count() === 0) $giveaway->delete();
+            if($giveaway->participants()->count() === 0) {
+                $giveaway->pokemon()->delete();
+                $giveaway->delete();
+                continue;
+            }
             // TODO: ^
             //  If giveaway is deleted due to lack of participants
             //  inform the host of it via notification system
 
 
-            $winner = $giveaway->participants()->inRandomOrder()->limit(1)->first();
-            $winnerSaveId = $winner->id;
-            $giveaway->winner_save_id = $winnerSaveId;
+            $numberOfWinners = match($giveaway->type) {
+                \App\Enums\Giveaway::SINGLE_WINNER => 1,
+                \App\Enums\Giveaway::MULTIPLE_WINNERS => $giveaway->pokemon()->count(),
+                default => throw new Exception('Unknown Giveaway Enum')
+            };
 
-            // TODO: Once notification system is implemented
-            //  send the winner a notification that they won
-            //  the giveaway
+            for ($i = 0; $i < $numberOfWinners; $i++) {
+                $winner = $giveaway->participants()->inRandomOrder()->limit(1)->first();
+                $winnerSave = $winner->entrySave()->first();
+
+                // No composite key support for Eloquent (yet (I hope it is a yet and not never))
+                \DB::table('giveaway_entries')
+                    ->where('giveaway_id', '=', $winner->giveaway_id)
+                    ->where('save_id', '=', $winner->save_id)
+                    ->update(['winner' => true]);
+
+                // TODO: Once notification system is implemented
+                //  send the winner a notification that they won
+                //  the giveaway
 
 
-            foreach($giveaway->pokemon()->lazy() as $pokemon) {
-                $pokemon->pId = self::getUniquePokemonId($winner->allPokemon());
-                $pokemon->save_id = $winnerSaveId;
+                $giveawayPokemon = $giveaway->pokemon()->limit(1)->offset($i)->first();
+                $pokemon = $giveawayPokemon->pokemon()->first();
+                $pokemon->pId = self::getUniquePokemonId($winnerSave->allPokemon());
+                $pokemon->save_id = $winnerSave->id;
                 $pokemon->save();
             }
-
-            $giveaway->save();
         }
     }
 

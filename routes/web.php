@@ -341,7 +341,7 @@ Route::get('/giveaways/{id}/participants', function(int $id) {
 
     $giveaway = Giveaway::whereId($id)->with($relations->undot()->toArray())->get()->first();
 
-    return view('giveawayParticipants', ['id' => $id, 'participants' => $giveaway->participants]);}
+    return view('giveawayParticipants', ['giveaway' => $giveaway, 'participants' => $giveaway->participants]);}
 )->middleware('auth');
 
 

@@ -11,6 +11,9 @@
 
 <div id="giveaway_{{ $giveawayId }}" class="block">
     <p style="text-align: center"><b>{{$isClosed ? 'ENDED ' : ''}}Giveaway</b></p>
+    @if($giveaway->title !== null)
+        <h2 style="text-align: center">"{{ $giveaway->title }}"</h2>
+    @endif
     <p style="text-align: center">Hosted by: {{ $giveawayHost->nickname ?? 'Satoshi' }} (User ID: {{ $giveawayHost->user->id }})<img src="/_static/images/avatars/{{ $giveawayHost->avatar }}.png" alt="[Avatar]"></p>
     <p style="text-align: center">{{ $isClosed ? 'Ended' : 'Ends' }}: <b class="endTime">{{ $endDate->toIso8601String() }}</b> (Your Timezone is: <span class="userTimezone"></span>)</p>
     <hr>
@@ -32,6 +35,15 @@
             <br>
         @endif
         <a style="text-decoration: underline" href="/giveaways/{{ $giveawayId }}/participants">{{ $giveaway->participants()->count() }}</a> <b>Entered</b>
+        <br>
+        @switch($giveaway->type)
+            @case(\App\Enums\Giveaway::SINGLE_WINNER)
+                <b>1 Winner</b>
+                @break
+            @case(\App\Enums\Giveaway::MULTIPLE_WINNERS)
+                <b>{{ $giveaway->pokemon()->count() }} Winners</b>
+                @break
+        @endswitch
         <br>
         <p>Giveaway ID: {{ $giveawayId }}</p>
     </div>

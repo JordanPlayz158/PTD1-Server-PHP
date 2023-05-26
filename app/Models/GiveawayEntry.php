@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|GiveawayEntry query()
  * @method static \Illuminate\Database\Eloquent\Builder|GiveawayEntry whereGiveawayId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GiveawayEntry whereSaveId($value)
+ * @property bool $winner
+ * @method static \Illuminate\Database\Eloquent\Builder|GiveawayEntry whereWinner($value)
  * @mixin \Eloquent
  */
 class GiveawayEntry extends Model {
@@ -35,6 +37,15 @@ class GiveawayEntry extends Model {
     protected $fillable = [
         'giveaway_id',
         'save_id'
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'winner' => 'boolean',
     ];
 
     public function entrySave(): BelongsTo

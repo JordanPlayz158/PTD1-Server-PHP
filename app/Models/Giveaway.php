@@ -26,13 +26,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Giveaway whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Giveaway whereOwnerSaveId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Giveaway whereUpdatedAt($value)
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GiveawayEntry> $participants
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GiveawayPokemon> $pokemon
  * @property-read int|null $pokemon_count
  * @property int|null $completed
  * @method static \Illuminate\Database\Eloquent\Builder|Giveaway whereCompleted($value)
  * @property int $winner_save_id
  * @method static \Illuminate\Database\Eloquent\Builder|Giveaway whereWinnerSaveId($value)
+ * @property string|null $title
+ * @method static \Illuminate\Database\Eloquent\Builder|Giveaway whereTitle($value)
+ * @property int $type
+ * @method static \Illuminate\Database\Eloquent\Builder|Giveaway whereType($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GiveawayEntry> $participants
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GiveawayPokemon> $pokemon
  * @mixin \Eloquent
  */
 class Giveaway extends Model {
@@ -44,8 +48,9 @@ class Giveaway extends Model {
      * @var array<int, string>
      */
     protected $fillable = [
+        'type',
+        'title',
         'owner_save_id',
-        'giveaway_pokemon_id',
         'complete_at'
     ];
 
@@ -60,7 +65,7 @@ class Giveaway extends Model {
 
     public function pokemon(): HasMany
     {
-        return $this->hasMany(GiveawayPokemon::class, 'id', 'giveaway_pokemon_id');
+        return $this->hasMany(GiveawayPokemon::class, 'id', 'id');
     }
 
     public function participants(): HasMany
