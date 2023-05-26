@@ -37,8 +37,8 @@ class GiveawayPokemon extends Model {
         'pokemon_id'
     ];
 
-    public function pokemon(): HasOne
+    public function pokemon(): BelongsTo
     {
-        return $this->hasOne(Pokemon::class);
+        return $this->belongsTo(Pokemon::class);
     }
 }
