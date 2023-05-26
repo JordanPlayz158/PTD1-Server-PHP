@@ -83,9 +83,15 @@ class Save extends Model {
     public function pokemon(): HasMany
     {
         return $this->hasMany(Pokemon::class)->whereNotExists(function (Builder $query) {
+            // Where pokemon is NOT up for trade
             $query->from('trades')->whereColumn('poke_id', '=', 'pokemon.id');
         })->whereNotExists(function (Builder $query) {
-            $query->from('giveaway_pokemon')->whereColumn('pokemon_id', '=', 'pokemon.id');
+            // Where pokemon is NOT up for giveaway
+            $query->from('giveaway_pokemon')
+                ->whereColumn('pokemon_id', '=', 'pokemon.id')
+                ->join('giveaway_entries', 'giveaway_entries.giveaway_id', '=', 'giveaway_pokemon.id')
+                // AND Where giveaway has NOT completed
+                ->where('giveaway_entries.winner', '=', false);
         });
     }
 
