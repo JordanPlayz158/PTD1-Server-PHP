@@ -1,6 +1,8 @@
 @php
     $nameSuffix = '';
 
+    if($pokemon->tag === null) $pokemon->tag = '';
+
     switch($pokemon->tag) {
         case 'n':
             break;
