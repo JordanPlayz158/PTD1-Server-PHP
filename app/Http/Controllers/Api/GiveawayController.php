@@ -27,9 +27,10 @@ class GiveawayController extends Controller {
         if(strlen($endDateString) === 0) return ['success' => false, 'error' => 'Invalid end date'];
 
         $timezone = $request->input('timezone', 'UTC');
-        $endDate = Carbon::parse($endDateString . ' ' . $timezone);
+        $endDate = Carbon::parse($endDateString . $timezone)->setTimezone('UTC');
+        $currentDate = Carbon::now()->setTimezone('UTC');
 
-        if($endDate->isBefore(Carbon::now()->addHour()) || $endDate->isAfter(Carbon::now()->addMonth()))
+        if($endDate->isBefore($currentDate->copy()->addHour()) || $endDate->isAfter($currentDate->copy()->addMonth()))
             return ['success' => false, 'error' => 'The date needs to be at least 1 hour after current time and no greater than 1 month past current date!'];
 
         $giveawayPokemon = [];
@@ -100,7 +101,7 @@ class GiveawayController extends Controller {
         $giveaway = Giveaway::find($id);
         if($giveaway === null) return ['success' => false, 'error' => 'Giveaway does not exist'];
         if(Carbon::parse($giveaway->complete_at)->isPast()) return ['success' => false, 'error' => 'Giveaway has ended'];
-        if(Carbon::parse($giveaway->created_at)->addDay()->isBefore(Carbon::now())) return ['success' => false, 'error' => 'You may only cancel a giveaway within 24 hours of creating it'];
+        if(Carbon::parse($giveaway->created_at)->addDay()->isBefore(Carbon::now('UTC'))) return ['success' => false, 'error' => 'You may only cancel a giveaway within 24 hours of creating it'];
         if(!$request->user()->ownsSave($giveaway->owner_save_id)) return ['success' => false, 'error' => 'You can\'t cancel a giveaway you did not mske!'];
 
         GiveawayPokemon::where('id', '=', $giveaway->id)->delete();
@@ -112,7 +113,7 @@ class GiveawayController extends Controller {
 
     public static function completeGiveaways(): void
     {
-        $completedGiveaways = Giveaway::where('complete_at', '<', Carbon::now())
+        $completedGiveaways = Giveaway::where('complete_at', '<', Carbon::now('UTC'))
             ->whereNotExists(function (Builder $query) {
                 $query->from('giveaway_entries')
                     ->whereColumn('giveaways.id', '=', 'giveaway_entries.giveaway_id')

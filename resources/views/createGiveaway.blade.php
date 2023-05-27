@@ -28,7 +28,11 @@
     </style>
     <script>
         window.addEventListener('load', function () {
-            document.getElementById('timezone-js').setAttribute('value', Intl.DateTimeFormat().resolvedOptions().timeZone);
+            let offset = -new Date().getTimezoneOffset();
+            const diff = offset >= 0 ? '+' : '-';
+            const pad = n => `${Math.floor(Math.abs(n))}`.padStart(2, '0');
+
+            document.getElementById('timezone-js').setAttribute('value', diff + pad(offset / 60) + ':' + pad(offset % 60));
         });
     </script>
 </head>
@@ -82,7 +86,7 @@
                             <input type="hidden" id="timezone-js" name="timezone">
                             <br>
                             <label>
-                                <input type="radio" name="type" value="0">
+                                <input type="radio" name="type" value="0" checked="checked">
                                 1 Winner
                             </label>
                             <label>
