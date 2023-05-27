@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 class GiveawayController extends Controller {
     public function create(Request $request)
     {
-        $type = \App\Enums\Giveaway::coerce($request->input('type', 0));
+        $type = \App\Enums\Giveaway::coerce(intval($request->input('type', 0)));
 
         $user = $request->user();
 
