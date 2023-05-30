@@ -73,6 +73,11 @@ class Giveaway extends Model {
         return $this->hasMany(GiveawayEntry::class, 'giveaway_id', 'id');
     }
 
+    public function hasParticipant($saveId): bool
+    {
+        return $this->participants()->where('save_id', '=', $saveId)->count();
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(Save::class, 'owner_save_id', 'id');
