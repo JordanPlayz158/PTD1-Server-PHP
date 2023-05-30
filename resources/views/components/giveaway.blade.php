@@ -28,9 +28,11 @@
             @if($personal)
                 <a href="/giveaways/{{ $giveawayId }}/cancel">Cancel</a>
             @else
-                <a href="/giveaways/{{ $giveawayId }}/join">Join</a>
-                <a> | </a>
-                <a href="/giveaways/{{ $giveawayId }}/leave">Leave</a>
+                @if(!$giveaway->hasParticipant(Auth::user()->selectedSave()->id))
+                    <a href="/giveaways/{{ $giveawayId }}/join">Join</a>
+                @else
+                    <a href="/giveaways/{{ $giveawayId }}/leave">Leave</a>
+                @endif
             @endif
             <br>
         @endif
