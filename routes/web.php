@@ -330,7 +330,7 @@ Route::get('/games/ptd/myGiveaways.php', function () {
 })->middleware('auth');
 
 Route::get('/games/ptd/completedGiveaways.php', function () {
-    return view('giveaways', ['giveaways' => Giveaway::where('complete_at', '<', Carbon::now())->orderBy('complete_at')->paginate(20, 'id')]);
+    return view('giveaways', ['giveaways' => Giveaway::where('complete_at', '<', Carbon::now())->orderBy('complete_at', 'desc')->paginate(20, 'id')]);
 })->middleware('auth');
 
 Route::get('/giveaways/{id}/join', [GiveawayController::class, 'join'])->middleware('auth');
