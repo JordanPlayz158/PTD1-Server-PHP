@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('auth:clear-resets')->everyFifteenMinutes();
         $schedule->command('cache:prune-stale-tags')->hourly();
-        $schedule->call(function () {GiveawayController::completeGiveaways();})->everyFifteenMinutes();
+        $schedule->call(function () {GiveawayController::completeGiveaways();})->everyMinute();
     }
 
     /**

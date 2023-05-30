@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -89,9 +90,9 @@ class Save extends Model {
             // Where pokemon is NOT up for giveaway
             $query->from('giveaway_pokemon')
                 ->whereColumn('pokemon_id', '=', 'pokemon.id')
-                ->join('giveaway_entries', 'giveaway_entries.giveaway_id', '=', 'giveaway_pokemon.id')
+                ->join('giveaways', 'giveaways.id', '=', 'giveaway_pokemon.id')
                 // AND Where giveaway has NOT completed
-                ->where('giveaway_entries.winner', '=', false);
+                ->where('giveaways.complete_at', '>', Carbon::now('UTC'));
         });
     }
 
