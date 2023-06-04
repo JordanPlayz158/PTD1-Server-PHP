@@ -341,8 +341,15 @@ Route::get('/giveaways/{id}/participants', function(int $id) {
 
     $giveaway = Giveaway::whereId($id)->with($relations->undot()->toArray())->get()->first();
 
-    return view('giveawayParticipants', ['giveaway' => $giveaway, 'participants' => $giveaway->participants]);}
-)->middleware('auth');
+    return view('giveawayParticipants', ['giveaway' => $giveaway, 'participants' => $giveaway->participants]);
+})->middleware('auth');
+Route::get('/giveaways/{id}/pokemon', function(int $id) {
+    $relations = Collection::make(['pokemon']);
+
+    $giveaway = Giveaway::whereId($id)->with($relations->undot()->toArray())->get()->first();
+
+    return view('giveawayPokemon', ['giveaway' => $giveaway, 'pokemon' => $giveaway->pokemon]);
+})->middleware('auth');
 
 
 Route::get('/games/ptd/createGiveaway.php', function (Request $request) {
