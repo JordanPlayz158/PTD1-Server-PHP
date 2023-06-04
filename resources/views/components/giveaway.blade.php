@@ -1,12 +1,13 @@
 @php
     $giveawayId = $giveaway->id;
     $giveawayPokemon = $giveaway->pokemon;
+    $giveawayPokemonSize = $giveawayPokemon->count();
     $giveawayHost = $giveaway->owner;
     $endDate = \Carbon\Carbon::parse($giveaway->complete_at);
 
     $isClosed = $endDate->isPast();
 
-    $height = 129 * ($giveawayPokemon->count() / 3);
+    $height = 129 * ($giveawayPokemonSize / 3);
 @endphp
 
 <div id="giveaway_{{ $giveawayId }}" class="block">
@@ -18,9 +19,15 @@
     <p style="text-align: center">{{ $isClosed ? 'Ended' : 'Ends' }}: <b class="endTime">{{ $endDate->toIso8601String() }}</b> (Your Timezone is: <span class="userTimezone"></span>)</p>
     <hr>
     <div id="pokemon" style="display: inline-block">
-        @foreach($giveawayPokemon as $giveawayPoke)
+        @for($i = 0; $i < min($giveawayPokemonSize, 20); $i++)
+            @php $giveawayPoke = $giveawayPokemon->get($i); @endphp
             <x-pokemon :id="$giveawayPoke->pokemon_id" type="NONE"/>
-        @endforeach
+        @endfor
+        @if($giveawayPokemonSize > 20)
+            <div class="block" style="text-align: center">
+                <h2><a href="/giveaways/{{ $giveawayId }}/pokemon">Show <b>rest</b> of pokemon...</a></h2>
+            </div>
+        @endif
     </div>
     <hr>
     <div style="text-align: center">
