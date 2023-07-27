@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\GiveawayController;
 use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\GiftController;
 use App\Http\Controllers\Web\AchievementController;
 use App\Http\Controllers\Web\AdminController;
 use App\Http\Controllers\Web\SWFController;
@@ -359,8 +360,12 @@ Route::get('/games/ptd/createGiveaway.php', function (Request $request) {
 Route::post('/games/ptd/createGiveaway.php', [GiveawayController::class, 'create'])->middleware('auth');
 
 // Mystery Gift
-Route::get('/games/ptd/dailyCode.php', function () {return redirect('/p/mystery-gift.html');});
+Route::get('/games/ptd/dailyGift.php', function () {
+    $save = Auth::user()->selectedSave();
+    return view('dailyGift', ['save' => $save]);
+})->name('dailygift');
 
+Route::get('/get-gift/{button}', [GiftController::class, 'GetGift'])->name('get-gift');
 
 // SWF Routes
 
