@@ -362,7 +362,9 @@ Route::post('/games/ptd/createGiveaway.php', [GiveawayController::class, 'create
 // Mystery Gift
 Route::get('/games/ptd/dailyGift.php', function () {
     $save = Auth::user()->selectedSave();
-    return view('dailyGift', ['save' => $save]);
+    $user = User::find(Auth::user()->id);
+
+    return view('dailyGift', ['save' => $save, 'user' => $user]);
 })->name('dailygift');
 
 Route::get('/get-gift/{button}', [GiftController::class, 'GetGift'])->name('get-gift');
