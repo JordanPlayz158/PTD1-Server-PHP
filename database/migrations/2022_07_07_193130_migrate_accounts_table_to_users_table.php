@@ -18,9 +18,6 @@ return new class extends Migration
      *   dex               - dex1
      *   shinyDex          - dex1Shiny
      *   shadowDex         - dex1Shadow
-     *   casino_coins      - N/A
-     *   last_used_dg      - N/A
-     *   last_used_gc      - N/A
      *   remember_token    - N/A
      *   created_at        - N/A
      *   updated_at        - N/A
@@ -37,10 +34,6 @@ return new class extends Migration
             $table->string('dex', 151)->nullable(true)->after('password');
             $table->string('shinyDex', 151)->nullable(true)->after('dex');
             $table->string('shadowDex', 151)->nullable(true)->after('shinyDex');
-            
-            $table->bigInteger('casino_coins', false)->default(0)->after('shadowDex');
-            $table->date('last_used_dg')->nullable(true)->after('casino_coins');
-            $table->date('last_used_gc')->nullable(true)->after('last_used_dg');
         });
 
         $rowNum = DB::table('accounts')->count('email');
