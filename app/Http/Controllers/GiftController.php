@@ -10,14 +10,11 @@ class GiftController extends Controller
 {
     public function getGift($button)
     {
-        
-        $user = User::find(Auth::user()->id);
+        $user = Auth::user();
         $save = $user->selectedSave();
         $randomNumber = mt_rand(0, 1);          
-        $currentDate = Carbon::parse(Carbon::now())->format('Y-m-d');
 
-        if ($user->last_used_dg === $currentDate)
-        {
+        if(Carbon::parse(Auth::user()->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'))) {
             return redirect()->back();
         }
 
@@ -36,7 +33,7 @@ class GiftController extends Controller
         ];
         // Retrieve the user's / save's info
         $money = $save->money;
-        $casinoCoins = $user->casino_coins;
+        $casinoCoins = Auth::user()->casino_coins;
 
         // Check if the profile has enough money to buy the gift
         $giftCost = $giftCosts[$button];
@@ -54,7 +51,9 @@ class GiftController extends Controller
         // Update the user's casino coins after buying the daily gift
         $updatedCasinoCoins = $casinoCoins + $prize;
         
-        $user->update(['casino_coins' => $updatedCasinoCoins, 'last_used_dg' => Carbon::now()]);
+        $user->casino_coins = $updatedCasinoCoins;
+        $user->last_used_dg = Carbon::now('UTC');
+        $user->save();
 
         return redirect()->back()->with([
         'prize' => $prize,
