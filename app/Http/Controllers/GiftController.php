@@ -14,6 +14,7 @@ class GiftController extends Controller
             return redirect()->back();
         }
         
+        // this will only work if the id's in the database are going off by the seeder | 31-7-2023
         $buttonToGiftIdMapping = [
             1 => [1, 2], // Map button 1 to gift with id 1 and 2
             2 => [3, 4], // Map button 2 to gift with id 3 and 4
