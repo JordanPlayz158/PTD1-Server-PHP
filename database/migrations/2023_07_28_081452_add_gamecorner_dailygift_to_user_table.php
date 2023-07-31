@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->bigInteger('casino_coins', false)->default(0)->after('shadowDex');
-            $table->date('last_used_dg')->nullable(true)->after('casino_coins');
-            $table->date('last_used_gc')->nullable(true)->after('last_used_dg');
+            $table->timestamp('last_used_dg')->nullable(true)->after('casino_coins');
+            $table->timestamp('last_used_gc')->nullable(true)->after('last_used_dg');
         });
     }
 
