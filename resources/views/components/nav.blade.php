@@ -22,7 +22,7 @@
                     <li><a href="/games/ptd/inventory_avatar.php">Avatars</a></li>
                 </ul>
             </li>
-            <li><a href="/games/ptd/gameCorner_test.php">Game Corner</a></li>
+            <li><a href="/games/ptd/gameCorner.php">Game Corner</a></li>
             <li class="expanded"><a href="/games/ptd/giveaways.php">Giveaway Center</a>
                 <ul class="menu">
                     <li><a href="/games/ptd/createGiveaway.php">Create Giveaway</a></li>
