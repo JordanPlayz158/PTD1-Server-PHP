@@ -69,7 +69,23 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Pokemon extends Model {
     protected $fillable = [
         'save_id',
-        'pId'
+        'pId',
+        'pNum',
+        'nickname',
+        'exp',
+        'lvl',
+        'm1',
+        'm2',
+        'm3',
+        'm4',
+        'ability',
+        'mSel',
+        'targetType',
+        'tag',
+        'item',
+        'owner',
+        'pos',
+        'shiny'
     ];
 
     public function offers(): HasManyThrough
