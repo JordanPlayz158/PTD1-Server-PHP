@@ -34,6 +34,10 @@ class GameCornerController extends Controller
     {
         $prize = 0;
 
+        if (Auth::user()->casino_coins < 250) {
+            return redirect()->back()->with(['return' => 250 - Auth::user()->casino_coins]);
+        } 
+
         for ($i = 0; $i < 50; $i++) {
 
             $prize += mt_rand(1, 125);
@@ -53,7 +57,7 @@ class GameCornerController extends Controller
         $pokemon = GameCornerPokemon::find($id);
 
         if (Auth::user()->casino_coins < GameCornerPokemon::find($id)->cost) {
-            return redirect()->back();
+            return redirect()->back()->with(['return' => GameCornerPokemon::find($id)->cost - Auth::user()->casino_coins]);
         } 
 
         Auth::user()->casino_coins = Auth::user()->casino_coins - GameCornerPokemon::find($id)->cost;
@@ -92,7 +96,7 @@ class GameCornerController extends Controller
         // maybe fix later
         $cost = 300000;
         if (Auth::user()->casino_coins < $cost) {
-            return redirect()->back();
+            return redirect()->back()->with(['return' => $cost - Auth::user()->casino_coins]);
         } 
         
         $pokemon = [
