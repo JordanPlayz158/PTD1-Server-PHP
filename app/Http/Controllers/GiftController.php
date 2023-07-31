@@ -13,24 +13,20 @@ class GiftController extends Controller
         if (Carbon::parse(Auth::user()->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'))) {
             return redirect()->back();
         }
-
+        
         $buttonToGiftIdMapping = [
             1 => [1, 2], // Map button 1 to gift with id 1 and 2
             2 => [3, 4], // Map button 2 to gift with id 3 and 4
             3 => [5, 6], // Map button 3 to gift with id 5 and 6
         ];
 
-        if (empty($buttonToGiftIdMapping[$button])) {
-            return redirect()->back();
-        }
-
         $gift = DailyGift::whereIn('id', $buttonToGiftIdMapping[$button])->inRandomOrder()->first();
-
-        if (!$gift) {
+        
+        if (Auth::user()->selectedSave()->money < $gift->cost) {
             return redirect()->back();
         }
 
-        if (Auth::user()->selectedSave()->money < $gift->cost) {
+        if (empty($buttonToGiftIdMapping[$button])) {
             return redirect()->back();
         }
 
