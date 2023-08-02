@@ -13,40 +13,133 @@ class DailyGiftSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('daily_gift')->insert([
-            'id' => 1,
+        // BUTTON 1 -------------------------------
+        DB::table('dailygift')->insert([
+            'button' => 1,
             'prize' => 1000,
-            'cost' => 1000
+            'cost' => 1000,
+            'percentage' => 0.50
         ]);
 
-        DB::table('daily_gift')->insert([
-            'id' => 2,
+        DB::table('dailygift')->insert([
+            'button' => 1,
             'prize' => 10000,
-            'cost' => 1000
+            'cost' => 1000,
+            'percentage' => 0.49934
         ]);
 
-        DB::table('daily_gift')->insert([
-            'id' => 3,
+        DB::table('dailygift')->insert([
+            'button' => 1,
+            'prize' => 1,
+            'cost' => 1000,
+            'percentage' => 0.0005
+        ]);
+
+        DB::table('dailygift')->insert([
+            'button' => 1,
+            'prize' => 5,
+            'cost' => 1000,
+            'percentage' => 0.0001
+        ]);
+
+        DB::table('dailygift')->insert([
+            'button' => 1,
+            'prize' => 10,
+            'cost' => 1000,
+            'percentage' => 0.00005
+        ]);
+
+        DB::table('dailygift')->insert([
+            'button' => 1,
+            'prize' => 20,
+            'cost' => 1000,
+            'percentage' => 0.00001
+        ]);
+
+        // BUTTON 2 -------------------------------
+        DB::table('dailygift')->insert([
+            'button' => 2,
             'prize' => 10000,
-            'cost' => 10000
+            'cost' => 10000,
+            'percentage' => 0.50
         ]);
 
-        DB::table('daily_gift')->insert([
-            'id' => 4,
+        DB::table('dailygift')->insert([
+            'button' => 2,
             'prize' => 25000,
-            'cost' => 10000
+            'cost' => 10000,
+            'percentage' => 0.49835
         ]);
 
-        DB::table('daily_gift')->insert([
-            'id' => 5,
+        DB::table('dailygift')->insert([
+            'button' => 2,
+            'prize' => 1,
+            'cost' => 1000,
+            'percentage' => 0.001
+        ]);
+
+        DB::table('dailygift')->insert([
+            'button' => 2,
+            'prize' => 5,
+            'cost' => 1000,
+            'percentage' => 0.0005
+        ]);
+
+        DB::table('dailygift')->insert([
+            'button' => 2,
+            'prize' => 10,
+            'cost' => 1000,
+            'percentage' => 0.0001
+        ]);
+
+        DB::table('dailygift')->insert([
+            'button' => 2,
+            'prize' => 20,
+            'cost' => 1000,
+            'percentage' => 0.00005
+        ]);
+
+        // BUTTON 3 -------------------------------
+        DB::table('dailygift')->insert([
+            'button' => 3,
             'prize' => 50000,
-            'cost' => 100000
+            'cost' => 100000,
+            'percentage' => 0.50
         ]);
 
-        DB::table('daily_gift')->insert([
-            'id' => 6,
+        DB::table('dailygift')->insert([
+            'button' => 3,
             'prize' => 100000,
-            'cost' => 100000
+            'cost' => 100000,
+            'percentage' => 0.4934
+        ]);
+
+        DB::table('dailygift')->insert([
+            'button' => 3,
+            'prize' => 1,
+            'cost' => 1000,
+            'percentage' => 0.005
+        ]);
+
+        DB::table('dailygift')->insert([
+            'button' => 3,
+            'prize' => 5,
+            'cost' => 1000,
+            'percentage' => 0.001
+        ]);
+
+        DB::table('dailygift')->insert([
+            'button' => 3,
+            'prize' => 10,
+            'cost' => 1000,
+            'percentage' => 0.0005
+        ]);
+
+        DB::table('dailygift')->insert([
+            'button' => 3,
+            'prize' => 20,
+            'cost' => 1000,
+            'percentage' => 0.0001
         ]);
     }
 }
