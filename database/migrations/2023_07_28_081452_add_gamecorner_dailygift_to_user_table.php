@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->bigInteger('casino_coins', false)->default(0)->after('shadowDex');
+            $table->bigInteger('casino_coins', false, true)->default(0)->after('ptd_coins');
             $table->timestamp('last_used_dg')->nullable(true)->after('casino_coins');
             $table->timestamp('last_used_gc')->nullable(true)->after('last_used_dg');
         });
