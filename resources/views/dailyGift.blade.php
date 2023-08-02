@@ -28,7 +28,7 @@
                             
                             <br>
                             @if (session('prize'))
-                                    <p>Congratulations! You got {{ number_format(session('prize'), 0, ',', '.') }} Casino Coins!</p>
+                                    <p>Congratulations! You got {{ session('prize') }}!</p>
                             @else  
                                 @if ($dateCheck || $user->last_used_dg == null)
 
