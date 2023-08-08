@@ -62,7 +62,7 @@
                                 </div>
                                  <div class="block">
                                     <div>
-                                        <strong>Random Non-Evolved Shadow Pokemon - 300.000 Casino Coins - <a href="{{ route('buy-shadow-pokemon') }}">Buy</a></strong>
+                                        <strong>Random Non-Evolved Shadow Pokemon - 300.000 Casino Coins</strong>
                                     </div>
                                 </div>
                                 <div id="pokemon">
