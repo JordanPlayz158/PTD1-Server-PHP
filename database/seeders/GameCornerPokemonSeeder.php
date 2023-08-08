@@ -14,6 +14,22 @@ class GameCornerPokemonSeeder extends Seeder
     public function run(): void
     {
         DB::table('gamecorner_pokemon')->insert([
+            'pNum' => 0,
+            'nickname' => 'Random Shadow Pokemon',
+            'exp' => 0,
+            'lvl' => 1,
+            'm1' => 368,
+            'm2' => 0,
+            'm3' => 0,
+            'm4' => 0,
+            'ability' => 0,
+            'mSel' => 1,
+            'targetType' => 1,
+            'shiny' => 2,
+            'cost' => 300000,
+        ]);
+
+        DB::table('gamecorner_pokemon')->insert([
             'pNum' => 63,
             'nickname' => 'Abra',
             'exp' => 0,
