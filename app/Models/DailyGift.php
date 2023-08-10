@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class DailyGift extends Model
 {
     use HasFactory;
-    protected $table = 'dailygift';
+    protected $table = 'daily_gift';
 
 }
