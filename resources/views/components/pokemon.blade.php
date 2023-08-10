@@ -19,7 +19,7 @@
      style="{{ $attributes['style'] }}">
     <img class="image" src="/_static/images/pokemon/{{ $pokemon->pNum }}_{{ $pokemon->shiny === 1 ? 1 : 0 }}.png"
          alt="[Avatar]">
-    <span class="name">{{ $pokemon->nickname }} {{ $nameSuffix }}</span>
+    <span class="name">{{ $pokemon->nickname }}{{ $nameSuffix }}</span>
     @if($pokemon->shiny === 1)
         <img class="image star" src="/_static/images/star_small.png" alt="[Shiny Star]">
     @endif
