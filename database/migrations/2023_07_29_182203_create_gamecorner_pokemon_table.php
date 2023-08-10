@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gamecorner_pokemon', function (Blueprint $table) {
+        Schema::create('game_corner_pokemon', function (Blueprint $table) {
             $table->id();
             $table->mediumInteger('pNum', false, true);
             $table->string('nickname', 255);
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gamecorner_pokemon');
+        Schema::dropIfExists('game_corner_pokemon');
     }
 };
