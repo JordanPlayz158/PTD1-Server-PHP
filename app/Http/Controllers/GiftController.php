@@ -34,9 +34,11 @@ class GiftController extends Controller
     }
     
 
-    public function GetGift($button)
+    public function getGift($button)
     {
-        if (Carbon::parse(Auth::user()->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'))) {
+        $user = Auth::user();
+
+        if (Carbon::parse($user->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'))) {
             return redirect()->back();
         }
         
@@ -46,31 +48,31 @@ class GiftController extends Controller
             return redirect()->back();
         }
 
-        if (Auth::user()->selectedSave()->money < $gift->cost) {
+        if ($user->selectedSave()->money < $gift->cost) {
             return redirect()->back();
         }
 
-        $updatedMoney = Auth::user()->selectedSave()->money - $gift->cost;
-        Auth::user()->selectedSave()->update(['money' => $updatedMoney]);
+        $updatedMoney = $user->selectedSave()->money - $gift->cost;
+        $user->selectedSave()->update(['money' => $updatedMoney]);
 
         if ($gift->prize <= 20)
         {
-            $updatedPTDCoins = Auth::user()->ptd_coins + $gift->prize;
-            Auth::user()->ptd_coins = $updatedPTDCoins;
+            $updatedPTDCoins = $user->ptd_coins + $gift->prize;
+            $user->ptd_coins = $updatedPTDCoins;
 
-            Auth::user()->last_used_dg = Carbon::now('UTC');
-            Auth::user()->save();
+            $user->last_used_dg = Carbon::now('UTC');
+            $user->save();
 
             return redirect()->back()->with([
                 'prize' => "$gift->prize PTD Coins",
             ]);
         }
         else {
-            $updatedCasinoCoins = Auth::user()->casino_coins + $gift->prize;
-            Auth::user()->casino_coins = $updatedCasinoCoins;
+            $updatedCasinoCoins = $user->casino_coins + $gift->prize;
+            $user->casino_coins = $updatedCasinoCoins;
 
-            Auth::user()->last_used_dg = Carbon::now('UTC');
-            Auth::user()->save();
+            $user->last_used_dg = Carbon::now('UTC');
+            $user->save();
             
             return redirect()->back()->with([
                 'prize' => "$gift->prize Casino Coins",
