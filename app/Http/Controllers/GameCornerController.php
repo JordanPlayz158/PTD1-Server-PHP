@@ -11,104 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GameCornerController extends Controller
 {
-    private function getUniquePokemonId(HasMany $pokemon) {
-        $valid = false;
-        $tmp = -1;
-
-        while (!$valid) {
-            $tmp = mt_rand(1, 2147483647);
-            $valid = true;
-
-            foreach ($pokemon->select('pId')->lazy() as $poke) {
-                if ($tmp == $poke->pId) {
-                    $valid = false;
-                    break;
-                }
-            }
-        }
-
-        return $tmp;
-    }
-    
-    public function PlaySlots()
-    {
-        $prize = 0;
-
-        if (Auth::user()->casino_coins < 250) {
-            return redirect()->back()->with(['return' => 250 - Auth::user()->casino_coins]);
-        } 
-
-        for ($i = 0; $i < 50; $i++) {
-
-            $prize += mt_rand(1, 125);
-        }   
-
-        Auth::user()->casino_coins = Auth::user()->casino_coins + $prize - 250;
-        Auth::user()->last_used_gc = Carbon::now('UTC');
-        Auth::user()->save();
-
-        return redirect()->back()->with([
-            'prize' => $prize
-        ]);
-    }
-
-    public function BuyPokemon($id)
-    {       
-        $pokemon = GameCornerPokemon::find($id);
-
-        if (Auth::user()->casino_coins < $pokemon->cost) {
-            return redirect()->back()->with(['return' => $pokemon->cost - Auth::user()->casino_coins]);
-        } 
-
-        Auth::user()->casino_coins = Auth::user()->casino_coins - $pokemon->cost;
-
-        if ($pokemon->pNum == 0){
-            $this->BuyRandomShadowPokemon($pokemon);
-        }
-        else
-        {
-            $pokemon = new Pokemon([
-                'save_id' => Auth::user()->selectedSave()->id,
-                'pId' => $this->getUniquePokemonId(Save::whereId(Auth::user()->selectedSave()->id)->first()->pokemon()),
-                'pNum' => $pokemon->pNum,
-                'nickname' => $pokemon->nickname,
-                'exp' => $pokemon->exp,
-                'lvl' => $pokemon->lvl,
-                'm1' => $pokemon->m1,
-                'm2' => $pokemon->m2,
-                'm3' => $pokemon->m3,
-                'm4' => $pokemon->m4,
-                'ability' => $pokemon->ability,
-                'mSel' => $pokemon->mSel,
-                'targetType' => $pokemon->targetType,
-                'tag' => 'n',
-                'item' => 0,
-                'owner' => 0,
-                'pos' => 1,
-                'shiny' => (mt_rand(1, 100) <= 1) ? 1 : $pokemon->shiny,   
-            ]);
-        }
-
-
-            
-        Auth::user()->save();
-        
-        $pokemon->save();
-
-        return redirect()->back()->with(['id' => $pokemon->id, 'nickname' => $pokemon->nickname]);
-    }
-
-    public function BuyRandomShadowPokemon($pokemon)
-    {
-        if (empty($pokemon)) {
-            return redirect()->back();
-        }
-
-        if (Auth::user()->casino_coins < $pokemon->cost) {
-            return redirect()->back()->with(['return' => $pokemon->cost - Auth::user()->casino_coins]);
-        } 
-        
-        $pokemons = [
+    public static $pokemons = [
             '1' => ['var_27' => 5,'name' => "Bulbasaur",'var_26' => 64,'var_16' => 45,'var_30' => 49,'var_23' => 49,'var_28' => 65,'var_24' => 65,'speed' => 45,'types' => [1,2,],'moves' => [1,],'unlocked_moves' => ['33' => [157,],'3' => [5,],'37' => [183,],'7' => [9,],'9' => [16,],'13' => [24,],'14' => [26,],'15' => [27,],'19' => [28,],'21' => [76,],'25' => [91,],'27' => [127,],'31' => [149,],],],
             '4' => ['var_27' => 5,'name' => "Charmander",'var_26' => 62,'var_16' => 39,'var_30' => 52,'var_23' => 43,'var_28' => 60,'var_24' => 50,'speed' => 65,'types' => [4,],'moves' => [6,5,],'unlocked_moves' => ['16' => [29,],'34' => [130,],'19' => [30,],'37' => [184,],'7' => [10,],'25' => [92,],'10' => [17,],'43' => [105,],'28' => [106,],'46' => [242,],],],
             '10' => ['var_27' => 2,'name' => "Caterpie",'var_26' => 39,'var_16' => 45,'var_30' => 30,'var_23' => 35,'var_28' => 20,'var_24' => 20,'speed' => 45,'types' => [7,],'moves' => [1,7,],'unlocked_moves' => ['15' => [13,],],],
@@ -216,13 +119,113 @@ class GameCornerController extends Controller
             '150' => ['var_27' => 100,'name' => "Mewtwo",'var_26' => 220,'var_16' => 106,'var_30' => 110,'var_23' => 90,'var_28' => 154,'var_24' => 90,'speed' => 130,'types' => [17,],'moves' => [20,49,197,],'unlocked_moves' => ['64' => [148,],'100' => [424,],'71' => [350,],'8' => [69,],'43' => [196,],'15' => [286,],'79' => [115,],'50' => [337,],'22' => [210,],'86' => [129,],'57' => [259,],'58' => [258,],'29' => [117,],'93' => [417,],],],
             '151' => ['var_27' => 5000,'name' => "Mew",'var_26' => 64,'var_16' => 100,'var_30' => 100,'var_23' => 100,'var_28' => 100,'var_24' => 100,'speed' => 100,'types' => [17,],'moves' => [48,57,56,],'unlocked_moves' => ['80' => [262,],'50' => [296,],'20' => [58,],'100' => [417,],'70' => [350,],'40' => [197,],'10' => [59,],'90' => [191,],'60' => [337,],'30' => [148,],],]];
 
-        $pNum = array_rand($pokemons);
+    
+    private function getUniquePokemonId(HasMany $pokemon) {
+        $valid = false;
+        $tmp = -1;
 
-        Auth::user()->casino_coins = Auth::user()->casino_coins - $pokemon->cost;
+        while (!$valid) {
+            $tmp = mt_rand(1, 2147483647);
+            $valid = true;
+
+            foreach ($pokemon->select('pId')->lazy() as $poke) {
+                if ($tmp == $poke->pId) {
+                    $valid = false;
+                    break;
+                }
+            }
+        }
+
+        return $tmp;
+    }
+    
+    public function playSlots()
+    {
+        $prize = 0;
+        $user = Auth::user();
+        if ($user->casino_coins < 250) {
+            return redirect()->back()->with(['return' => 250 - Auth::user()->casino_coins]);
+        } 
+
+        for ($i = 0; $i < 50; $i++) {
+
+            $prize += mt_rand(1, 125);
+        }   
+
+        $user->casino_coins = $user->casino_coins + $prize - 250;
+        $user->last_used_gc = Carbon::now('UTC');
+        $user->save();
+
+        return redirect()->back()->with([
+            'prize' => $prize
+        ]);
+    }
+
+    public function buyPokemon($id)
+    {       
+        $pokemon = GameCornerPokemon::find($id);
+        $user = Auth::user();
+        if ($user->casino_coins < $pokemon->cost) {
+            return redirect()->back()->with(['return' => $pokemon->cost - $user->casino_coins]);
+        } 
+
+        $user->casino_coins = $user->casino_coins - $pokemon->cost;
+
+        if ($pokemon->pNum == 0){
+            $this->buyRandomShadowPokemon($pokemon);
+        }
+        else
+        {
+            $pokemon = new Pokemon([
+                'save_id' => $user->selectedSave()->id,
+                'pId' => $this->getUniquePokemonId(Save::whereId($user->selectedSave()->id)->first()->pokemon()),
+                'pNum' => $pokemon->pNum,
+                'nickname' => $pokemon->nickname,
+                'exp' => $pokemon->exp,
+                'lvl' => $pokemon->lvl,
+                'm1' => $pokemon->m1,
+                'm2' => $pokemon->m2,
+                'm3' => $pokemon->m3,
+                'm4' => $pokemon->m4,
+                'ability' => $pokemon->ability,
+                'mSel' => $pokemon->mSel,
+                'targetType' => $pokemon->targetType,
+                'tag' => 'n',
+                'item' => 0,
+                'owner' => 0,
+                'pos' => 1,
+                'shiny' => (mt_rand(1, 100) <= 1) ? 1 : $pokemon->shiny,   
+            ]);
+        }
+
+
+            
+        $user->save();
+        
+        $pokemon->save();
+
+        return redirect()->back()->with(['id' => $pokemon->id, 'nickname' => $pokemon->nickname]);
+    }
+
+    public function buyRandomShadowPokemon($pokemon)
+    {
+        if (empty($pokemon)) {
+            return redirect()->back();
+        }
+
+        $user = Auth::user();
+
+        if ($user->casino_coins < $pokemon->cost) {
+            return redirect()->back()->with(['return' => $pokemon->cost - $user->casino_coins]);
+        } 
+
+        $pNum = array_rand(self::$pokemons);
+
+        $user->casino_coins = $user->casino_coins - $pokemon->cost;
 
         $pokemon = new Pokemon([
-            'save_id' => Auth::user()->selectedSave()->id,
-            'pId' => $this->getUniquePokemonId(Save::whereId(Auth::user()->selectedSave()->id)->first()->pokemon()),
+            'save_id' => $user->selectedSave()->id,
+            'pId' => $this->getUniquePokemonId(Save::whereId($user->selectedSave()->id)->first()->pokemon()),
             'pNum' => $pNum,
             'nickname' => $pokemon[$pNum]['name'],
             'exp' => 0,
@@ -241,7 +244,7 @@ class GameCornerController extends Controller
             'shiny' => 2,   
         ]);
 
-        Auth::user()->save();
+        $user->save();
         
         $pokemon->save();
 
