@@ -372,14 +372,21 @@ Route::get('/get-gift/{button}', [GiftController::class, 'GetGift'])->name('get-
 // Game Corner
 
 Route::get('/games/ptd/gameCorner.php', function () {  
-    return view('gameCorner', ['save' => Auth::user()->selectedSave(), 'user' => Auth::user(), 'dateCheck' => Carbon::parse(Auth::user()->last_used_gc)->addDay()->isBefore(Carbon::now('UTC')), 'pokemon' => GameCornerPokemon::all()]);
+    $user = Auth::user();
+    $dateCheck = Carbon::parse(Auth::user()->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'));
+    if ($user->last_used_gc == null){
+        $user->last_used_gc = Carbon::now('UTC')->subDay();
+        $user->save();
+    }
+
+    return view('gameCorner', ['save' => Auth::user()->selectedSave(), 'user' => Auth::user(), 'dateCheck' => $dateCheck, 'pokemon' => GameCornerPokemon::all()]);
 })->name('gamecorner')->middleware('auth');
 
-Route::get('/play-slots', [GameCornerController::class, 'PlaySlots'])->name('play-slots')->middleware('auth');
+Route::get('/play-slots', [GameCornerController::class, 'playSlots'])->name('play-slots')->middleware('auth');
 
-Route::get('/buy-pokemon/{id}', [GameCornerController::class, 'BuyPokemon'])->name('buy-pokemon')->middleware('auth');
+Route::get('/buy-pokemon/{id}', [GameCornerController::class, 'buyPokemon'])->name('buy-pokemon')->middleware('auth');
 
-Route::get('/buy-shadow-pokemon', [GameCornerController::class, 'BuyRandomShadowPokemon'])->name('buy-shadow-pokemon')->middleware('auth');
+Route::get('/buy-shadow-pokemon', [GameCornerController::class, 'buyRandomShadowPokemon'])->name('buy-shadow-pokemon')->middleware('auth');
 
 // SWF Routes
 
