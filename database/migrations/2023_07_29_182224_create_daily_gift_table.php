@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dailygift', function (Blueprint $table) {
+        Schema::create('daily_gift', function (Blueprint $table) {
             $table->id();
             $table->enum('button', [1, 2 ,3]);
             $table->integer('prize', false, true);
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dailygift');
+        Schema::dropIfExists('daily_gift');
     }
 };
