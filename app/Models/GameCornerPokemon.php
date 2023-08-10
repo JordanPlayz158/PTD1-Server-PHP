@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class GameCornerPokemon extends Model
 {
     use HasFactory;
-    protected $table = 'gamecorner_pokemon';
+    protected $table = 'game_corner_pokemon';
     protected $fillable = [
         'pNum',
         'nickname',
