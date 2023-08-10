@@ -30,7 +30,7 @@
                             @if (session('prize'))
                                     <p>Congratulations! You got {{ session('prize') }}!</p>
                             @else  
-                                @if ($dateCheck || $user->last_used_dg == null)
+                                @if ($dateCheck)
 
                                     <p><a href="{{ route('get-gift', ['button' => 1]) }}">Buy a Common Daily Gift for 1.000 money</a></p>
 

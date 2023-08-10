@@ -364,7 +364,13 @@ Route::post('/games/ptd/createGiveaway.php', [GiveawayController::class, 'create
 // Daily Gift
 
 Route::get('/games/ptd/dailyGift.php', function () {
-    return view('dailyGift', ['save' => Auth::user()->selectedSave(), 'user' => Auth::user(), 'dateCheck' => Carbon::parse(Auth::user()->last_used_dg)->addDay()->isBefore(Carbon::now('UTC'))]);
+    $user = Auth::user();
+    $dateCheck = Carbon::parse(Auth::user()->last_used_dg)->addDay()->isBefore(Carbon::now('UTC'));
+    if ($user->last_used_dg == null){
+        $user->last_used_dg = Carbon::now('UTC')->subDay();
+        $user->save();
+    }
+    return view('dailyGift', ['save' => Auth::user()->selectedSave(), 'user' => Auth::user(), 'dateCheck' => $dateCheck]);
 })->name('dailygift')->middleware('auth');
 
 Route::get('/get-gift/{button}', [GiftController::class, 'GetGift'])->name('get-gift')->middleware('auth');

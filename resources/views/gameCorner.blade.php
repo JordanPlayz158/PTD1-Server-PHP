@@ -37,7 +37,7 @@
                                     <br>
                                     <p>You are missing {{ number_format(session('return'), 0, ',', '.') }} Casino Coins.
                                 @else  
-                                    @if ($dateCheck || $user->last_used_gc == null)
+                                    @if ($dateCheck)
                                         <br>
                                         <a href="{{ route('play-slots') }}">Play Slot Machine 1</a><br><br>
                                         <a href="{{ route('play-slots') }}">Play Slot Machine 2</a><br><br>
