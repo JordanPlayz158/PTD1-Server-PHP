@@ -13,8 +13,8 @@ class GameCornerPokemonSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('gamecorner_pokemon')->insert([
-            'pNum' => 0,
+        DB::table('game_corner_pokemon')->insert([
+            'pNum' => 0,    
             'nickname' => 'Random Shadow Pokemon',
             'exp' => 0,
             'lvl' => 1,
@@ -29,7 +29,7 @@ class GameCornerPokemonSeeder extends Seeder
             'cost' => 300000,
         ]);
 
-        DB::table('gamecorner_pokemon')->insert([
+        DB::table('game_corner_pokemon')->insert([
             'pNum' => 63,
             'nickname' => 'Abra',
             'exp' => 0,
@@ -45,7 +45,7 @@ class GameCornerPokemonSeeder extends Seeder
             'cost' => 120,
         ]);
 
-        DB::table('gamecorner_pokemon')->insert([
+        DB::table('game_corner_pokemon')->insert([
             'pNum' => 35,
             'nickname' => 'Clefairy',
             'exp' => 0,
@@ -61,7 +61,7 @@ class GameCornerPokemonSeeder extends Seeder
             'cost' => 500,
         ]);
 
-        DB::table('gamecorner_pokemon')->insert([
+        DB::table('game_corner_pokemon')->insert([
             'pNum' => 127,
             'nickname' => 'Pinsir',
             'exp' => 0,
@@ -77,7 +77,7 @@ class GameCornerPokemonSeeder extends Seeder
             'cost' => 2500,
         ]);
 
-        DB::table('gamecorner_pokemon')->insert([
+        DB::table('game_corner_pokemon')->insert([
             'pNum' => 147,
             'nickname' => 'Dratini',
             'exp' => 0,
@@ -93,7 +93,7 @@ class GameCornerPokemonSeeder extends Seeder
             'cost' => 2800,
         ]);
 
-        DB::table('gamecorner_pokemon')->insert([
+        DB::table('game_corner_pokemon')->insert([
             'pNum' => 123,
             'nickname' => 'Scyther',
             'exp' => 0,
@@ -109,7 +109,7 @@ class GameCornerPokemonSeeder extends Seeder
             'cost' => 5500,
         ]);
 
-        DB::table('gamecorner_pokemon')->insert([
+        DB::table('game_corner_pokemon')->insert([
             'pNum' => 137,
             'nickname' => 'Porygon',
             'exp' => 0,
@@ -126,7 +126,7 @@ class GameCornerPokemonSeeder extends Seeder
         ]);
 
 
-        DB::table('gamecorner_pokemon')->insert([
+        DB::table('game_corner_pokemon')->insert([
             'pNum' => 63,
             'nickname' => 'Abra',
             'exp' => 0,
@@ -142,7 +142,7 @@ class GameCornerPokemonSeeder extends Seeder
             'cost' => 9000,
         ]);
 
-        DB::table('gamecorner_pokemon')->insert([
+        DB::table('game_corner_pokemon')->insert([
             'pNum' => 35,
             'nickname' => 'Clefairy',
             'exp' => 0,
@@ -158,7 +158,7 @@ class GameCornerPokemonSeeder extends Seeder
             'cost' => 15000,
         ]);
 
-        DB::table('gamecorner_pokemon')->insert([
+        DB::table('game_corner_pokemon')->insert([
             'pNum' => 127,
             'nickname' => 'Pinsir',
             'exp' => 0,
@@ -174,7 +174,7 @@ class GameCornerPokemonSeeder extends Seeder
             'cost' => 50000,
         ]);
 
-        DB::table('gamecorner_pokemon')->insert([
+        DB::table('game_corner_pokemon')->insert([
             'pNum' => 147,
             'nickname' => 'Dratini',
             'exp' => 0,
@@ -190,7 +190,7 @@ class GameCornerPokemonSeeder extends Seeder
             'cost' => 100000,
         ]);
 
-        DB::table('gamecorner_pokemon')->insert([
+        DB::table('game_corner_pokemon')->insert([
             'pNum' => 123,
             'nickname' => 'Scyther',
             'exp' => 0,
@@ -206,7 +206,7 @@ class GameCornerPokemonSeeder extends Seeder
             'cost' => 120000,
         ]);
 
-        DB::table('gamecorner_pokemon')->insert([
+        DB::table('game_corner_pokemon')->insert([
             'pNum' => 137,
             'nickname' => 'Porygon',
             'exp' => 0,
