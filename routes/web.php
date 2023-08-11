@@ -367,7 +367,7 @@ Route::get('/games/ptd/dailyGift.php', function () {
     $user = Auth::user();
     $dateCheck = Carbon::parse(Auth::user()->last_used_dg)->addDay()->isBefore(Carbon::now('UTC'));
     if ($user->last_used_dg == null){
-        $user->last_used_dg = Carbon::now('UTC')->subDay();
+        $user->last_used_dg = Carbon::now('UTC')->subDays(2);
         $user->save();
     }
     return view('dailyGift', ['save' => Auth::user()->selectedSave(), 'user' => Auth::user(), 'dateCheck' => $dateCheck]);
@@ -381,7 +381,7 @@ Route::get('/games/ptd/gameCorner.php', function () {
     $user = Auth::user();
     $dateCheck = Carbon::parse(Auth::user()->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'));
     if ($user->last_used_gc == null){
-        $user->last_used_gc = Carbon::now('UTC')->subDay();
+        $user->last_used_gc = Carbon::now('UTC')->subDays(2);
         $user->save();
     }
 
