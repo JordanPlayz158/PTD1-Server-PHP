@@ -37,8 +37,9 @@ class GiftController extends Controller
     public function getGift($button)
     {
         $user = Auth::user();
+        $dateCheck = Carbon::parse($user->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'));
 
-        if (Carbon::parse($user->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'))) {
+        if (!$dateCheck){
             return redirect()->back();
         }
         

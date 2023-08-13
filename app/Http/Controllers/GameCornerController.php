@@ -143,8 +143,14 @@ class GameCornerController extends Controller
     {
         $prize = 0;
         $user = Auth::user();
+        $dateCheck = Carbon::parse($user->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'));
+
+        if (!$dateCheck){
+            return redirect()->back();
+        }
+
         if ($user->casino_coins < 250) {
-            return redirect()->back()->with(['return' => 250 - Auth::user()->casino_coins]);
+            return redirect()->back()->with(['return' => 250 - $user->casino_coins]);
         } 
 
         for ($i = 0; $i < 50; $i++) {
@@ -163,8 +169,9 @@ class GameCornerController extends Controller
 
     public function buyPokemon($id)
     {       
-        $pokemon = GameCornerPokemon::find($id);
         $user = Auth::user();
+        $pokemon = GameCornerPokemon::find($id);
+
         if ($user->casino_coins < $pokemon->cost) {
             return redirect()->back()->with(['return' => $pokemon->cost - $user->casino_coins]);
         } 
@@ -172,7 +179,7 @@ class GameCornerController extends Controller
         $user->casino_coins = $user->casino_coins - $pokemon->cost;
 
         if ($pokemon->pNum == 0){
-            $this->buyRandomShadowPokemon($pokemon);
+            $pokemon = $this->buyRandomShadowPokemon($pokemon);
         }
         else
         {
@@ -197,14 +204,12 @@ class GameCornerController extends Controller
                 'shiny' => (mt_rand(1, 100) <= 1) ? 1 : $pokemon->shiny,   
             ]);
         }
-
-
             
         $user->save();
         
         $pokemon->save();
 
-        return redirect()->back()->with(['id' => $pokemon->id, 'nickname' => $pokemon->nickname]);
+        return redirect()->back()->with(['game-corner-id' => $pokemon->id, 'nickname' => $pokemon->nickname]);
     }
 
     public function buyRandomShadowPokemon($pokemon)
@@ -221,13 +226,11 @@ class GameCornerController extends Controller
 
         $pNum = array_rand(self::$pokemons);
 
-        $user->casino_coins = $user->casino_coins - $pokemon->cost;
-
         $pokemon = new Pokemon([
             'save_id' => $user->selectedSave()->id,
             'pId' => $this->getUniquePokemonId(Save::whereId($user->selectedSave()->id)->first()->pokemon()),
             'pNum' => $pNum,
-            'nickname' => $pokemon[$pNum]['name'],
+            'nickname' => self::$pokemons[$pNum]['name'],
             'exp' => 0,
             'lvl' => 1,
             'm1' => 368,
@@ -248,6 +251,6 @@ class GameCornerController extends Controller
         
         $pokemon->save();
 
-        return redirect()->back()->with(['id' => $pokemon->id, 'nickname' => $pokemon->nickname]);
+        return $pokemon;
     }
 }
