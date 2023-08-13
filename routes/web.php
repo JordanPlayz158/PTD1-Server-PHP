@@ -379,13 +379,13 @@ Route::get('/get-gift/{button}', [GiftController::class, 'GetGift'])->name('get-
 
 Route::get('/games/ptd/gameCorner.php', function () {  
     $user = Auth::user();
-    $dateCheck = Carbon::parse(Auth::user()->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'));
+    $dateCheck = Carbon::parse($user->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'));
     if ($user->last_used_gc == null){
         $user->last_used_gc = Carbon::now('UTC')->subDays(2);
         $user->save();
     }
 
-    return view('gameCorner', ['save' => Auth::user()->selectedSave(), 'user' => Auth::user(), 'dateCheck' => $dateCheck, 'pokemon' => GameCornerPokemon::all()]);
+    return view('gameCorner', ['save' => Auth::user()->selectedSave(), 'user' => Auth::user(), 'dateCheck' => $dateCheck, 'pokemons' => GameCornerPokemon::all()]);
 })->name('gamecorner')->middleware('auth');
 
 Route::get('/play-slots', [GameCornerController::class, 'playSlots'])->name('play-slots')->middleware('auth');
