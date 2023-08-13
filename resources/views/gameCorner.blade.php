@@ -24,12 +24,12 @@
                     <div class="block">
                         <div class="title"><p>Game Corner - <a href="/games/ptd/account.php">Go Back</a></p></div>
                         <div>
-                            @if ($save->advanced >=  3 && session('id') == null)
+                            @if ($save->advanced >=  3 && session('game-corner-id') == null)
                                 <p>Welcome to the Game Corner! Now that you are part of Team Rocket you can access the fun of the slots and play to get Team Rocket Exclusive pokemon!</p>
                                 
                                 <br>
 
-                                <p>You have {{ number_format($user->casino_coins, 0, ',', '.') }} Casino Coins. All Slot Machines cost 5 Casino Coins and you can play up to 50 times a day. One click will make equal to 50 plays.</p>
+                                <p>You have {{ number_format($user->casino_coins, 0, ',', '.') }} Casino Coins. All Slot Machines cost 5 Casino Coins and you can play up to 50 times a day. One click will make equal to 50 plays and you can only play once a day.</p>
                                 @if (session('prize'))
                                     <br>
                                     <p>Congratulations! You won {{ number_format(session('prize'), 0, ',', '.') }} Casino Coins!</p>
@@ -66,24 +66,22 @@
                                     </div>
                                 </div>
                                 <div id="pokemon">
-                                    @foreach($pokemon as $poke)
+                                    @foreach($pokemons as $poke)
                                         <x-pokemon :id="$poke->id" :cost="$poke->cost" type="GAMECORNER"/>
                                     @endforeach
                                 </div>
-                            @elseif (session('id'))
+                            @elseif (session('game-corner-id'))
                                     <p>Welcome to the Game Corner! Now that you are part of Team Rocket you can access the fun of the slots and play to get Team Rocket Exclusive pokemon!</p>
-                                
                                     <br>
 
                                     <p>You have {{ number_format($user->casino_coins, 0, ',', '.') }} Casino Coins. All Slot Machines cost 5 Casino Coins and you can play up to 50 times a day. One click will make equal to 50 plays.</p>
                             </div>
                         </div>
-
                                     <div class="block">
                                         <strong>Congratulations! Your prize is the following:</strong>
                                     </div>
                                     <div id="pokemon">
-                                        <x-pokemon :id="session('id')"/>
+                                        <x-pokemon :id="session('game-corner-id')"/>
                                     </div>
                             @else
                                 <p>Beat Lavender Town and become a part of Team Rocket to use the Game Corner.
