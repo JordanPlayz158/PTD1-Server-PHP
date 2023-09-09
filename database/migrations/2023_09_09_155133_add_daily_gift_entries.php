@@ -1,17 +1,16 @@
 <?php
 
-namespace Database\Seeders;
-
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-class DailyGiftSeeder extends Seeder
+return new class extends Migration
 {
     /**
-     * Run the database seeds.
+     * Run the migrations.
      */
-    public function run(): void
+    public function up(): void
     {
         // BUTTON 1 -------------------------------
         DB::table('daily_gift')->insert([
@@ -142,4 +141,29 @@ class DailyGiftSeeder extends Seeder
             'percentage' => 0.0001
         ]);
     }
-}
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        DB::table('daily_gift')->delete(1);
+        DB::table('daily_gift')->delete(2);
+        DB::table('daily_gift')->delete(3);
+        DB::table('daily_gift')->delete(4);
+        DB::table('daily_gift')->delete(5);
+        DB::table('daily_gift')->delete(6);
+        DB::table('daily_gift')->delete(7);
+        DB::table('daily_gift')->delete(8);
+        DB::table('daily_gift')->delete(9);
+        DB::table('daily_gift')->delete(10);
+        DB::table('daily_gift')->delete(11);
+        DB::table('daily_gift')->delete(12);
+        DB::table('daily_gift')->delete(13);
+        DB::table('daily_gift')->delete(14);
+        DB::table('daily_gift')->delete(15);
+        DB::table('daily_gift')->delete(16);
+        DB::table('daily_gift')->delete(17);
+        DB::table('daily_gift')->delete(18);
+    }
+};

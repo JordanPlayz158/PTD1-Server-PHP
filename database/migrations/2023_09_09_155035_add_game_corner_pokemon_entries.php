@@ -1,20 +1,19 @@
 <?php
 
-namespace Database\Seeders;
-
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-class GameCornerPokemonSeeder extends Seeder
+return new class extends Migration
 {
     /**
-     * Run the database seeds.
+     * Run the migrations.
      */
-    public function run(): void
+    public function up(): void
     {
         DB::table('game_corner_pokemon')->insert([
-            'pNum' => 0,    
+            'pNum' => 0,
             'nickname' => 'Random Shadow Pokemon',
             'exp' => 0,
             'lvl' => 1,
@@ -222,4 +221,24 @@ class GameCornerPokemonSeeder extends Seeder
             'cost' => 150000,
         ]);
     }
-}
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        DB::table('game_corner_pokemon')->delete(1);
+        DB::table('game_corner_pokemon')->delete(2);
+        DB::table('game_corner_pokemon')->delete(3);
+        DB::table('game_corner_pokemon')->delete(4);
+        DB::table('game_corner_pokemon')->delete(5);
+        DB::table('game_corner_pokemon')->delete(6);
+        DB::table('game_corner_pokemon')->delete(7);
+        DB::table('game_corner_pokemon')->delete(8);
+        DB::table('game_corner_pokemon')->delete(9);
+        DB::table('game_corner_pokemon')->delete(10);
+        DB::table('game_corner_pokemon')->delete(11);
+        DB::table('game_corner_pokemon')->delete(12);
+        DB::table('game_corner_pokemon')->delete(13);
+    }
+};
