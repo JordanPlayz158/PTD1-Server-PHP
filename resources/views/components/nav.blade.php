@@ -15,14 +15,14 @@
             </li>
             <li><a href="/games/ptd/adoption.php">Pokemon Adoption</a></li>
             <li><a href="/games/ptd/avatarStore.php">Avatar Store</a></li>
-            <li><a href="/games/ptd/dailyCode.php">Daily Gift</a></li>
+            <li><a href="/games/ptd/dailyGift.php">Daily Gift</a></li>
             <li class="expanded"><a href="/games/ptd/inventory.php">Inventory</a>
                 <ul class="menu">
                     <li><a href="/games/ptd/inventory_items.php">Items</a></li>
                     <li><a href="/games/ptd/inventory_avatar.php">Avatars</a></li>
                 </ul>
             </li>
-            <li><a href="/games/ptd/gameCorner_test.php">Game Corner</a></li>
+            <li><a href="/games/ptd/gameCorner.php">Game Corner</a></li>
             <li class="expanded"><a href="/games/ptd/giveaways.php">Giveaway Center</a>
                 <ul class="menu">
                     <li><a href="/games/ptd/createGiveaway.php">Create Giveaway</a></li>

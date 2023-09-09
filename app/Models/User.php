@@ -64,6 +64,8 @@ class User extends Authenticatable implements MustVerifyEmail {
         'name',
         'email',
         'password',
+        'casino_coins',
+        'last_used_dg'
     ];
 
     /**

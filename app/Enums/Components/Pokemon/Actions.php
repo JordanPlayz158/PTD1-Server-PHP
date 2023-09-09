@@ -8,10 +8,12 @@ use BenSampo\Enum\Enum;
  * @method static static NONE()
  * @method static static STANDARD()
  * @method static static TRADE()
+ * @method static static GAMECORNER()
  */
 final class Actions extends Enum
 {
     public const NONE = 0;
     public const STANDARD = 1;
     public const TRADE = 2;
+    public const GAMECORNER = 3;
 }

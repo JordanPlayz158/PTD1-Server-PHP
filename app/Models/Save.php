@@ -72,7 +72,8 @@ class Save extends Model {
      * @var array<int, string>
      */
     protected $fillable = [
-        'num'
+        'num',
+        'money'
     ];
 
     /**

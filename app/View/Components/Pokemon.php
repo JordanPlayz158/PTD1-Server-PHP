@@ -32,6 +32,13 @@ class Pokemon extends Component
      */
     public function render()
     {
+        if ($this->type == \App\Enums\Components\Pokemon\Actions::GAMECORNER())
+        {   
+            $pokemon = \App\Models\GameCornerPokemon::whereId($this->id)->get()->first();
+            $pokemon->tag = 'n';
+            return view('components.pokemon', ['pokemon' => $pokemon, 'type' => $this->type->value]);
+        }
+        
         return view('components.pokemon', ['pokemon' => \App\Models\Pokemon::whereId($this->id)->get()->first(), 'type' => $this->type->value]);
     }
 

@@ -3,9 +3,12 @@
 use App\Http\Controllers\Api\GiveawayController;
 use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\GameCornerController;
+use App\Http\Controllers\GiftController;
 use App\Http\Controllers\Web\AchievementController;
 use App\Http\Controllers\Web\AdminController;
 use App\Http\Controllers\Web\SWFController;
+use App\Models\GameCornerPokemon;
 use App\Models\Giveaway;
 use App\Models\Pokemon;
 use App\Models\Trade;
@@ -358,9 +361,38 @@ Route::get('/games/ptd/createGiveaway.php', function (Request $request) {
 
 Route::post('/games/ptd/createGiveaway.php', [GiveawayController::class, 'create'])->middleware('auth');
 
-// Mystery Gift
-Route::get('/games/ptd/dailyCode.php', function () {return redirect('/p/mystery-gift.html');});
+// Daily Gift
 
+Route::get('/games/ptd/dailyGift.php', function () {
+    $user = Auth::user();
+    $dateCheck = Carbon::parse(Auth::user()->last_used_dg)->addDay()->isBefore(Carbon::now('UTC'));
+    if ($user->last_used_dg == null){
+        $user->last_used_dg = Carbon::now('UTC')->subDays(2);
+        $user->save();
+    }
+    return view('dailyGift', ['save' => Auth::user()->selectedSave(), 'user' => Auth::user(), 'dateCheck' => $dateCheck]);
+})->name('dailygift')->middleware('auth');
+
+Route::get('/get-gift/{button}', [GiftController::class, 'GetGift'])->name('get-gift')->middleware('auth');
+
+// Game Corner
+
+Route::get('/games/ptd/gameCorner.php', function () {  
+    $user = Auth::user();
+    $dateCheck = Carbon::parse($user->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'));
+    if ($user->last_used_gc == null){
+        $user->last_used_gc = Carbon::now('UTC')->subDays(2);
+        $user->save();
+    }
+
+    return view('gameCorner', ['save' => Auth::user()->selectedSave(), 'user' => Auth::user(), 'dateCheck' => $dateCheck, 'pokemons' => GameCornerPokemon::all()]);
+})->name('gamecorner')->middleware('auth');
+
+Route::get('/play-slots', [GameCornerController::class, 'playSlots'])->name('play-slots')->middleware('auth');
+
+Route::get('/buy-pokemon/{id}', [GameCornerController::class, 'buyPokemon'])->name('buy-pokemon')->middleware('auth');
+
+Route::get('/buy-shadow-pokemon', [GameCornerController::class, 'buyRandomShadowPokemon'])->name('buy-shadow-pokemon')->middleware('auth');
 
 // SWF Routes
 

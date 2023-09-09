@@ -48,6 +48,8 @@
             <x-pokemon.standard :id="$pokemon->id"/>
         @elseif($type == \App\Enums\Components\Pokemon\Actions::TRADE())
             <x-pokemon.trade :id="$pokemon->id"/>
+        @elseif($type == \App\Enums\Components\Pokemon\Actions::GAMECORNER())
+            <x-pokemon.gamecorner :id="$pokemon->id" :cost="$pokemon->cost"/>
         @endif
     </div>
 </div>
