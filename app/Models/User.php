@@ -52,7 +52,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRoleId($value)
  * @mixin \Eloquent
  */
-class User extends Authenticatable implements MustVerifyEmail {
+class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
