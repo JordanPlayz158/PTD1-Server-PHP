@@ -3,9 +3,6 @@
 <head>
     <title>Admin Control Panel</title>
     <meta charset="UTF-8">
-    <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
-    <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
-    <link rel='stylesheet' type='text/css' href="/_static/css/style.css">
     <script src="/_static/js/js.cookie.js"></script>
     <script>
         function toggleXDebug() {
@@ -76,6 +73,25 @@
                                     <div>
                                         <h4>Enable XDEBUG:</h4>
                                         <button onclick="toggleXDebug()">Toggle</button>
+                                    </div>
+                                </th>
+                                <th>
+                                    <div>
+                                        <h4>Create SYSTEM notification:</h4>
+                                        <form method="post">
+                                            <label><b>Title:</b>
+                                                <input type="text" name="title">
+                                            </label>
+                                            <br>
+                                            <label><b>Body:</b>
+                                                <input type="text" name="body" placeholder="Optional">
+                                            </label>
+                                            <br>
+                                            <input type="hidden" name="action" value="sendNotification">
+                                            @csrf
+                                            <input id="submitButton" value="Send notification!" type="submit"
+                                                   class="login_btn">
+                                        </form>
                                     </div>
                                 </th>
                             </tr>
