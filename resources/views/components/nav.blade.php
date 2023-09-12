@@ -1,18 +1,11 @@
 <!-- Navbar -->
 <div id="nav">
-    <div id="suckerfish">
+    <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css?time={{ env('LAST_RESOURCE_EDIT_TIMESTAMP') }}'>
+    <div id="suckerfish" class="suckerfish">
         <ul class="menu">
             <li><a href="/">Blog</a></li>
             <!-- Change to proper check pokemon screen once done -->
             <li><a href="/games/ptd/createTrade.php">Home</a></li>
-            <li class="expanded"><a href="/games/ptd/account.php">Account</a>
-                <ul class="menu">
-                    <li><a href="/games/ptd/changeNickname.html">Change Nickname</a></li>
-                    <li><a href="/games/ptd/changeAvatar.html">Change Avatar</a></li>
-                    <li><a href="/games/ptd/reset_password_form.php">Change Password</a></li>
-                    <li><a href="/apiKeys">API Keys</a></li>
-                </ul>
-            </li>
             <li><a href="/games/ptd/adoption.php">Pokemon Adoption</a></li>
             <li><a href="/games/ptd/avatarStore.php">Avatar Store</a></li>
             <li><a href="/games/ptd/dailyGift.php">Daily Gift</a></li>
@@ -49,4 +42,27 @@
             <li><a href="/logout">Logout</a></li>
         </ul>
     </div>
+    <?php
+    $user = Auth::user();
+    ?>
+    @if(isset($user))
+        <div class="suckerfish" style="float: right">
+            <ul class="menu">
+                <li class="expanded">
+                    <a href="/games/ptd/account.php" style="text-align: right">{{ $user->name }}
+                        @if($user->notifications_count > 0)
+                            <span class="badge">{{ $user->notifications_count }}</span>
+                        @endif
+                        <ul class="menu rightToLeft">
+                            <li><a href="/notifications">Notifications</a></li>
+                            <li><a href="/games/ptd/changeNickname.html">Change Nickname</a></li>
+                            <li><a href="/games/ptd/changeAvatar.html">Change Avatar</a></li>
+                            <li><a href="/games/ptd/reset_password_form.php">Change Password</a></li>
+                            <li><a href="/apiKeys">API Keys</a></li>
+                        </ul>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    @endif
 </div>

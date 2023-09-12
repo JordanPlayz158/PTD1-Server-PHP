@@ -3,9 +3,6 @@
 <head>
     <title>Change Account Email</title>
     <meta charset="UTF-8">
-    <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
-    <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
-    <link rel='stylesheet' type='text/css' href="/_static/css/style.css">
     <!--<script src="/_static/js/base.js"></script>-->
     <script src="/_static/js/utils.js"></script>
     <script>

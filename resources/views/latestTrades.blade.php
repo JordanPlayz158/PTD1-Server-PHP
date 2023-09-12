@@ -3,9 +3,6 @@
 <head>
     <title>Pokémon Center - Latest Trades</title>
     <meta charset="UTF-8">
-    <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
-    <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
-    <link rel='stylesheet' type='text/css' href="/_static/css/style.css">
     <style>
         .pagination {
             display: inline-block;

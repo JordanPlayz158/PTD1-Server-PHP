@@ -3,10 +3,6 @@
 <head>
     <title>Pokémon Center - Offer Confirmation</title>
     <meta charset="UTF-8">
-    <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
-    <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
-    <link rel='stylesheet' type='text/css' href="/_static/css/style.css">
-    <script type='text/javascript' src='/_static/js/tracking.js'></script>
 </head>
 <body>
 @include('components.header')
