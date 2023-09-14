@@ -32,17 +32,17 @@ class GiftController extends Controller
             }
         }
     }
-    
+
 
     public function getGift($button)
     {
         $user = Auth::user();
-        $dateCheck = Carbon::parse($user->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'));
+        $dateCheck = Carbon::parse($user->last_used_dg)->addDay()->isBefore(Carbon::now('UTC'));
 
         if (!$dateCheck){
             return redirect()->back();
         }
-        
+
         $gift  = $this->selectPrize($button);
 
         if (empty($gift)) {
@@ -74,7 +74,7 @@ class GiftController extends Controller
 
             $user->last_used_dg = Carbon::now('UTC');
             $user->save();
-            
+
             return redirect()->back()->with([
                 'prize' => "$gift->prize Casino Coins",
             ]);
