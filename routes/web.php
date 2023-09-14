@@ -365,11 +365,11 @@ Route::post('/games/ptd/createGiveaway.php', [GiveawayController::class, 'create
 
 Route::get('/games/ptd/dailyGift.php', function () {
     $user = Auth::user();
-    $dateCheck = Carbon::parse(Auth::user()->last_used_dg)->addDay()->isBefore(Carbon::now('UTC'));
     if ($user->last_used_dg == null){
         $user->last_used_dg = Carbon::now('UTC')->subDays(2);
         $user->save();
     }
+    $dateCheck = Carbon::parse($user->last_used_dg)->addDay()->isBefore(Carbon::now('UTC'));
     return view('dailyGift', ['save' => Auth::user()->selectedSave(), 'user' => Auth::user(), 'dateCheck' => $dateCheck]);
 })->name('dailygift')->middleware('auth');
 
@@ -377,13 +377,13 @@ Route::get('/get-gift/{button}', [GiftController::class, 'GetGift'])->name('get-
 
 // Game Corner
 
-Route::get('/games/ptd/gameCorner.php', function () {  
+Route::get('/games/ptd/gameCorner.php', function () {
     $user = Auth::user();
-    $dateCheck = Carbon::parse($user->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'));
     if ($user->last_used_gc == null){
         $user->last_used_gc = Carbon::now('UTC')->subDays(2);
         $user->save();
     }
+    $dateCheck = Carbon::parse($user->last_used_gc)->addDay()->isBefore(Carbon::now('UTC'));
 
     return view('gameCorner', ['save' => Auth::user()->selectedSave(), 'user' => Auth::user(), 'dateCheck' => $dateCheck, 'pokemons' => GameCornerPokemon::all()]);
 })->name('gamecorner')->middleware('auth');
