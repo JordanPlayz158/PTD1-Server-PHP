@@ -36,7 +36,7 @@
             <td id="main">
                 <div class="block">
                     <div class="title"><p>My Giveaways - <a
-                                href="https://ptd1.jordanplayz158.xyz/games/ptd/checkPokemon.php">Go Back</a></p></div>
+                                href="{{ url()->previous() }}">Go Back</a></p></div>
                     <div class="content">
                         <p>Here is a list of my giveaways.</p>
                     </div>

@@ -15,7 +15,7 @@
             <td id="main">
                 <div class="block">
                     <div class="title"><p>Create Trade - <a
-                                href="/games/ptd/checkPokemon.php?save=0">Go Back</a></p></div>
+                                href="{{ url()->previous() }}">Go Back</a></p></div>
                     <div class="content">
                         <p>Here is a list of your Pokémon from this profile, click on Trade to create a new Trade.</p>
                         <p>NOTE: This will remove the Pokémon from your profile. To get him back to your profile go back

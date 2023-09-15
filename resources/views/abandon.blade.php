@@ -21,7 +21,7 @@
             <td id="main">
                 <div class="block">
                     <div class="title"><p>Pokemon - <a
-                                href="/games/ptd/createTrade.php">Go Back</a></p></div>
+                                href="{{ url()->previous() }}">Go Back</a></p></div>
                     <div class="content">
                         <p>You wish to abandon this Pokémon up for trade?</p>
                     </div>

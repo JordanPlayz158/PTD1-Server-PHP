@@ -50,7 +50,7 @@
             <td id="main">
                 <div class="block">
                     <div class="title"><p>Create Giveaway - <a
-                                href="/games/ptd/checkPokemon.php?save=0">Go Back</a></p></div>
+                                href="{{ url()->previous() }}">Go Back</a></p></div>
                     <div class="content">
                         <p>Here is a list of your Pokémon from this profile, click on Create Giveaway to create a new Giveaway.</p>
                         <p>NOTE: This will remove the Pokémon from your profile. To get them back to your profile go

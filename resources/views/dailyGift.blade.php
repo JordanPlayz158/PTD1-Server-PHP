@@ -22,14 +22,14 @@
                 </td>
                 <td id="main">
                     <div class="block">
-                        <div class="title"><p>Daily Gift - <a href="/games/ptd/account.php">Go Back</a></p></div>
+                        <div class="title"><p>Daily Gift - <a href="{{ url()->previous() }}">Go Back</a></p></div>
                         <div>
                             <p>You have {{ number_format($save->money, 0, ',', '.') }} money - <a href="/games/ptd/gameCorner.php">View Prize List</a></p>
-                            
+
                             <br>
                             @if (session('prize'))
                                     <p>Congratulations! You got {{ session('prize') }}!</p>
-                            @else  
+                            @else
                                 @if ($dateCheck)
 
                                     <p><a href="{{ route('get-gift', ['button' => 1]) }}">Buy a Common Daily Gift for 1.000 money</a></p>
@@ -40,7 +40,7 @@
                                         <p><a href="{{ route('get-gift', ['button' => 2]) }}">Buy an Uncommon Daily Gift for 10.000 money</a></p>
                                     @else
                                         <p>You do not have the requirements for the Uncommon Daily Gift in this profile</p>
-                                    @endif  
+                                    @endif
 
                                     <br>
 

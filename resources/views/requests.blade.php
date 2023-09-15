@@ -16,7 +16,7 @@
                 <div id="requests">
                     <div class="block">
                         <div class="title"><p>Offers and Requests - <a
-                                    href="https://ptd1.jordanplayz158.xyz/games/ptd/checkPokemon.php?save=0">Go Back</a>
+                                    href="{{ url()->previous() }}">Go Back</a>
                             </p></div>
                         <div class="content">
                             <p>Here is a list of your Requests (from others) <b>TO</b> this profile</p>

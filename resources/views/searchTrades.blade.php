@@ -15,7 +15,7 @@
             <td id="main">
                 <div class="block">
                     <div class="title"><p>Search Trades - <a
-                                href="https://ptd1.jordanplayz158.xyz/games/ptd/checkPokemon.php">Go Back</a></p></div>
+                                href="{{ url()->previous() }}">Go Back</a></p></div>
                     <div class="content">
                         <p>Here you can search for pokemon up for trade by ID.</p>
                         <form action="?">

@@ -22,11 +22,11 @@
                 </td>
                 <td id="main">
                     <div class="block">
-                        <div class="title"><p>Game Corner - <a href="/games/ptd/account.php">Go Back</a></p></div>
+                        <div class="title"><p>Game Corner - <a href="{{ url()->previous() }}">Go Back</a></p></div>
                         <div>
                             @if ($save->advanced >=  3 && session('game-corner-id') == null)
                                 <p>Welcome to the Game Corner! Now that you are part of Team Rocket you can access the fun of the slots and play to get Team Rocket Exclusive pokemon!</p>
-                                
+
                                 <br>
 
                                 <p>You have {{ number_format($user->casino_coins, 0, ',', '.') }} Casino Coins. All Slot Machines cost 5 Casino Coins and you can play up to 50 times a day. One click will make equal to 50 plays and you can only play once a day.</p>
@@ -36,21 +36,21 @@
                                 @elseif (session('return'))
                                     <br>
                                     <p>You are missing {{ number_format(session('return'), 0, ',', '.') }} Casino Coins.
-                                @else  
+                                @else
                                     @if ($dateCheck)
                                         <br>
                                         <a href="{{ route('play-slots') }}">Play Slot Machine 1</a><br><br>
                                         <a href="{{ route('play-slots') }}">Play Slot Machine 2</a><br><br>
                                         <a href="{{ route('play-slots') }}">Play Slot Machine 3</a><br><br>
                                         <a href="{{ route('play-slots') }}">Play Slot Machine 4</a><br><br>
-                                        <a href="{{ route('play-slots') }}">Play Slot Machine 5</a><br><br>  
+                                        <a href="{{ route('play-slots') }}">Play Slot Machine 5</a><br><br>
                                         <a href="{{ route('play-slots') }}">Play Slot Machine 6</a><br><br>
-                                        <a href="{{ route('play-slots') }}">Play Slot Machine 7</a>    
-                    
+                                        <a href="{{ route('play-slots') }}">Play Slot Machine 7</a>
+
                                     @else
                                         <br>
                                         <p>You have already played enough slots for today. Come back tomorrow!</p>
-                             
+
                                     @endif
                                 @endif
                                        </div>

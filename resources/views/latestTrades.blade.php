@@ -21,7 +21,7 @@
             <td id="main">
                 <div class="block">
                     <div class="title"><p>Latest Trades - <a
-                                href="https://ptd1.jordanplayz158.xyz/games/ptd/checkPokemon.php">Go Back</a></p></div>
+                                href="{{ url()->previous() }}">Go Back</a></p></div>
                     <div class="content">
                         <p>Here is a list of the latest Pokémon up for trade.</p>
                     </div>
