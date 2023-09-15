@@ -2,27 +2,32 @@
 
 namespace App\View\Components;
 
+use App\Enums\Components\Pokemon\Actions;
+use App\Models\GameCornerPokemon;
 use Illuminate\View\Component;
 
 class Pokemon extends Component
 {
     public int $id;
-    public \App\Enums\Components\Pokemon\Actions $type;
+    public Actions $type;
+    public mixed $overridePokemon = null;
 
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct(string $id, string $type = '')
+    public function __construct(string $id, string $type = '', $overridePokemon = null)
     {
         $this->id = intval($id);
 
         if(empty($type)) {
-            $this->type = \App\Enums\Components\Pokemon\Actions::STANDARD();
+            $this->type = Actions::STANDARD();
         } else {
-            $this->type = \App\Enums\Components\Pokemon\Actions::coerce($type);
+            $this->type = Actions::coerce($type);
         }
+
+        $this->overridePokemon = $overridePokemon;
     }
 
     /**
@@ -32,13 +37,17 @@ class Pokemon extends Component
      */
     public function render()
     {
-        if ($this->type == \App\Enums\Components\Pokemon\Actions::GAMECORNER())
-        {   
-            $pokemon = \App\Models\GameCornerPokemon::whereId($this->id)->get()->first();
+        if ($this->type == Actions::GAMECORNER())
+        {
+            $pokemon = GameCornerPokemon::whereId($this->id)->get()->first();
             $pokemon->tag = 'n';
             return view('components.pokemon', ['pokemon' => $pokemon, 'type' => $this->type->value]);
         }
-        
+
+        if($this->overridePokemon != null) {
+            return view('components.pokemon', ['pokemon' => $this->overridePokemon, 'type' => $this->type->value]);
+        }
+
         return view('components.pokemon', ['pokemon' => \App\Models\Pokemon::whereId($this->id)->get()->first(), 'type' => $this->type->value]);
     }
 

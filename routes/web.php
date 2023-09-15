@@ -310,6 +310,42 @@ Route::post('/games/ptd/abandon/{id}', function (int $id) {
 })->middleware('auth');
 
 // Non-original pages
+Route::get('/games/ptd/changeAvatar.php', function () {
+    return view('changeAvatar', ['avatar' => Auth::user()->selectedSave()->avatar]);
+})->middleware('auth');
+
+Route::post('/games/ptd/changeAvatar.php', function (Request $request) {
+    $save = Auth::user()->selectedSave();
+    $save->avatar = $request->input('avatar', 'none');
+    $save->save();
+
+    return redirect(url()->previous());
+})->middleware('auth');
+
+Route::get('/games/ptd/changeNickname.php', function () {
+    return view('changeNickname', ['name' => Auth::user()->name]);
+})->middleware('auth');
+
+Route::post('/games/ptd/changeNickname.php', function (Request $request) {
+    $user = Auth::user();
+    $user->name = $request->input('name', $user->email);
+    $user->save();
+
+    return redirect(url()->previous());
+})->middleware('auth');
+
+Route::get('/games/ptd/myTrades.php', function () {
+    return view('myTrades', ['pokemon' => Auth::user()->selectedSave()->tradePokemon()->paginate(20)]);
+})->middleware('auth');
+
+Route::post('/games/ptd/myTrades.php', function (Request $request) {
+    $user = Auth::user();
+    $user->name = $request->input('name', $user->email);
+    $user->save();
+
+    return redirect(url()->previous());
+})->middleware('auth');
+
 Route::get('/games/ptd/changeEmail.php', function () {
     return view('changeEmail', ['email' => Auth::user()->email]);
 })->middleware('auth');

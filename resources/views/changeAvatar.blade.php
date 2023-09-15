@@ -3,97 +3,26 @@
 <head>
     <title>Pokémon Center - Change Account Avatar</title>
     <meta charset="UTF-8">
-    <link rel='stylesheet' type='text/css' href='/_static/css/base.css'>
-    <link rel='stylesheet' type='text/css' href='/_static/css/suckerfish.css'>
-    <link rel='stylesheet' type='text/css' href="/_static/css/style.css">
-    <!--<script type='text/javascript' src='logging.js'></script>-->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
-    </script>
-    <script src="/_static/js/base.js"></script>
-    <script src="/_static/js/moves.js"></script>
-    <script src="/_static/js/utils.js"></script>
-    <script>
-        let saveNum = getCookie('save');
-
-        if (saveNum === null || saveNum.length < 1 || saveNum < 0) {
-            saveNum = 0;
-        } else if (saveNum > 2) {
-            saveNum = 2;
-        }
-
-        window.onload = () => {
-            loadProfile(() => {
-                authenticatedFetch(fetch('/api/saves/?exclude=pokemon,items,id,user_id,num,advanced,advanced_a,classic,classic_a,challenge,npcTrade,shinyHunt,version,created_at,updated_at&save=' + saveNum))
-                    .then(result => result.json())
-                    .then(saves => {
-                        if (!successCheck(saves)) {
-                            return;
-                        }
-
-                        let save = saves[saveNum];
-                        initProfile(save['avatar'], save['nickname'], save['badges'], save['money'], saveNum);
-
-                        document.getElementById('avatar').innerText = save['avatar'];
-
-                        console.log(saves);
-                    }).catch(error => {
-                    console.log(error);
-                })
-            })
-        };
-
-        function changeAccountAvatar(event) {
-            event.preventDefault();
-            const select = document.getElementById('avatars');
-            const avatar = select.options[select.selectedIndex].innerText;
-
-            let body = {'avatar' : avatar};
-            const headers = {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            };
-
-            authenticatedFetch(fetch('/api/saves/' + saveNum, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(body)
-            }))
-                .then(result => result.json())
-                .then(data => {
-                    if(!successCheck(data, POKEMON)) {
-                        return;
-                    }
-
-                    document.getElementById('avatar').innerText = avatar;
-
-                    console.log(data);
-                }).catch(error => {
-                console.log(error);
-            })
-        }
-    </script>
 </head>
 <body>
-<div id="header"></div>
+@include('components.header')
 <div id="content">
-    <div id="nav"></div>
+    @include('components.nav')
     <table id="content_table">
         <tbody>
         <tr>
-            <td id="sidebar"></td>
+            <x-profiles/>
             <td id="main">
                 <div class="block">
                     <div id="pokemonResult"></div>
                     <div class="title"><p>Change Your Avatar - <a
-                                href="/games/ptd/checkPokemon.php?save=0">Go Back</a></p></div>
+                                href="{{ url()->previous() }}">Go Back</a></p></div>
                     <div class="content">
-                        <p>CURRENT AVATAR: </p><b>"<span id="avatar"></span>"</b>
+                        <p>CURRENT AVATAR: </p><b>"<span id="avatar">{{ $avatar }}</span>"</b>
                         <div class="block">
-                            <form action="/api/changeAccountNickname/" method="POST" onsubmit="changeAccountAvatar(event)">
+                            <form action="" method="POST">
                                 <label><b>New Account Avatar:</b>
-                                    <select name="avatars" id="avatars">
+                                    <select name="avatar" id="avatars">
                                         <!-- These are commented out as they do not exist in the SWF and thus lead to issues
                                         <option value="b_-1">b_-1</option>
                                         <option value="b_0">b_0</option>-->
@@ -143,6 +72,7 @@
                                 <div class="login_actions">
                                     <input id="submitButton" value="Change" type="submit" class="login_btn">
                                 </div>
+                                @csrf
                             </form>
                         </div>
                     </div>

@@ -26,7 +26,7 @@
             <li class="expanded"><a href="/games/ptd/createTrade.php">Trading Center</a>
                 <ul class="menu">
                     <li><a href="/games/ptd/createTrade.php">Create Trade</a></li>
-                    <li><a href="/games/ptd/myTrades.html">Your Trades</a></li>
+                    <li><a href="/games/ptd/myTrades.php">Your Trades</a></li>
                     <li><a href="/games/ptd/myOffers.html">Your Offers/Requests</a></li>
                     <li><a href="/games/ptd/searchTrades.php">Search Trades</a></li>
                     <li><a href="/games/ptd/latestTrades.php">Latest Trades</a></li>
@@ -55,8 +55,8 @@
                         @endif
                         <ul class="menu rightToLeft">
                             <li><a href="/notifications">Notifications</a></li>
-                            <li><a href="/games/ptd/changeNickname.html">Change Nickname</a></li>
-                            <li><a href="/games/ptd/changeAvatar.html">Change Avatar</a></li>
+                            <li><a href="/games/ptd/changeNickname.php">Change Nickname</a></li>
+                            <li><a href="/games/ptd/changeAvatar.php">Change Avatar</a></li>
                             <li><a href="/games/ptd/reset_password_form.php">Change Password</a></li>
                             <li><a href="/apiKeys">API Keys</a></li>
                         </ul>
