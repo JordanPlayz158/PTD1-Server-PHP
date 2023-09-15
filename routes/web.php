@@ -193,7 +193,12 @@ Route::delete('/apiKeys/{apiKeyId}', function (Request $request, int $apiKeyId) 
 Route::post('/profile/', function (Request $request) {
     $request->validate(['save' => 'required|numeric|integer']);
 
-    $request->session()->put('save', $request->input('save'));
+    $save = $request->input('save', 0);
+
+    if($save < 0 || $save > 2)
+        $save = 0;
+
+    $request->session()->put('save', $save);
 
     return redirect(url()->previous());
 })->middleware('auth');
