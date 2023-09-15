@@ -126,8 +126,8 @@ Route::get('/home', function () {return redirect('/');});
 Route::get('/flash', function (Request $request) {
     $game = $request->input('game', 'PTD1.swf');
 
-    if(str_contains($game, '/')) {
-        return response('SWF Path contains "/", illegal character');
+    if(str_contains($game, '/') || str_contains($game, "\\")) {
+        return response('SWF Path contains "/" or "\", illegal character');
     }
 
     return view('flash', ['game' => $game]);
