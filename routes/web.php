@@ -203,7 +203,7 @@ Route::post('/profile/', function (Request $request) {
     return redirect(url()->previous());
 })->middleware('auth');
 
-Route::get('/games/ptd/trading.php', function () {return redirect('/games/ptd/trading.html');})->middleware('auth');
+Route::get('/games/ptd/trading.php', function () {return redirect()->route('createTrade');})->middleware('auth');
 
 Route::get('/games/ptd/makeAnOffer.php', function (Request $request) {
     return view('makeAnOffer', ['id' => $request->input('id'), 'ids' => Auth::user()->selectedSave()->pokemon()->get('id')]);
@@ -223,7 +223,7 @@ Route::post('/games/ptd/makeAnOffer.php', function (Request $request) {
     $result = (new OfferController())->create($request->replace(['offerIds' => $offerIds]), $request->input('id'));
 
     if($result['success'] === true) {
-        return redirect('/games/ptd/myOffers.html');
+        return redirect('/games/ptd/offers.php');
     } else {
         return redirect($request->fullUrlWithQuery(['error' => $result['error']]));
     }
@@ -243,7 +243,7 @@ Route::get('/offers/{id}/confirm', function(int $id) {
 
 
 Route::get('/games/ptd/offers.php', function () {
-    return view('offers', ['pokemon' => Auth::user()->selectedSave()->tradePokemon()->with('offers')]);
+    return view('offers', ['pokemon' => Auth::user()->selectedSave()->pokemon()->with('offers')]);
 })->middleware('auth');
 
 Route::get('/games/ptd/requests.php', function () {
@@ -270,7 +270,7 @@ Route::get('/games/ptd/createTrade.php', function (Request $request) {
     }
 
     return view('createTrade', ['pokemon' => $pokemon, 'sorts' => $sorts ?? [], 'orderBys' => $orderBys ?? []]);
-})->middleware('auth');
+})->middleware('auth')->name('createTrade');
 
 Route::get('/games/ptd/trade/{id}', function (int $id) {
     return view('trade', ['id' => $id]);
@@ -291,7 +291,7 @@ Route::post('/games/ptd/recall/{id}', function (int $id) {
     $pokemon = Auth::user()->findPokemon($id);
     if($pokemon) $pokemon->recall();
 
-    return redirect('/games/ptd/createTrade.php');
+    return redirect()->route('createTrade');
 })->middleware('auth');
 
 Route::get('/games/ptd/changePokemonNickname/{id}', function (int $id) {
@@ -304,7 +304,7 @@ Route::post('/games/ptd/changePokemonNickname/{id}', function (int $id, Request 
     $pokemon = Auth::user()->findPokemon($id);
     if($pokemon && !empty($name)) $pokemon->changeName($name);
 
-    return redirect('/games/ptd/createTrade.php');
+    return redirect()->route('createTrade');
 })->middleware('auth');
 
 Route::get('/games/ptd/abandon/{id}', function (int $id) {
@@ -391,6 +391,7 @@ Route::get('/giveaways/{id}/participants', function(int $id) {
 
     return view('giveawayParticipants', ['giveaway' => $giveaway, 'participants' => $giveaway->participants]);
 })->middleware('auth');
+
 Route::get('/giveaways/{id}/pokemon', function(int $id) {
     $relations = Collection::make(['pokemon']);
 
@@ -405,6 +406,37 @@ Route::get('/games/ptd/createGiveaway.php', function (Request $request) {
 })->middleware('auth');
 
 Route::post('/games/ptd/createGiveaway.php', [GiveawayController::class, 'create'])->middleware('auth');
+
+Route::get('/offers/{id}/retract', function (int $id) {
+    return view('retractOffer', ['id' => $id]);
+})->middleware('auth');
+
+Route::post('/offers/{id}/retract', function (int $id) {
+    Auth::user()->deleteOffer($id);
+
+    return redirect('/games/ptd/offers.php');//->route('createTrade');
+})->middleware('auth');
+
+Route::get('/requests/{id}/accept', function (int $id) {
+    return view('acceptRequest', ['id' => $id]);
+})->middleware('auth');
+
+Route::post('/requests/{id}/accept', function (int $id, Request $request) {
+    if(Auth::user()->madeRequest($id))
+        (new OfferController())->accept($request, $id);
+
+    return redirect('/games/ptd/requests.php');//->route('createTrade');
+})->middleware('auth');
+
+Route::get('/requests/{id}/deny', function (int $id) {
+    return view('denyRequest', ['id' => $id]);
+})->middleware('auth');
+
+Route::post('/requests/{id}/deny', function (int $id) {
+    Auth::user()->deleteRequest($id);
+
+    return redirect('/games/ptd/requests.php');//->route('createTrade');
+})->middleware('auth');
 
 // Daily Gift
 
@@ -449,3 +481,7 @@ Route::post('/php/newPoke6.php', [SWFController::class, 'post']);
 Route::get('/php/ptd1_version.php', function (Request $request) {
     return $request->getSchemeAndHttpHost() . "/PTD1.swf";
 });
+
+// Routes that exist in SWF, may be disabled
+// /php/trading.php
+// /php/poke.php

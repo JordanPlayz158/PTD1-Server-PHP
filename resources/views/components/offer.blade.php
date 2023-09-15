@@ -26,11 +26,11 @@
     <hr>
     <div style="text-align: center">
         @if($type == \App\Enums\Components\Trading::OFFER())
-            <a href="">Retract</a>
+            <a href="/offers/{{ $requestId }}/retract">Retract</a>
         @elseif($type == \App\Enums\Components\Trading::REQUEST())
-            <a href="/offers/{{ $requestId }}/confirm">Accept</a>
+            <a href="/requests/{{ $requestId }}/accept">Accept</a>
             <a> | </a>
-            <a href="/offers/{{ $requestId }}/confirm">Reject</a>
+            <a href="/requests/{{ $requestId }}/deny">Reject</a>
         @endif
     </div>
     @endif

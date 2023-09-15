@@ -27,7 +27,7 @@
                 <ul class="menu">
                     <li><a href="/games/ptd/createTrade.php">Create Trade</a></li>
                     <li><a href="/games/ptd/myTrades.php">Your Trades</a></li>
-                    <li><a href="/games/ptd/myOffers.html">Your Offers/Requests</a></li>
+                    <li><a href="/games/ptd/offers.php">Your Offers/Requests</a></li>
                     <li><a href="/games/ptd/searchTrades.php">Search Trades</a></li>
                     <li><a href="/games/ptd/latestTrades.php">Latest Trades</a></li>
                 </ul>

@@ -134,6 +134,28 @@ class User extends Authenticatable {
         return $this->ownsSave(Pokemon::whereId($pokemonId)->get('save_id')->first()->save_id);
     }
 
+    public function madeOffer(int $offerId) : bool {
+        return $this->ownsSave(Offer::whereId($offerId)->first()->offerPokemon()->first()->pokemon()->first()->save_id);
+    }
+
+    public function madeRequest(int $requestId) : bool {
+        return $this->ownsSave(Offer::whereId($requestId)->first()->requestPokemon()->first()->pokemon()->first()->save_id);
+    }
+
+    public function deleteOffer(int $offerId) : bool {
+        if(!$this->madeOffer($offerId)) return false;
+
+        $offer = Offer::whereId($offerId)->first();
+        return $offer->offerPokemon()->delete() && $offer->requestPokemon()->delete() && $offer->delete();
+    }
+
+    public function deleteRequest(int $offerId) : bool {
+        if(!$this->madeRequest($offerId)) return false;
+
+        $offer = Offer::whereId($offerId)->first();
+        return $offer->offerPokemon()->delete() && $offer->requestPokemon()->delete() && $offer->delete();
+    }
+
     public function findPokemon(int $pokemonId): mixed
     {
         if($this->ownsPokemon($pokemonId)) {
