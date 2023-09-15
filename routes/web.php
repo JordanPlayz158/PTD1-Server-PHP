@@ -78,9 +78,9 @@ Route::post('/reset-password', function (Request $request) {
         : back()->withErrors(['email' => [__($status)]]);
 })->name('password.update');
 
-Route::get('/games/ptd/reset_password_form.php', function () {return redirect('/forgot-password');});
+Route::get('/games/ptd/reset_password_form.php', function () {return redirect()->route('password.request');});
 
-Route::get('/games/ptd/password.php', function () {return redirect('/forgot-password');});
+Route::get('/games/ptd/password.php', function () {return redirect()->route('password.request');});
 
 
 // Verify Email
@@ -111,14 +111,14 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
         Cache::delete($cacheString);
     }
 
-    return redirect('/games/ptd/account.php');
+    return redirect()->name('account');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 
 // Root
 
-Route::get('/', function () {return view('index');});
-Route::get('/home', function () {return redirect('/');});
+Route::get('/', function () {return view('index');})->name('home');
+Route::get('/home', function () {return redirect()->route('home');});
 
 
 // Ruffle Flash Games
@@ -137,7 +137,7 @@ Route::get('/flash', function (Request $request) {
 // Login
 
 Route::get('/login', function () {
-    if(Auth::check()) return redirect('/games/ptd/account.php');
+    if(Auth::check()) return redirect()->name('account');
 
     return view('login');
 })->name('login');
@@ -160,7 +160,7 @@ Route::get('/apiKeys', function () {
     $tokens = Auth::user()->tokens()->where('name', '!=', 'loginApiKey')->get(['id', 'last_used_at', 'created_at', 'updated_at']);
 
     return view('tokens', ['tokens' => $tokens, 'newToken' => false]);
-})->middleware('auth')->name('apiKeysGet');
+})->middleware('auth')->name('apiKeys');
 
 Route::post('/apiKeys', function () {
     $newToken = Auth::user()->createToken('token')->plainTextToken;
@@ -184,7 +184,7 @@ Route::delete('/apiKeys/{apiKeyId}', function (Request $request, int $apiKeyId) 
 
     $tokenBuilder->delete();
 
-    return redirect('/apiKeys');
+    return redirect()->route('apiKeys');
 })->middleware('auth');
 
 
@@ -223,7 +223,7 @@ Route::post('/games/ptd/makeAnOffer.php', function (Request $request) {
     $result = (new OfferController())->create($request->replace(['offerIds' => $offerIds]), $request->input('id'));
 
     if($result['success'] === true) {
-        return redirect('/games/ptd/offers.php');
+        return redirect()->route('offers');
     } else {
         return redirect($request->fullUrlWithQuery(['error' => $result['error']]));
     }
@@ -231,7 +231,7 @@ Route::post('/games/ptd/makeAnOffer.php', function (Request $request) {
 
 Route::get('/games/ptd/account.php', function () {
     return view('account');
-})->middleware('auth');
+})->middleware('auth')->name('account');
 
 Route::get('/games/ptd/searchTrades.php', function () {return view('searchTrades');})->middleware('auth');
 
@@ -244,11 +244,11 @@ Route::get('/offers/{id}/confirm', function(int $id) {
 
 Route::get('/games/ptd/offers.php', function () {
     return view('offers', ['pokemon' => Auth::user()->selectedSave()->pokemon()->with('offers')]);
-})->middleware('auth');
+})->middleware('auth')->name('offers');
 
 Route::get('/games/ptd/requests.php', function () {
     return view('requests', ['pokemon' => Auth::user()->selectedSave()->tradePokemon()->with('requests')]);
-})->middleware('auth');
+})->middleware('auth')->name('requests');
 
 Route::get('/games/ptd/latestTrades.php', function () {
     return view('latestTrades', ['ids' => Trade::latest()->paginate(20, 'poke_id')]);
@@ -280,7 +280,7 @@ Route::post('/games/ptd/trade/{id}', function (int $id) {
     $pokemon = Auth::user()->findPokemon($id);
     if($pokemon) $pokemon->listTrade();
 
-    return redirect('/games/ptd/myTrades.php');
+    return redirect()->route('myTrades');
 })->middleware('auth');
 
 Route::get('/games/ptd/recall/{id}', function (int $id) {
@@ -315,7 +315,7 @@ Route::post('/games/ptd/abandon/{id}', function (int $id) {
     $pokemon = Auth::user()->findPokemon($id);
     if($pokemon) $pokemon->delete();
 
-    return redirect('/games/ptd/createTrade.php');
+    return redirect()->route('createTrade');
 })->middleware('auth');
 
 // Non-original pages
@@ -345,7 +345,7 @@ Route::post('/games/ptd/changeNickname.php', function (Request $request) {
 
 Route::get('/games/ptd/myTrades.php', function () {
     return view('myTrades', ['pokemon' => Auth::user()->selectedSave()->tradePokemon()->paginate(20)]);
-})->middleware('auth');
+})->middleware('auth')->name('myTrades');
 
 Route::post('/games/ptd/myTrades.php', function (Request $request) {
     $user = Auth::user();
@@ -414,7 +414,7 @@ Route::get('/offers/{id}/retract', function (int $id) {
 Route::post('/offers/{id}/retract', function (int $id) {
     Auth::user()->deleteOffer($id);
 
-    return redirect('/games/ptd/offers.php');//->route('createTrade');
+    return redirect()->route('offers');
 })->middleware('auth');
 
 Route::get('/requests/{id}/accept', function (int $id) {
@@ -425,7 +425,7 @@ Route::post('/requests/{id}/accept', function (int $id, Request $request) {
     if(Auth::user()->madeRequest($id))
         (new OfferController())->accept($request, $id);
 
-    return redirect('/games/ptd/requests.php');//->route('createTrade');
+    return redirect()->route('requests');
 })->middleware('auth');
 
 Route::get('/requests/{id}/deny', function (int $id) {
@@ -435,7 +435,7 @@ Route::get('/requests/{id}/deny', function (int $id) {
 Route::post('/requests/{id}/deny', function (int $id) {
     Auth::user()->deleteRequest($id);
 
-    return redirect('/games/ptd/requests.php');//->route('createTrade');
+    return redirect()->route('requests');
 })->middleware('auth');
 
 // Daily Gift
