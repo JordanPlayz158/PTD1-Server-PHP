@@ -134,6 +134,15 @@ class User extends Authenticatable {
         return $this->ownsSave(Pokemon::whereId($pokemonId)->get('save_id')->first()->save_id);
     }
 
+    public function findPokemon(int $pokemonId): mixed
+    {
+        if($this->ownsPokemon($pokemonId)) {
+            return Pokemon::whereId($pokemonId)->first();
+        }
+
+        return false;
+    }
+
     public function isParticipatingInOffer(int $offerId): bool
     {
         $offerBuilder = Offer::whereId($offerId);

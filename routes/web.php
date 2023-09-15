@@ -297,6 +297,17 @@ Route::post('/games/ptd/trade/{id}', function (int $id) {
     return redirect('/games/ptd/createTrade.php');
 })->middleware('auth');
 
+Route::get('/games/ptd/recall/{id}', function (int $id) {
+    return view('recall', ['id' => $id]);
+})->middleware('auth');
+
+Route::post('/games/ptd/recall/{id}', function (int $id) {
+    $pokemon = Auth::user()->findPokemon($id);
+    if($pokemon) $pokemon->recall();
+
+    return redirect('/games/ptd/createTrade.php');
+})->middleware('auth');
+
 Route::get('/games/ptd/abandon/{id}', function (int $id) {
     return view('abandon', ['id' => $id]);
 })->middleware('auth');

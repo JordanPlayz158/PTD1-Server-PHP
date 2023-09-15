@@ -116,6 +116,12 @@ class Pokemon extends Model {
         return $this->hasOne(Trade::class, 'poke_id');
     }
 
+    public function recall() : bool {
+        if(!$this->isUpForTrade()) return false;
+
+        return $this->trade()->delete();
+    }
+
     public function isUpForTrade(): bool
     {
         return $this->trade()->exists();

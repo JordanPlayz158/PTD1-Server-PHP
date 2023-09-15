@@ -7,15 +7,17 @@ use Illuminate\View\Component;
 class Standard extends Component
 {
     public int $id;
+    public bool $isUpForTrade;
 
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct(string $id)
+    public function __construct(string $id, string $isUpForTrade)
     {
         $this->id = intval($id);
+        $this->isUpForTrade = boolval($isUpForTrade);
     }
 
     /**
@@ -25,6 +27,6 @@ class Standard extends Component
      */
     public function render()
     {
-        return view('components.pokemon.standard', ['id' => $this->id]);
+        return view('components.pokemon.standard', ['id' => $this->id, 'isUpForTrade' => $this->isUpForTrade]);
     }
 }

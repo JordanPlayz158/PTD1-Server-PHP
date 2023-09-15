@@ -45,7 +45,7 @@
     </div>
     <div class="actions" id="create_{{ $pokemon->id }}">
         @if($type == \App\Enums\Components\Pokemon\Actions::STANDARD())
-            <x-pokemon.standard :id="$pokemon->id"/>
+            <x-pokemon.standard :id="$pokemon->id" :isUpForTrade="$pokemon->isUpForTrade()"/>
         @elseif($type == \App\Enums\Components\Pokemon\Actions::TRADE())
             <x-pokemon.trade :id="$pokemon->id"/>
         @elseif($type == \App\Enums\Components\Pokemon\Actions::GAMECORNER())
