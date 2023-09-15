@@ -294,6 +294,19 @@ Route::post('/games/ptd/recall/{id}', function (int $id) {
     return redirect('/games/ptd/createTrade.php');
 })->middleware('auth');
 
+Route::get('/games/ptd/changePokemonNickname/{id}', function (int $id) {
+    return view('changePokemonNickname', ['id' => $id]);
+})->middleware('auth');
+
+Route::post('/games/ptd/changePokemonNickname/{id}', function (int $id, Request $request) {
+    $name = $request->input('name');
+
+    $pokemon = Auth::user()->findPokemon($id);
+    if($pokemon && !empty($name)) $pokemon->changeName($name);
+
+    return redirect('/games/ptd/createTrade.php');
+})->middleware('auth');
+
 Route::get('/games/ptd/abandon/{id}', function (int $id) {
     return view('abandon', ['id' => $id]);
 })->middleware('auth');

@@ -88,6 +88,11 @@ class Pokemon extends Model {
         'shiny'
     ];
 
+    public function changeName(string $name) : bool {
+        $this->nickname = $name;
+        return $this->save();
+    }
+
     public function offers(): HasManyThrough
     {
         return $this->hasManyThrough(
