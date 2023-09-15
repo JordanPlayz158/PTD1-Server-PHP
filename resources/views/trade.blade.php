@@ -29,7 +29,7 @@
 
                 <div id="tradeUi" class="block">
                     <h2 style="text-align: center">Put Up For Trade?</h2>
-                    <x-pokemon :id="$id" type="NONE" style="display: block; margin: auto;"/>
+                    <x-pokemon :id="$id" type="NONE" style="display: block; margin: auto; float: none;"/>
                     <div style="text-align: center">
                         <form method="post">
                             @csrf
