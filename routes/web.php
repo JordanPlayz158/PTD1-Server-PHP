@@ -272,29 +272,10 @@ Route::get('/games/ptd/trade/{id}', function (int $id) {
 })->middleware('auth');
 
 Route::post('/games/ptd/trade/{id}', function (int $id) {
-    if(Auth::user()->ownsPokemon($id)) {
-        $pokemon = null;
+    $pokemon = Auth::user()->findPokemon($id);
+    if($pokemon) $pokemon->listTrade();
 
-        foreach (Auth::user()->saves()->with('pokemon')->lazy() as $save) {
-            foreach ($save->pokemon as $poke) {
-                if ($poke->id === $id) {
-                    $pokemon = $poke;
-                    break 2;
-                }
-            }
-        }
-
-        if($pokemon !== null && !$pokemon->isUpForTrade()) {
-            $trade = new Trade();
-
-            $trade->poke_id = $pokemon->id;
-
-            $trade->save();
-        }
-    }
-
-
-    return redirect('/games/ptd/createTrade.php');
+    return redirect('/games/ptd/myTrades.php');
 })->middleware('auth');
 
 Route::get('/games/ptd/recall/{id}', function (int $id) {
@@ -313,9 +294,8 @@ Route::get('/games/ptd/abandon/{id}', function (int $id) {
 })->middleware('auth');
 
 Route::post('/games/ptd/abandon/{id}', function (int $id) {
-    if(Auth::user()->ownsPokemon($id)) {
-        Pokemon::whereId($id)->delete();
-    }
+    $pokemon = Auth::user()->findPokemon($id);
+    if($pokemon) $pokemon->delete();
 
     return redirect('/games/ptd/createTrade.php');
 })->middleware('auth');
