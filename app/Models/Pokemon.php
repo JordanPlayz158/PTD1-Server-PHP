@@ -132,6 +132,26 @@ class Pokemon extends Model {
     public function recall() : bool {
         if(!$this->isUpForTrade()) return false;
 
+        $evolve = match ($this->pNum) {
+            // Kadabra => Alakazam
+            64 => [65, 'Alakazam'],
+            // Machoke => Machamp
+            67 => [68, 'Machamp'],
+            // Graveler => Golem
+            75 => [76, 'Golem'],
+            // Haunter => Gengar
+            93 => [94, 'Gengar'],
+
+            default => [-1],
+        };
+
+        if($evolve[0] !== -1) {
+            $this->pNum = $evolve[0];
+            $this->nickname = $evolve[1];
+            return $this->trade()->delete() && $this->save();
+
+        }
+
         return $this->trade()->delete();
     }
 
