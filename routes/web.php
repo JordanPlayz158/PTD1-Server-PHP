@@ -111,7 +111,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
         Cache::delete($cacheString);
     }
 
-    return redirect()->name('account');
+    return redirect()->route('account');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 
@@ -137,7 +137,7 @@ Route::get('/flash', function (Request $request) {
 // Login
 
 Route::get('/login', function () {
-    if(Auth::check()) return redirect()->name('account');
+    if(Auth::check()) return redirect()->route('account');
 
     return view('login');
 })->name('login');
