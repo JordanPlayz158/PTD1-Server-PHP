@@ -50,6 +50,14 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read \App\Models\Achievement|null $achievement
  * @property int|null $role_id
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRoleId($value)
+ * @property int $ptd_coins
+ * @property int $casino_coins
+ * @property mixed|null $last_used_dg
+ * @property mixed|null $last_used_gc
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereCasinoCoins($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereLastUsedDg($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereLastUsedGc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePtdCoins($value)
  * @mixin \Eloquent
  */
 class User extends Authenticatable {
