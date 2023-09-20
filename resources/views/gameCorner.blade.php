@@ -24,7 +24,7 @@
                     <div class="block">
                         <div class="title"><p>Game Corner - <a href="{{ url()->previous() }}">Go Back</a></p></div>
                         <div>
-                            @if ($save->advanced >=  3 && session('game-corner-id') == null)
+                            @if ($save->advanced >=  3 && session('game-corner-pokemon') == null)
                                 <p>Welcome to the Game Corner! Now that you are part of Team Rocket you can access the fun of the slots and play to get Team Rocket Exclusive pokemon!</p>
 
                                 <br>
@@ -70,7 +70,7 @@
                                         <x-pokemon :id="$poke->id" :cost="$poke->cost" type="GAMECORNER"/>
                                     @endforeach
                                 </div>
-                            @elseif (session('game-corner-id'))
+                            @elseif (session('game-corner-pokemon'))
                                     <p>Welcome to the Game Corner! Now that you are part of Team Rocket you can access the fun of the slots and play to get Team Rocket Exclusive pokemon!</p>
                                     <br>
 
@@ -81,7 +81,7 @@
                                         <strong>Congratulations! Your prize is the following:</strong>
                                     </div>
                                     <div id="pokemon">
-                                        <x-pokemon :id="session('game-corner-id')"/>
+                                        <x-pokemon id="0" :overridePokemon="session('game-corner-pokemon')"/>
                                     </div>
                             @else
                                 <p>Beat Lavender Town and become a part of Team Rocket to use the Game Corner.
