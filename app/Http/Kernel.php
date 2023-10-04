@@ -2,10 +2,20 @@
 
 namespace App\Http;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Routing\Router;
 
 class Kernel extends HttpKernel
 {
+    public function __construct(Application $app, Router $router)
+    {
+        if(empty(env("REDIS_HOST"))) $this->middlewareAliases['throttle'] = \Illuminate\Routing\Middleware\ThrottleRequests::class;
+            else $this->middlewareAliases['throttle'] = \Illuminate\Routing\Middleware\ThrottleRequestsWithRedis::class;
+
+        parent::__construct($app, $router);
+    }
+
     /**
      * The application's global HTTP middleware stack.
      *
@@ -72,11 +82,6 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \App\Http\Middleware\ValidateSignature::class,
-
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequestsWithRedis::class,
-        // Uncomment below and comment above IF you DO NOT use Redis
-        //'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
 }
