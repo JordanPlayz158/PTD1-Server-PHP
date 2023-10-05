@@ -5,7 +5,7 @@
 /public/storage
 /storage/*.key
 /vendor
-/.env
+.env
 .env.backup
 .env.production
 .phpunit.result.cache
@@ -22,5 +22,3 @@ yarn-error.log
 /.phpstorm.meta.php
 *.swf
 *.apk
-/docker/app
-/docker/data
