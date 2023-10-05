@@ -57,7 +57,7 @@ return new class extends Migration
 
         if(!Schema::hasTable('pokes')) {
             Schema::create('pokes', function (Blueprint $table) {
-                $table->bigInteger('uuid', false, true)->nullable(false)->unique();
+                $table->bigInteger('uuid', false, true)->nullable(false)->unique('uuid');
                 $table->string('email', 50)->nullable(false);
                 $table->tinyInteger('num', false, true)->nullable(false);
                 $table->mediumInteger('id', false, true)->nullable(false);
