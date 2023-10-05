@@ -1,0 +1,10 @@
+#!/bin/sh
+cd /var/www/html || (echo Failed to cd to directory. Exiting... && exit)
+# If the repository is cloned (first run) then generate a new key
+# If the repository was pulled OR cloned (file system modified) then
+# (Re)install composer dependencies
+((git -C . pull && composer install --no-dev --optimize-autoloader && php artisan migrate) || (git clone https://github.com/JordanPlayz158/PTD1-Server . && cp /.env . && composer install --no-dev --optimize-autoloader && php artisan key:generate --force))
+chown -R www-data:www-data .
+chmod -R 775 storage/* bootstrap/cache/
+php artisan migrate
+php-fpm
