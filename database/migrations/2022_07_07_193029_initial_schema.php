@@ -29,18 +29,18 @@ return new class extends Migration
                 $table->bigInteger('uuid', false, true)->nullable(false)->unique('uuid');
                 $table->string('email', 50)->nullable(false);
                 $table->tinyInteger('num', false, true)->nullable(false);
-                $table->tinyInteger('advanced', false, true);
-                $table->tinyInteger('advanced_a', false, true);
-                $table->string('nickname', 255);
-                $table->tinyInteger('badges', false, true);
-                $table->string('avatar', 4);
-                $table->tinyInteger('classic', false, true);
-                $table->string('classic_a', 255);
-                $table->tinyInteger('challenge', false, true);
-                $table->integer('money', false, true);
-                $table->tinyInteger('npcTrade', false, true);
-                $table->tinyInteger('shinyHunt', false, true);
-                $table->tinyInteger('version', false, true);
+                $table->tinyInteger('advanced', false, true)->nullable(true);
+                $table->tinyInteger('advanced_a', false, true)->nullable(true);
+                $table->string('nickname', 255)->nullable(true);
+                $table->tinyInteger('badges', false, true)->nullable(true);
+                $table->string('avatar', 4)->nullable(true);
+                $table->tinyInteger('classic', false, true)->nullable(true);
+                $table->string('classic_a', 255)->nullable(true);
+                $table->tinyInteger('challenge', false, true)->nullable(true);
+                $table->integer('money', false, true)->nullable(true);
+                $table->tinyInteger('npcTrade', false, true)->nullable(true);
+                $table->tinyInteger('shinyHunt', false, true)->nullable(true);
+                $table->tinyInteger('version', false, true)->nullable(true);
                 $table->longText('items');
 
                 $table->primary(['email', 'num']);
@@ -65,18 +65,18 @@ return new class extends Migration
                 $table->string('nickname', 255);
                 $table->mediumInteger('exp', false, true);
                 $table->tinyInteger('lvl', false, true);
-                $table->smallInteger('m1', false, true);
-                $table->smallInteger('m2', false, true);
-                $table->smallInteger('m3', false, true);
-                $table->smallInteger('m4', false, true);
-                $table->smallInteger('ability', false, true);
+                $table->smallInteger('m1', false, true)->nullable(true);
+                $table->smallInteger('m2', false, true)->nullable(true);
+                $table->smallInteger('m3', false, true)->nullable(true);
+                $table->smallInteger('m4', false, true)->nullable(true);
+                $table->smallInteger('ability', false, true)->nullable(true);
                 $table->tinyInteger('mSel', false, true);
-                $table->tinyInteger('targetType', false, true);
-                $table->string('tag', 3);
-                $table->string('item', 3);
-                $table->string('owner', 255);
+                $table->tinyInteger('targetType', false, true)->nullable(true);
+                $table->string('tag', 3)->nullable(true);
+                $table->string('item', 3)->nullable(true);
+                $table->string('owner', 255)->nullable(true);
                 $table->mediumInteger('pos', false, true);
-                $table->tinyInteger('shiny', false, true);
+                $table->tinyInteger('shiny', false, true)->nullable(true);;
 
                 $table->primary(['email', 'num', 'id']);
             });
@@ -133,9 +133,9 @@ return new class extends Migration
             Schema::create('offers', function (Blueprint $table) {
                 $table->bigInteger('id', true, true)->nullable(false);
                 $table->bigInteger('offerSave', false, true);
-                $table->longText('offerIds');
+                $table->longText('offerIds')->nullable(true);
                 $table->bigInteger('requestSave', false, true);
-                $table->longText('requestIds');
+                $table->longText('requestIds')->nullable(true);
             });
         }
     }
